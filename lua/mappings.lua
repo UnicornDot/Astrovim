@@ -11,6 +11,12 @@ function M.mappings(maps)
 
   maps.v["K"] = { ":move '<-2<CR>gv-gv", desc = "Move line up", silent = true }
   maps.v["J"] = { ":move '>+1<CR>gv-gv", desc = "Move line down", silent = true }
+  maps.i["jj"] = { "<ESC>", desc = "escape", silent = true }
+  maps.i["jk"] = { "<ESC>", desc = "escape", silent = true }
+  maps.i["<C-o>"] = { "<ESC>o", desc = "quick nextline", silent = true }
+  maps.i["<C-a>"] = { "<ESC>A", desc = "quick tailline", silent = true }
+  maps.n["K"] = { "5k", desc = "move fast", silent = true }
+  maps.n["J"] = { "5j", desc = "move fast", silent = true }
 
   maps.i["<C-s>"] = { "<esc>:w<cr>a", desc = "Save file", silent = true }
 
@@ -238,6 +244,7 @@ function M.mappings(maps)
   maps.n["<Leader>nh"] = { ":nohlsearch<CR>", desc = "Close search highlight" }
 
   maps.n["<Leader><Leader>"] = { desc = "󰍉 User" }
+  maps.n["s"] = "<Nop>"
 
   maps.n["H"] = { "^", desc = "Go to start without blank" }
   maps.n["L"] = { "$", desc = "Go to end without blank" }
@@ -259,26 +266,18 @@ function M.mappings(maps)
 
   if is_available "toggleterm.nvim" then
     if vim.fn.executable "lazygit" == 1 then
-      maps.n["<Leader>tl"] = {
+      maps.n["<Leader>gg"] = {
         require("utils").toggle_lazy_git(),
         desc = "ToggleTerm lazygit",
       }
-      maps.n["<Leader>gg"] = maps.n["<Leader>tl"]
     end
 
-    if vim.fn.executable "yazi" == 1 then
-      maps.n["<Leader>ty"] = {
-        require("utils").toggle_yazi(),
-        desc = "ToggleTerm yazi",
-      }
-    end
-
-    if vim.fn.executable "unimatrix" == 1 then
-      maps.n["<Leader>tm"] = {
-        require("utils").toggle_unicmatrix(),
-        desc = "ToggleTerm unimatrix",
-      }
-    end
+    -- if vim.fn.executable "joshuto" == 1 then
+    --   maps.n["<leader>tj"] = {
+    --     require("utils").toggle_joshuto(),
+    --     desc = "ToggleTerm joshuto",
+    --   }
+    -- end
 
     if vim.fn.executable "lazydocker" == 1 then
       maps.n["<Leader>td"] = {
@@ -286,6 +285,16 @@ function M.mappings(maps)
         desc = "ToggleTerm lazydocker",
       }
     end
+
+    -- multi style open terminal
+    maps.n["<M-3>"] = { "<cmd>ToggleTerm direction=float<cr>", desc = "ToggleTerm float" }
+    maps.t["<M-3>"] = { "<cmd>ToggleTerm direction=float<cr>", desc = "ToggleTerm float" }
+    maps.n["<M-1>"] = { "<cmd>ToggleTerm size=10 direction=horizontal<cr>", desc = "ToggleTerm horizontal split" }
+    maps.t["<M-1>"] = { "<cmd>ToggleTerm size=10 direction=horizontal<cr>", desc = "ToggleTerm horizontal split" }
+    maps.n["<M-2>"] = { "<cmd>ToggleTerm size=80 direction=vertical<cr>", desc = "ToggleTerm vertical split" }
+    maps.t["<M-2>"] = { "<cmd>ToggleTerm size=80 direction=vertical<cr>", desc = "ToggleTerm vertical split" }
+    maps.n["<C-\\>"] = { "<cmd>ToggleTerm<cr>", desc = "Toggle terminal" }
+    maps.t["<C-\\>"] = maps.n["<C-\\>"]
   end
 
   -- 在visual mode 里粘贴不要复制

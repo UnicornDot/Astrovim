@@ -6,6 +6,12 @@ return {
         "lua:custom-registry",
         "github:mason-org/mason-registry",
       })
+      opts.ui = {
+        check_outdated_packages_on_open = true,
+        width = 0.8,
+        height = 0.9,
+        border = "rounded",
+      }
     end,
   },
   {

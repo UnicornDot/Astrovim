@@ -7,16 +7,21 @@ end
 vim.opt.rtp:prepend(vim.env.LAZY or lazypath)
 
 require("lazy").setup {
+  ui = {
+    width = 0.8,
+    height = 0.8,
+    border = "rounded"
+  },
   spec = {
     -- TODO: change `branch="v4"` to `version="^4"` on release
-    { "AstroNvim/AstroNvim", branch = "v4", import = "astronvim.plugins" },
+    { "AstroNvim/AstroNvim", branch = "main", import = "astronvim.plugins" },
     -- AstroCommunity: import any community modules here
     -- TODO: Remove branch v4 on release
     -- { "AstroNvim/astrocommunity", branch = "v4" },
     -- import/override with your plugins
     { import = "plugins" },
   },
-  install = { colorscheme = { "solarized-osaka" } },
+  install = { colorscheme = { "catppuccin" } },
   performance = {
     rtp = {
       -- disable some rtp plugins, add more to your liking

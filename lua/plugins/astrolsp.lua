@@ -38,5 +38,15 @@ return {
         },
       },
     },
+    config = {
+      clangd = {
+        capabilities = {
+          offsetEncoding = "utf-8",
+        },
+      },
+    },
+    on_attach = function(_client, _bufnr)
+      require("lspconfig.ui.windows").default_options.border = "rounded"
+    end
   },
 }
