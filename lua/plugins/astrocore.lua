@@ -8,7 +8,7 @@ return {
     local options = require("astrocore").extend_tbl(opts, {
       -- Configure project root detection, check status with `:AstroRootInfo`
       diagnostics = {
-        underline = true,
+        underline = false,
         update_in_insert = false,
       },
       -- modify core features of AstroNvim

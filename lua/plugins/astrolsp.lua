@@ -8,7 +8,7 @@ return {
       codelens = true, -- enable/disable codelens refresh on start
       lsp_handlers = true, -- enable/disable setting of lsp_handlers
       semantic_tokens = true, -- enable/disable semantic token highlighting
-      inlay_hints = false,
+      inlay_hints = true,
       diagnostics_mode = 3,
     },
     -- Configuration options for controlling formatting with language servers
@@ -45,8 +45,6 @@ return {
         },
       },
     },
-    on_attach = function(_client, _bufnr)
-      require("lspconfig.ui.windows").default_options.border = "rounded"
-    end
+    on_attach = function(_client, _bufnr) require("lspconfig.ui.windows").default_options.border = "rounded" end,
   },
 }
