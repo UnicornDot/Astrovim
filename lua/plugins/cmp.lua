@@ -8,7 +8,8 @@ local function mapping()
   local luasnip = require "luasnip"
 
   return {
-    ["<CR>"] = cmp.config.disable,
+    -- ["<CR>"] = cmp.config.disable,
+    ["<CR>"] = cmp.mapping.confirm { select = true },
     -- ctrl + e关闭补全窗口
     -- <C-n> and <C-p> for navigating snippets
     ["<C-n>"] = cmp.mapping(function()
@@ -107,6 +108,7 @@ return {
   opts = function(_, opts)
     local cmp = require "cmp"
     local compare = require "cmp.config.compare"
+    local ConformBehavior = require "cmp.types.cmp"
 
     return require("astrocore").extend_tbl(opts, {
       window = {
@@ -114,6 +116,10 @@ return {
           col_offset = 1,
           side_padding = 0,
         },
+      },
+      confirm_opts = {
+        behavior = ConformBehavior.Replace,
+        select = true,
       },
       formatting = formatting_style,
       sources = cmp.config.sources {
