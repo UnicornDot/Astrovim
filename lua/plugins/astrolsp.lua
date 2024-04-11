@@ -29,6 +29,8 @@ return {
     mappings = {
       n = {
         gl = { function() vim.diagnostic.open_float() end, desc = "Hover diagnostics" },
+        ["M"] = { function() vim.lsp.buf.hover() end, desc = "Hover symbol details", cond = "textDocument/hover" },
+        ["K"] = { "5k", desc = "fast move", silent = true },
       },
       i = {
         ["<C-l>"] = {
