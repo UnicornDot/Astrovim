@@ -52,7 +52,7 @@ return {
             event = "VimEnter",
             desc = "Restore session on open",
             callback = function()
-              if require("astrocore").is_available "resession.nvim" then
+              if require("astrocore").is_available "resession.nvim" and false then
                 local resession = require "resession"
                 -- Only load the session if nvim was started with no args
                 if vim.fn.argc(-1) == 0 then
