@@ -55,6 +55,11 @@ function M.mappings(maps)
     end
   end
 
+  if is_available "diffview.nvim" then
+    maps.n["<Leader>gf"] = { "<cmd>DiffviewFileHistory<cr>", desc = "show file history"}
+    maps.n["<Leader>gw"] = { "<cmd>DiffViewOpen<cr>", desc = "open workspace diff" }
+  end
+
   -- telescope plugin mappings
   if is_available "telescope.nvim" then
     maps.v["<Leader>f"] = { desc = "󰍉 Find" }
