@@ -1,12 +1,5 @@
 return {
   {
-    "AstroNvim/astroui",
-    ---@type AstroUIOpts
-  },
-  {
-    "rebelot/heirline.nvim",
-  },
-  {
     "folke/which-key.nvim",
     event = "VeryLazy",
     opts = {
