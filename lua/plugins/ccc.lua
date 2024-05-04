@@ -12,8 +12,10 @@ return {
             n = {
               ["<M-c>"] = { "<Cmd>CccHighlighterToggle<CR>", desc = "Toggle colorizer" },
               ["<M-m>"] = { "<Cmd>CccConvert<CR>", desc = "Convert color" },
-              ["<M-p>"] = { "<Cmd>CccPick<CR>", desc = "Pick Color" },
             },
+            i = {
+              ["<M-p>"] = { "<Cmd>CccPick<CR>", desc = "Pick Color" },
+            }
           },
         },
       },
