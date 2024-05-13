@@ -6,7 +6,6 @@ return {
       colorscheme = "catppuccin",
       highlights = {
         init = function()
-
           local get_hlgroup = require("astroui").get_hlgroup
           -- get highlights from highlight groups
           local normal = get_hlgroup "Normal"
@@ -22,7 +21,7 @@ return {
             HighlightURL = { underline = true }, -- always underline URLs
             OctoEditable = { fg = "NONE", bg = "NONE" }, -- use treesitter for octo.nvim highlighting
 
-            --- Telescope hl 
+            --- Telescope hl
             TelescopeBorder = { fg = bg_alt, bg = bg },
             TelescopeNormal = { bg = bg },
             TelescopePreviewBorder = { fg = bg, bg = bg },
@@ -62,7 +61,7 @@ return {
     optional = true,
     opts = function(_, opts) opts.winbar = nil end,
   },
-  -- homepage 
+  -- homepage
   {
     "goolord/alpha-nvim",
     enabled = true,
@@ -99,6 +98,6 @@ return {
   {
     "karb94/neoscroll.nvim",
     event = "VeryLazy",
-    opts = {}
-  }
+    opts = {},
+  },
 }

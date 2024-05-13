@@ -31,6 +31,9 @@ return {
         gl = { function() vim.diagnostic.open_float() end, desc = "Hover diagnostics" },
         ["M"] = { function() vim.lsp.buf.hover() end, desc = "Hover symbol details", cond = "textDocument/hover" },
         ["K"] = { "5k", desc = "fast move", silent = true },
+        ["<Leader>lA"] = {
+          function() vim.lsp.buf.code_action { content = { only = { "source", "refactor", "quickfix" } } } end,
+        },
       },
       i = {
         ["<C-l>"] = {

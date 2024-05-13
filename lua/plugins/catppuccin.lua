@@ -73,6 +73,7 @@ return {
       nvimtree = false,
       ts_rainbow = true,
       ts_rainbow2 = true,
+      rainbow_delimiters = true,
       symbols_outline = true,
       telescope = true,
       lsp_trouble = true,
