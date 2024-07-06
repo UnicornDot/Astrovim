@@ -60,7 +60,7 @@ local function truncateString(s, maxLength)
 end
 
 local formatting_style = {
-  fields = { "kind", "abbr", "menu" },
+  fields = {  "abbr", "menu", "kind" },
   format = function(_, item)
     local icons = require "icons.lspkind"
     local icon = icons[item.kind] or ""
@@ -123,7 +123,8 @@ return {
       window = {
         completion = {
           col_offset = 1,
-          side_padding = 0,
+          side_padding = 1,
+          scrollbar = false
         },
       },
       confirm_opts = {
@@ -132,7 +133,26 @@ return {
       },
       formatting = formatting_style,
       sources = cmp.config.sources {
-        { name = "nvim_lsp", priority = 1000 },
+        { 
+          name = "nvim_lsp", 
+           ---@param entry cmp.Entry
+          ---@param ctx cmp.Context
+          entry_filter = function(entry, ctx)
+            -- Check if the buffer type is 'vue'
+            if ctx.filetype ~= "vue" then return true end
+
+            local cursor_before_line = ctx.cursor_before_line
+            -- For events
+            if cursor_before_line:sub(-1) == "@" then
+              return entry.completion_item.label:match "^@"
+              -- For props also exclude events with `:on-` prefix
+            elseif cursor_before_line:sub(-1) == ":" then
+              return entry.completion_item.label:match "^:" and not entry.completion_item.label:match "^:on-"
+            else
+              return true
+            end
+          end,
+          priority = 1000 },
         { name = "luasnip", priority = 750 },
         { name = "pandoc_references", priority = 725 },
         { name = "latex_symbols", priority = 700 },

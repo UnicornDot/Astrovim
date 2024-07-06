@@ -1,4 +1,6 @@
 local utils = require "astrocore"
+local set_mappings = require("astrocore").set_mappings
+
 local function preview_stack_trace()
   local current_line = vim.api.nvim_get_current_line()
   local patterns_list = {
@@ -22,6 +24,7 @@ local function preview_stack_trace()
   end
 end
 
+---@type LazySpec
 return {
   {
     "AstroNvim/astrolsp",
@@ -31,45 +34,31 @@ return {
         rust_analyzer = {
           on_attach = function()
             vim.api.nvim_create_autocmd({ "TermClose", "BufEnter" }, {
-              pattern = "*cargo run*",
+              pattern = "*cargo*",
               desc = "Jump to error line",
               callback = function()
-                vim.keymap.set(
-                  "n",
-                  "gd",
-                  preview_stack_trace,
-                  { silent = true, noremap = true, buffer = true, desc = "Jump to error line" }
-                )
+                set_mappings({
+                  n = {
+                    ["gd"] = {
+                      preview_stack_trace,
+                      desc = "Jump to error line",
+                    },
+                  },
+                }, { buffer = true })
               end,
             })
           end,
           settings = {
             ["rust-analyzer"] = {
-              cachePriming = {
-                enable = true,
-                numThreads = 2,
-              },
-              completion = {
-                autoimport = {
-                  enable = true,
-                },
-                enableSnippets = true,
-              },
               cargo = {
                 allFeatures = true,
                 loadOutDirsFromCheck = true,
-                runBuildScripts = true,
+                buildScripts = {
+                  enable = true,
+                },
               },
               -- Add clippy lints for Rust.
-              checkOnSave = {
-                allFeatures = true,
-                command = "clippy",
-                extraArgs = { "--no-deps" },
-              },
-              assist = {
-                importEnforceGranularity = true,
-                importPrefix = "crate",
-              },
+              checkOnSave = true,
               procMacro = {
                 enable = true,
                 ignored = {
@@ -77,6 +66,31 @@ return {
                   ["napi-derive"] = { "napi" },
                   ["async-recursion"] = { "async_recursion" },
                 },
+              },
+              -- Add clippy lints for Rust.
+              check = {
+                command = "clippy",
+                extraArgs = { "--no-deps" },
+              },
+              assist = {
+                importEnforceGranularity = true,
+                importPrefix = "crate",
+              },
+              completion = {
+                autoimport = {
+                  enable = true,
+                },
+                enableSnippets = true,
+              },
+              inlayHints = {
+                lifetimeElisionHints = {
+                  enable = true,
+                  useParameterNames = true,
+                },
+              },
+              cachePriming = {
+                enable = true,
+                numThreads = 2,
               },
             },
           },
@@ -132,11 +146,28 @@ return {
         end
         adapter = cfg.get_codelldb_adapter(codelldb_path, liblldb_path)
       else
+        ---@diagnostic disable-next-line: missing-parameter
         adapter = cfg.get_codelldb_adapter()
       end
 
       local astrolsp_avail, astrolsp = pcall(require, "astrolsp")
-      return { server = astrolsp_avail and astrolsp.lsp_opts "rust_analyzer", dap = { adapter = adapter } }
+      local astrolsp_opts = (astrolsp_avail and astrolsp.lsp_opts "rust_analyzer") or {}
+      local server = {
+        ---@type table | (fun(project_root:string|nil, default_settings: table|nil):table) -- The rust-analyzer settings or a function that creates them.
+        settings = function(project_root, default_settings)
+          local astrolsp_settings = astrolsp_opts.settings or {}
+
+          local merge_table = require("astrocore").extend_tbl(default_settings or {}, astrolsp_settings)
+          local ra = require "rustaceanvim.config.server"
+          -- load_rust_analyzer_settings merges any found settings with the passed in default settings table and then returns that table
+          return ra.load_rust_analyzer_settings(project_root, {
+            settings_file_pattern = "rust-analyzer.json",
+            default_settings = merge_table,
+          })
+        end,
+      }
+      local final_server = require("astrocore").extend_tbl(astrolsp_opts, server)
+      return { server = final_server, dap = { adapter = adapter }, tools = { enable_clippy = false } }
     end,
     config = function(_, opts) vim.g.rustaceanvim = require("astrocore").extend_tbl(opts, vim.g.rustaceanvim) end,
   },
@@ -156,7 +187,7 @@ return {
       },
     },
     opts = {
-      src = {
+      completion = {
         cmp = { enabled = true },
       },
       null_ls = {

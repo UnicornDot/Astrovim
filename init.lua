@@ -18,7 +18,3 @@ end
 require "lazy_setup"
 require "polish"
 require "options"
-
-
-if vim.g.neovide then require("neovide").init() end
-

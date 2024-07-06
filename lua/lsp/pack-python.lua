@@ -2,18 +2,41 @@ local utils = require "astrocore"
 local is_available = require("astrocore").is_available
 local set_mappings = require("astrocore").set_mappings
 
+---@type LazySpec
 return {
-  { "microsoft/python-type-stubs" },
-  { "pandas-dev/pandas-stubs" },
   {
     "AstroNvim/astrolsp",
     ---@type AstroLSPOpts
     opts = {
-      servers = { "pylance" },
       ---@diagnostic disable: missing-fields
       config = {
-        pylance = {
-          on_attach = function(client, bufnr)
+        basedpyright = {
+          on_attach = function(client, _)
+            --TODO: https://github.com/DetachHead/basedpyright/issues/327
+            -- require("utils").save_client(client)
+            -- client.server_capabilities = utils.extend_tbl(client.server_capabilities, {
+            --   workspace = {
+            --     fileOperations = {
+            --       willRename = {
+            --         filters = {
+            --           {
+            --             pattern = {
+            --               glob = "**/*.{py,pyi,pyd,so,dylib}",
+            --               matches = "file",
+            --             },
+            --           },
+            --           {
+            --             pattern = {
+            --               glob = "**",
+            --               matches = "folder",
+            --             },
+            --           },
+            --         },
+            --       },
+            --     },
+            --   },
+            -- })
+
             if is_available "venv-selector.nvim" then
               set_mappings({
                 n = {
@@ -21,7 +44,7 @@ return {
                     "<cmd>VenvSelect<CR>",
                     desc = "Select VirtualEnv",
                   },
-                  ["<Leader>lV"] = {
+                  ["<leader>lV"] = {
                     function()
                       require("astrocore").notify(
                         "Current Env:" .. require("venv-selector").get_active_venv(),
@@ -30,11 +53,16 @@ return {
                     end,
                     desc = "Show Current VirtualEnv",
                   },
+                  ["<leader>lo"] = {
+                    "<cmd>PyrightOrganizeImports<CR>",
+                    desc = "Organize Imports",
+                  },
                 },
-              }, { buffer = bufnr })
+              }, { buffer = true })
             end
           end,
           filetypes = { "python" },
+          single_file_support = true,
           root_dir = function(...)
             local util = require "lspconfig.util"
             return util.find_git_ancestor(...)
@@ -47,68 +75,16 @@ return {
                 "pyrightconfig.json",
               })(...)
           end,
-          cmd = { "pylance", "--stdio" },
-          single_file_support = true,
-          before_init = function(_, c) c.settings.python.pythonPath = vim.fn.exepath "python" end,
           settings = {
-            python = {
+            basedpyright = {
               analysis = {
                 autoSearchPaths = true,
+                diagnosticMode = "openFilesOnly",
                 useLibraryCodeForTypes = true,
-                diagnosticMode = "workspace",
+                reportMissingTypeStubs = false,
                 typeCheckingMode = "basic",
-                autoImportCompletions = true,
-                completeFunctionParens = true,
-                indexing = true,
-                inlayHints = false,
-                stubPath = vim.fn.stdpath "data" .. "/lazy/python-type-stubs/stubs",
-                extraPaths = {
-                  vim.fn.stdpath "data" .. "/lazy/python-type-stubs/stubs",
-                  vim.fn.stdpath "data" .. "/lazy/pandas-stubs/pandas-stubs",
-                },
-                diagnosticSeverityOverrides = {
-                  reportUnusedImport = "information",
-                  reportUnusedFunction = "information",
-                  reportUnusedVariable = "information",
-                  reportGeneralTypeIssues = "none",
-                  reportOptionalMemberAccess = "none",
-                  reportOptionalSubscript = "none",
-                  reportPrivateImportUsage = "none",
-                },
               },
             },
-          },
-          handlers = {
-            ["workspace/executeCommand"] = function(_, result)
-              if result and result.label == "Extract Method" then
-                vim.ui.input({ prompt = "New name: ", default = result.data.newSymbolName }, function(input)
-                  if input and #input > 0 then vim.lsp.buf.rename(input) end
-                end)
-              end
-            end,
-          },
-          commands = {
-            PylanceExtractMethod = {
-              function()
-                local arguments =
-                  { vim.uri_from_bufnr(0):gsub("file://", ""), require("vim.lsp.util").make_given_range_params().range }
-                vim.lsp.buf.execute_command { command = "pylance.extractMethod", arguments = arguments }
-              end,
-              description = "Extract Method",
-              range = 2,
-            },
-            PylanceExtractVariable = {
-              function()
-                local arguments =
-                  { vim.uri_from_bufnr(0):gsub("file://", ""), require("vim.lsp.util").make_given_range_params().range }
-                vim.lsp.buf.execute_command { command = "pylance.extractVariable", arguments = arguments }
-              end,
-              description = "Extract Variable",
-              range = 2,
-            },
-          },
-          docs = {
-            description = "https://github.com/microsoft/pylance-release\n\n`pylance`, Fast, feature-rich language support for Python",
           },
         },
       },
@@ -119,7 +95,7 @@ return {
     optional = true,
     opts = function(_, opts)
       if opts.ensure_installed ~= "all" then
-        opts.ensure_installed = utils.list_insert_unique(opts.ensure_installed, { "python", "toml" })
+        opts.ensure_installed = utils.list_insert_unique(opts.ensure_installed, { "python", "toml", "ninja", "rst" })
       end
     end,
   },
@@ -140,20 +116,48 @@ return {
     end,
   },
   {
+    "williamboman/mason-lspconfig.nvim",
+    optional = true,
+    opts = function(_, opts)
+      opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, { "basedpyright" })
+    end,
+  },
+  {
     "linux-cultist/venv-selector.nvim",
-    ft = "python",
     opts = {
       anaconda_base_path = "~/miniconda3",
       anaconda_envs_path = "~/miniconda3/envs",
+      stay_on_this_version = true,
+      dap_enabled = true,
+      settings = {
+        options = {
+          notify_user_on_venv_activation = true,
+        },
+      },
     },
+    cmd = { "VenvSelect", "VenvSelectCached" },
   },
   {
     "mfussenegger/nvim-dap-python",
-    dependencies = { "mfussenegger/nvim-dap" },
-    ft = "python",
+    dependencies = "mfussenegger/nvim-dap",
+    ft = "python", -- NOTE: ft: lazy-load on filetype
     config = function(_, opts)
-      local path = require("mason-registry").get_package("debugpy"):get_install_path() .. "/venv/bin/python"
+      local path = require("mason-registry").get_package("debugpy"):get_install_path()
+      if vim.fn.has "win32" == 1 then
+        path = path .. "/venv/Scripts/python"
+      else
+        path = path .. "/venv/bin/python"
+      end
       require("dap-python").setup(path, opts)
+    end,
+  },
+  {
+    "nvim-neotest/neotest",
+    optional = true,
+    dependencies = { "nvim-neotest/neotest-python" },
+    opts = function(_, opts)
+      if not opts.adapters then opts.adapters = {} end
+      table.insert(opts.adapters, require "neotest-python"(require("astrocore").plugin_opts "neotest-python"))
     end,
   },
 }
