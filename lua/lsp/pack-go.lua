@@ -185,7 +185,7 @@ return {
     opts = {
       -- disable_defaults = true,
       lsp_inlay_hints = {
-        enable = false,
+        enable = true,
       },
       trouble = true,
       run_in_floaterm = true,
@@ -221,7 +221,7 @@ return {
     "chaozwn/goctl.nvim",
     dependencies = { "MunifTanjim/nui.nvim", "nvim-telescope/telescope.nvim" },
     ft = "goctl",
-    enabled = vim.fn.executable "goctl",
+    enabled = vim.fn.executable "goctl" == 1,
     opts = function()
       local group = vim.api.nvim_create_augroup("GoctlAutocmd", { clear = true })
       vim.api.nvim_create_autocmd("FileType", {
