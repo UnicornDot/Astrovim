@@ -29,14 +29,58 @@ return {
 
       return require("astrocore").extend_tbl(opts, {
         defaults = {
+          prompt_prefix = " ",
+          selection_caret = " ",
+          entry_prefix = "  ",
+          initial_mode = "insert",
+          selection_strategy = "reset",
+          sorting_strategy = nil,
+          layout_strategy = nil,
           layout_config = {
             horizontal = {  prompt_position="bottom", preview_width = 0.55 },
-          }
+          },
+          vimgrep_arguments = {
+            "rg",
+            "--no-heading",
+            "--with-filename",
+            "--line-number",
+            "--column",
+            "--smart-case",
+            "--hidden",
+            "--glob=!.git/",
+            "--glob=!node_modules/",
+            "--glob=!target/",
+          },
+          file_ignore_patterns = {},
+          path_display = { "smart" },
+          winblend = 0,
+          border = {},
+          borderchars = nil,
+          color_devicons = true,
+          set_env = { ["COLORTERM"] = "truecolor" }, -- default = nil
         },
         pickers = {
           find_files = {
             -- dot file
             hidden = true,
+          },
+          live_grep = {
+            --@usage don't include the filename in the search results
+            only_sort_text = true,
+          },
+          grep_string = {
+            only_sort_text = true,
+          },
+          planets = {
+            show_pluto = true,
+            show_moon = true,
+          },
+          git_files = {
+            hidden = true,
+            show_untracked = true,
+          },
+          colorscheme = {
+            enable_preview = true,
           },
           buffers = {
             path_display = { "smart" },
@@ -82,6 +126,7 @@ return {
             TelescopeResultsBorder = { fg = bg, bg = bg },
             TelescopeResultsNormal = { bg = bg },
             TelescopeResultsTitle = { fg = bg, bg = bg },
+            TelescopeSelection = { fg = bg, bg = bg_alt },
           }
         end,
       },

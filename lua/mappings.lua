@@ -3,7 +3,7 @@ local is_available = require("astrocore").is_available
 local utils = require "astrocore"
 local M = {}
 
-function M.mappings(maps)
+function M.setup(maps)
   maps.n["<Leader>n"] = false
 
   maps.n.n = { require("utils").better_search "n", desc = "Next search" }

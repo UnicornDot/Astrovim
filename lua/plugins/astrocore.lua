@@ -88,7 +88,7 @@ return {
           },
         },
       },
-      mappings = require("mappings").mappings(opts.mappings),
+      mappings = require("mappings").setup(opts.mappings),
     })
     return options
   end,

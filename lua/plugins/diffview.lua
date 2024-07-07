@@ -8,9 +8,13 @@ return {
     opts = function(_, opts)
       local maps = opts.mappings
       if vim.fn.executable "git" == 1 then
-        maps.n[prefix_diff_view .. "s"] =
-          { function() require("telescope.builtin").git_stash { use_file_path = true } end, desc = "Git stash" }
-        maps.n[prefix_diff_view .. "g"] = {
+        maps.n[prefix_diff_view .. "s"] = {
+          function()
+            require("telescope.builtin").git_stash { use_file_path = true }
+          end,
+          desc = "Git stash"
+        }
+        maps.n[prefix_diff_view .. "o"] = {
           function() vim.cmd [[DiffviewOpen]] end,
           desc = "Open Git Diffview",
         }
