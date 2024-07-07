@@ -60,13 +60,26 @@ local function truncateString(s, maxLength)
 end
 
 local formatting_style = {
-  fields = {  "abbr", "menu", "kind" },
-  format = function(_, item)
+  fields = { "kind", "abbr", "menu"},
+  format = function(entry, item)
     local icons = require "icons.lspkind"
     local icon = icons[item.kind] or ""
+    local source_names = {
+      nvim_lsp = "(LSP)",
+      emoji = "(Emoji)",
+      path = "(Path)",
+      calc = "(Calc)",
+      cmp_tabnine = "(Tabnine)",
+      vsnip = "(Snippet)",
+      luasnip = "(Snippet)",
+      buffer = "(Buffer)",
+      tmux = "(TMUX)",
+      copilot = "(Copilot)",
+      treesitter = "(TreeSitter)",
+    }
     item.kind = string.format("%s", icon)
     item.abbr = trim(item.abbr)
-    item.menu = truncateString(trim(item.menu), 20)
+    item.menu = source_names[entry.source.name]
     return item
   end,
 }
