@@ -39,7 +39,7 @@ function M.setup(maps)
 
   -- telescope plugin mappings
   if is_available "telescope.nvim" then
-    maps.v["<Leader>f"] = { desc = "󰍉 Find" }
+    maps.v["<Leader>f"] = { desc = "Find" }
     maps.n["<Leader>fT"] = { "<cmd>TodoTelescope<cr>", desc = "Find TODOs" }
     -- buffer switching
     maps.n["<Leader>bt"] = {
@@ -215,7 +215,7 @@ function M.setup(maps)
   if is_available "marks.nvim" then
     -- print(require("astrocore").is_available "marks.nvim")
     -- marks
-    maps.n["m"] = { desc = "󰈚 Marks" }
+    maps.n["m"] = { desc = "Marks" }
     maps.n["m,"] = { "<Plug>(Marks-setnext)<CR>", desc = "Set Next Lowercase Mark" }
     maps.n["m;"] = { "<Plug>(Marks-toggle)<CR>", desc = "Toggle Mark(Set Or Cancel Mark)" }
     maps.n["m]"] = { "<Plug>(Marks-next)<CR>", desc = "Move To Next Mark" }
@@ -228,9 +228,9 @@ function M.setup(maps)
   end
 
   -- close search highlight
-  maps.n["<Leader>nh"] = { ":nohlsearch<CR>", desc = "Close search highlight" }
+  maps.n["<Leader><CR>"] = { ":nohlsearch<CR>", desc = "Close search highlight" }
 
-  maps.n["<Leader><Leader>"] = { desc = "󰍉 User" }
+  maps.n["<Leader><Leader>"] = { desc = "User" }
   maps.n["s"] = "<Nop>"
 
   maps.n["H"] = { "^", desc = "Go to start without blank" }
@@ -288,7 +288,7 @@ function M.setup(maps)
   maps.n["x"] = { '"_x', desc = "Cut without copy" }
 
   -- 分屏快捷键
-  maps.n["<Leader>w"] = { desc = "󱂬 Window" }
+  maps.n["<Leader>w"] = { desc = "Window" }
   maps.n["<Leader>ww"] = { "<cmd><cr>", desc = "Save" }
   maps.n["<Leader>wc"] = { "<C-w>c", desc = "Close current screen" }
   maps.n["<Leader>wo"] = { "<C-w>o", desc = "Close other screen" }

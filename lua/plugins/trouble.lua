@@ -9,7 +9,7 @@ return {
         opts = function(_, opts)
           local maps = opts.mappings
           local prefix = "<Leader>x"
-          maps.n[prefix] = { desc = require("astroui").get_icon("Trouble", 1, true) .. "Trouble" }
+          maps.n[prefix] = { desc = "Trouble(Diagnostics)" }
           maps.n[prefix .. "X"] =
             { "<CMD>TroubleToggle workspace_diagnostics<CR>", desc = "Workspace Diagnostics (Trouble)" }
           maps.n[prefix .. "x"] =

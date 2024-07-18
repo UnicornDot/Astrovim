@@ -23,6 +23,9 @@ return {
       return opts
     end,
   },
+
+  { 'echasnovski/mini.nvim', version = false },
+
   -- statusline and bufferline
   {
     "rebelot/heirline.nvim",

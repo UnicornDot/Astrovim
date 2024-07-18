@@ -18,7 +18,7 @@ return {
     local overseer = require("overseer")
     overseer.setup({
       dap = false,
-      templates = { "make", "cargo", "shell", "run_script", "run_web" },
+      templates = { "make", "cargo", "shell", "run_script", "npm", "run_web" },
       task_list = {
         direction = "left",
         bindings = {

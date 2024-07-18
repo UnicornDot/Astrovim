@@ -9,7 +9,7 @@ return {
         opts = {
           mappings = {
             n = {
-              [prefix] = { desc = "󰗇 Tests" },
+              [prefix] = { desc = "Tests" },
               [prefix .. "t"] = { function() require("neotest").run.run() end, desc = "Run test" },
               [prefix .. "d"] = { function() require("neotest").run.run { strategy = "dap" } end, desc = "Debug test" },
               [prefix .. "f"] = {
