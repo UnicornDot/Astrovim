@@ -14,9 +14,15 @@ return {
     profile = { optional = false, type = "string", default = "dev" }
   },
   builder = function(params)
+    local command = nil
+    if vim.fn.executable "bun" then
+      command = "bun"
+    else
+      command = "npm"
+    end
     return {
       name = vim.fn.getcwd(),
-      cmd = "npm",
+      cmd = command,
       args = { "run", params.profile },
       cwd = vim.fn.getcwd(),
       components = {
