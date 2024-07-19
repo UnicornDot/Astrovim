@@ -1,3 +1,5 @@
+--TODO: https://github.com/golang/go/issues/60903
+
 local function create_buf_config_file()
   local source_file = vim.fn.stdpath "config" .. "/buf.yaml"
   local target_file = vim.fn.getcwd() .. "/buf.yaml"
@@ -8,12 +10,14 @@ local function create_buf_config_file()
   os.execute(cmd)
 end
 
+---@type LazySpec
 return {
   {
     "AstroNvim/astrolsp",
+    optional = true,
     ---@type AstroLSPOpts
-    ---@diagnostic disable: missing-fields
     opts = {
+      ---@diagnostic disable: missing-fields
       config = {
         gopls = {
           capabilities = {
@@ -44,28 +48,37 @@ return {
             },
           },
           on_attach = function(client, _)
-            if client.name == "gopls" then
-              if not client.server_capabilities.semanticTokensProvider then
-                local semantic = client.config.capabilities.textDocument.semanticTokens
-                client.server_capabilities.semanticTokensProvider = {
-                  full = true,
-                  legend = {
-                    tokenTypes = semantic.tokenTypes,
-                    tokenModifiers = semantic.tokenModifiers,
-                  },
-                  range = true,
-                }
-              end
+            if not client.server_capabilities.semanticTokensProvider then
+              local semantic = client.config.capabilities.textDocument.semanticTokens
+              client.server_capabilities.semanticTokensProvider = {
+                full = true,
+                legend = {
+                  tokenTypes = semantic.tokenTypes,
+                  tokenModifiers = semantic.tokenModifiers,
+                },
+                range = true,
+              }
             end
           end,
           settings = {
             gopls = {
-              gofumpt = true,
+              analyses = {
+                ST1003 = false,
+                fieldalignment = false,
+                fillreturns = true,
+                nilness = true,
+                nonewvars = true,
+                shadow = true,
+                undeclaredname = true,
+                unreachable = true,
+                unusedparams = true,
+                unusedwrite = true,
+                useany = true,
+              },
               codelenses = {
-                gc_details = false,
-                generate = true,
+                gc_details = false, -- Show a code lens toggling the display of gc's choices.
+                generate = true, -- show the `go generate` lens.
                 regenerate_cgo = true,
-                run_govulncheck = true,
                 test = true,
                 tidy = true,
                 upgrade_dependency = true,
@@ -80,21 +93,14 @@ return {
                 parameterNames = true,
                 rangeVariableTypes = true,
               },
-              analyses = {
-                fieldalignment = false,
-                nilness = true,
-                unusedparams = true,
-                unusedwrite = true,
-                useany = true,
-              },
               buildFlags = { "-tags", "integration" },
+              completeUnimported = true,
+              diagnosticsDelay = "500ms",
               matcher = "Fuzzy",
+              semanticTokens = true,
+              staticcheck = true,
               symbolMatcher = "fuzzy",
               usePlaceholders = false,
-              completeUnimported = true,
-              staticcheck = true,
-              directoryFilters = { "-.git", "-.vscode", "-.idea", "-.vscode-test", "-node_modules" },
-              semanticTokens = true,
             },
           },
         },
@@ -107,8 +113,10 @@ return {
     optional = true,
     opts = function(_, opts)
       if opts.ensure_installed ~= "all" then
-        opts.ensure_installed =
-          require("astrocore").list_insert_unique(opts.ensure_installed, { "go", "gomod", "gosum", "gowork" })
+        opts.ensure_installed = require("astrocore").list_insert_unique(
+          opts.ensure_installed,
+          { "go", "gomod", "gosum", "gowork", "goctl", "gotmpl" }
+        )
       end
     end,
   },
@@ -118,10 +126,9 @@ return {
     opts = function(_, opts)
       opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, {
         "gomodifytags",
-        "gofumpt",
+        "gotests",
         "iferr",
         "impl",
-        "goimports",
       })
 
       if not opts.handlers then opts.handlers = {} end
@@ -176,50 +183,32 @@ return {
     opts = {},
   },
   {
-    "ray-x/go.nvim",
+    "olexsmir/gopher.nvim",
+    ft = "go",
+    build = function()
+      if not require("lazy.core.config").spec.plugins["mason.nvim"] then
+        vim.print "Installing go dependencies..."
+        vim.cmd.GoInstallDeps()
+      end
+    end,
     dependencies = {
-      "ray-x/guihua.lua",
-      "neovim/nvim-lspconfig",
+      "nvim-lua/plenary.nvim",
       "nvim-treesitter/nvim-treesitter",
+      { "williamboman/mason.nvim", optional = true }, -- by default use Mason for go dependencies
     },
-    opts = {
-      -- disable_defaults = true,
-      lsp_inlay_hints = {
-        enable = true,
-      },
-      trouble = true,
-      run_in_floaterm = true,
-      luasnip = true,
-      capabilities = {
-        workspace = {
-          didChangeWatchedFiles = { dynamicRegistration = true },
-        },
-      },
-      diagnostic = { -- set diagnostic to false to disable vim.diagnostic setup
-        hdlr = true, -- hook lsp diag handler and send diag to quickfix
-        underline = true,
-        virtual_text = {
-          spacing = 5,
-          severity_limit = "ERROR",
-          severity = {
-            min = vim.diagnostic.severity.ERROR,
-          },
-        },
-        signs = {
-          severity = {
-            min = vim.diagnostic.severity.ERROR,
-          },
-        },
-        update_in_insert = false,
-      },
-    },
-    event = { "CmdlineEnter" },
-    ft = { "go", "gomod" },
-    build = ':lua require("go.install").update_all_sync()',
+    opts = {},
+  },
+  {
+    "nvim-neotest/neotest",
+    optional = true,
+    dependencies = { "nvim-neotest/neotest-go" },
+    opts = function(_, opts)
+      if not opts.adapters then opts.adapters = {} end
+      table.insert(opts.adapters, require "neotest-go"(require("astrocore").plugin_opts "neotest-go"))
+    end,
   },
   {
     "chaozwn/goctl.nvim",
-    dependencies = { "MunifTanjim/nui.nvim", "nvim-telescope/telescope.nvim" },
     ft = "goctl",
     enabled = vim.fn.executable "goctl" == 1,
     opts = function()
@@ -235,23 +224,8 @@ return {
             "<Cmd>GoctlApiFormat<CR>",
             { silent = true, noremap = true, buffer = true, desc = "Format Buffer" }
           )
-          vim.keymap.set(
-            "n",
-            "<Leader>fg",
-            "<cmd>Telescope goctl<CR>",
-            { silent = true, noremap = true, buffer = true, desc = "Jump to error line" }
-          )
         end,
       })
-    end,
-  },
-  {
-    "nvim-neotest/neotest",
-    optional = true,
-    dependencies = { "nvim-neotest/neotest-go" },
-    opts = function(_, opts)
-      if not opts.adapters then opts.adapters = {} end
-      table.insert(opts.adapters, require "neotest-go"(require("astrocore").plugin_opts "neotest-go"))
     end,
   },
 }

@@ -1,4 +1,6 @@
 local utils = require "astrocore"
+
+---@type LazySpec
 return {
   {
     "AstroNvim/astrolsp",
@@ -7,6 +9,16 @@ return {
       ---@diagnostic disable: missing-fields
       config = {
         tailwindcss = {
+          root_dir = function(fname)
+            local root_pattern = require("lspconfig").util.root_pattern(
+              "tailwind.config.cjs",
+              "tailwind.config.js",
+              "tailwind.config.ts",
+              "postcss.config.js",
+              "config/tailwind.config.js"
+            )
+            return root_pattern(fname)
+          end,
           settings = {
             tailwindCSS = {
               classAttributes = {
@@ -48,14 +60,6 @@ return {
         },
       },
     },
-  },
-  {
-    "razak17/tailwind-fold.nvim",
-    opts = {
-      min_chars = 40,
-    },
-    dependencies = { "nvim-treesitter/nvim-treesitter" },
-    ft = { "html", "svelte", "astro", "vue", "typescriptreact" },
   },
   {
     "nvim-treesitter/nvim-treesitter",

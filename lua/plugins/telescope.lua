@@ -11,7 +11,7 @@ return {
       if maps then
         -- telescope plugin mappings
         if is_available "telescope.nvim" then
-          maps.v["<Leader>f"] = { desc = "󰍉 Find" }
+          maps.v["<Leader>f"] = { desc = "Find" }
           maps.n["<Leader>fT"] = { "<cmd>TodoTelescope<cr>", desc = "Find TODOs" }
         end
       end

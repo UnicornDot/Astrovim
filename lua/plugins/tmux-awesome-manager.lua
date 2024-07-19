@@ -20,7 +20,7 @@ return {
       default_size = "30%", -- on panes, the default size
       open_new_as = "pane", -- open new command as.  options: pane, window, separated_session.
     }
-    
+
     -- commands
     tmux.run_wk {
       cmd = "yarn test",

@@ -1,4 +1,7 @@
 local utils = require "astrocore"
+local set_mappings = require("astrocore").set_mappings
+
+---@type LazySpec
 return {
   {
     "AstroNvim/astrolsp",
@@ -8,7 +11,7 @@ return {
       config = {
         taplo = {
           evenBetterToml = { schema = { catalogs = { "https://www.schemastore.org/api/json/catalog.json" } } },
-          on_attach = function(_, bufnr)
+          on_attach = function()
             set_mappings({
               n = {
                 ["K"] = {
@@ -22,7 +25,7 @@ return {
                   desc = "Show Crate Documentation",
                 },
               },
-            }, { buffer = bufnr })
+            }, { buffer = true })
           end,
         },
       },
@@ -42,14 +45,5 @@ return {
     "williamboman/mason-lspconfig.nvim",
     optional = true,
     opts = function(_, opts) opts.ensure_installed = utils.list_insert_unique(opts.ensure_installed, { "taplo" }) end,
-  },
-  {
-    "jay-babu/mason-null-ls.nvim",
-    optional = true,
-    opts = function(_, opts)
-      -- Ensure that opts.handlers exists and is a table
-      if not opts.handlers then opts.handlers = {} end
-      opts.handlers.taplo = function() end
-    end,
   },
 }

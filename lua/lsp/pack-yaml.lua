@@ -1,7 +1,10 @@
 local utils = require "astrocore"
+
+---@type LazySpec
 return {
   {
     "b0o/SchemaStore.nvim",
+    lazy = true,
     dependencies = {
       {
         "AstroNvim/astrolsp",

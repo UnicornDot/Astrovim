@@ -7,7 +7,9 @@ return { 'gen740/SmoothCursor.nvim',
       fancy = {
         enable = true,
         head = { cursor = "󱓟", texthl = "SmoothCursor", linehl = nil },
-      }
+      },
+      disable_float_win = true,
+      disabled_filetypes = { "neo-tree", "lazy"},
     })
   end
 }

@@ -1,4 +1,8 @@
+--WARNING: now rust-analyzer is can't use in neovim, because this issue
+-- https://github.com/rust-lang/rust-analyzer/issues/17289
+-- https://github.com/williamboman/mason.nvim/issues/1741
 local utils = require "astrocore"
+
 local set_mappings = require("astrocore").set_mappings
 
 local function preview_stack_trace()
@@ -126,6 +130,16 @@ return {
     "mrcjkb/rustaceanvim",
     version = "^4",
     ft = "rust",
+    specs = {
+      {
+        "AstroNvim/astrolsp",
+        optional = true,
+        ---@param opts AstroLSPOpts
+        opts = {
+          handlers = { rust_analyzer = false }, -- disable setup of `rust_analyzer`
+        },
+      },
+    },
     opts = function()
       local adapter
       local success, package = pcall(function() return require("mason-registry").get_package "codelldb" end)
@@ -146,7 +160,6 @@ return {
         end
         adapter = cfg.get_codelldb_adapter(codelldb_path, liblldb_path)
       else
-        ---@diagnostic disable-next-line: missing-parameter
         adapter = cfg.get_codelldb_adapter()
       end
 
@@ -174,21 +187,30 @@ return {
   {
     "Saecki/crates.nvim",
     lazy = true,
-    event = { "BufRead Cargo.toml" },
     dependencies = {
-      {
-        "hrsh7th/nvim-cmp",
-        ---@param opts cmp.ConfigSchema
-        opts = function(_, opts)
-          opts.sources = opts.sources or {}
-          table.insert(opts.sources, { name = "crates" })
-          return opts
-        end,
+      "AstroNvim/astrocore",
+      opts = {
+        autocmds = {
+          CmpSourceCargo = {
+            {
+              event = "BufRead",
+              desc = "Load crates.nvim into Cargo buffers",
+              pattern = "Cargo.toml",
+              callback = function()
+                require("cmp").setup.buffer { sources = { { name = "crates" } } }
+                require "crates"
+              end,
+            },
+          },
+        },
       },
     },
     opts = {
       completion = {
         cmp = { enabled = true },
+        crates = {
+          enabled = true,
+        },
       },
       null_ls = {
         enabled = true,

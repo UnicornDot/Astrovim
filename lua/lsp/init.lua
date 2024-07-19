@@ -1,3 +1,19 @@
+local methods = vim.lsp.protocol.Methods
+local inlay_hints_handler = vim.lsp.handlers[methods.textDocument_inlayHint]
+local simple_inlay_hint_handler = function(err, result, ctx, config)
+  local client = vim.lsp.get_client_by_id(ctx.client_id)
+  if client then
+    if result == nil then return end
+    -- @diagnostic disable-next-line: undefined-field
+    result = vim.iter(result):map(function(hint)
+      local label = hint.label
+      if not (label ~= nil and #label < 5) then hint.label = {} end
+      return hint
+    end)
+    inlay_hints_handler(err, result, ctx, config)
+  end
+end
+
 return {
   "AstroNvim/astrolsp",
   ---@type AstroLSPOpts
@@ -42,6 +58,9 @@ return {
           cond = "textDocument/signatureHelp",
         },
       },
+    },
+    lsp_handlers = {
+      [methods.textDocument_inlayHint] = simple_inlay_hint_handler,
     },
     config = {
       clangd = {

@@ -1,4 +1,5 @@
 local utils = require "astrocore"
+
 local markdown_table_change = function()
   vim.ui.input({ prompt = "Separate Char: " }, function(input)
     if not input or #input == 0 then return end
@@ -6,25 +7,43 @@ local markdown_table_change = function()
     vim.cmd(execute_command)
   end)
 end
+
+---@type LazySpec
 return {
   {
+    "AstroNvim/astrocore",
+    ---@param opts AstroCoreOpts
+    opts = function(_, opts)
+      return require("astrocore").extend_tbl(opts, {
+        options = {
+          g = {
+            mkdp_auto_close = 0,
+            mkdp_combine_preview = 1,
+          },
+        },
+      })
+    end,
+  },
+  {
     "AstroNvim/astrolsp",
+    ---@type AstroLSPOpts
     opts = {
+      ---@diagnostic disable: missing-fields
       config = {
         marksman = {
-          on_attach = function(_, bufnr)
-            if require("astrocore").is_available "markdown-preview.nvim" then
-              require("astrocore").set_mappings {
+          on_attach = function()
+            if utils.is_available "markdown-preview.nvim" then
+              utils.set_mappings({
                 n = {
-                  ["<Leader>lz"] = { "<Cmd>MarkdownPreview<CR>", desc = "Markdown Start Preview" },
-                  ["<Leader>lZ"] = { "<Cmd>MarkdownPreviewStop<CR>", desc = "Markdown Stop Preview" },
-                  ["<Leader>lp"] = { "<Cmd>Pastify<CR>", desc = "Markdown Paste Image" },
+                  ["<Leader>lz"] = { "<cmd>MarkdownPreview<CR>", desc = "Markdown Start Preview" },
+                  ["<Leader>lZ"] = { "<cmd>MarkdownPreviewStop<CR>", desc = "Markdown Stop Preview" },
+                  ["<Leader>lp"] = { "<cmd>Pastify<CR>", desc = "Markdown Paste Image" },
                 },
                 x = {
                   ["<Leader>lt"] = { [[:'<,'>MakeTable! \t<CR>]], desc = "Markdown csv to table(Default:\\t)" },
                   ["<Leader>lT"] = { markdown_table_change, desc = "Markdown csv to table with separate char" },
                 },
-              }
+              }, { buffer = true })
             end
           end,
         },
@@ -49,11 +68,24 @@ return {
     "jay-babu/mason-null-ls.nvim",
     optional = true,
     opts = function(_, opts)
-      opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, { "prettierd" })
-      local nls = require "null-ls"
-      opts.sources = vim.list_extend(opts.sources or {}, {
-        nls.builtins.diagnostics.markdownlint,
-      })
+      opts.ensure_installed =
+        require("astrocore").list_insert_unique(opts.ensure_installed, { "prettierd", "markdownlint" })
+
+      opts.handlers.markdownlint = function()
+        local null_ls = require "null-ls"
+        local markdownlint_diagnostics_buildins = null_ls.builtins.diagnostics.markdownlint
+        table.insert(markdownlint_diagnostics_buildins._opts.args, "--config")
+        local system_config = vim.fn.stdpath "config" .. "/.markdownlint.jsonc"
+        local project_config = vim.fn.getcwd() .. "/.markdownlint.jsonc"
+        if vim.fn.filereadable(project_config) == 1 then
+          table.insert(markdownlint_diagnostics_buildins._opts.args, project_config)
+        else
+          table.insert(markdownlint_diagnostics_buildins._opts.args, system_config)
+        end
+        null_ls.register(null_ls.builtins.diagnostics.markdownlint.with {
+          generator_opts = markdownlint_diagnostics_buildins._opts,
+        })
+      end
     end,
   },
   {

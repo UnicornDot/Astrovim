@@ -3,13 +3,13 @@ return {
     "nvim-pack/nvim-spectre",
     cmd = "Spectre",
     dependencies = {
-      { "AstroNvim/astroui", opts = { icons = { Spectre = "󰛔" } } },
+      { "AstroNvim/astroui" },
       {
         "AstroNvim/astrocore",
         opts = function(_, opts)
           local maps = opts.mappings
           local prefix = "<Leader>s"
-          maps.n[prefix] = { desc = require("astroui").get_icon("Spectre", 1, true) .. "Search / Replace" }
+          maps.n[prefix] = { desc = "Search / Replace" }
           maps.n[prefix .. "s"] = { function() require("spectre").open() end, desc = "Spectre" }
           maps.n[prefix .. "f"] =
             { function() require("spectre").open_file_search() end, desc = "Spectre (current file)" }
