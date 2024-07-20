@@ -29,7 +29,7 @@ return {
     end,
   },
   {
-    "williamboman/man-lspconfig.nvim",
+    "williamboman/mason-lspconfig.nvim",
     optional = true,
     opts = function(_, opts)
       if not is_linux_arm then

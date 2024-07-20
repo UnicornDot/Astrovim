@@ -1,4 +1,3 @@
-local system = vim.loop.os_uname().sysname
 local is_available = require("astrocore").is_available
 local utils = require "astrocore"
 
@@ -104,7 +103,7 @@ return {
       -- 多个窗口之间跳转
       maps.n["<leader>we"] = { "<C-w>=", desc = "Make all window equal" }
       maps.n["<M-l>"] = {
-        function() require("astrocore.buffer").nav(vim.v.count > 0 and vim.v.count or 1) end, 
+        function() require("astrocore.buffer").nav(vim.v.count > 0 and vim.v.count or 1) end,
         desc = "Next buffer"
       }
       maps.n["<M-h>"] = {
@@ -116,12 +115,6 @@ return {
       maps.n["<leader>bc"] = { function() require("astrocore.buffer").close() end, desc = "Close buffer" }
       maps.n["<leader>bC"] = { function() require("astrocore.buffer").close(0, true) end, desc = "Force close buffer" }
       maps.n["<leader>bn"] = { "<cmd>tabnew<cr>", desc = "New tab" }
-      maps.n["<leader>bD"] = {
-        function()
-          require("astrocore.status").heirline.buffer_picker(function(bufnr) require("astrocore.buffer").close(bufnr) end)
-        end,
-        desc = "Pick to close",
-      }
     end
     opts.mappings = maps
   end,
