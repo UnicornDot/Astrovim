@@ -11,8 +11,18 @@ return {
       if maps then
         -- telescope plugin mappings
         if is_available "telescope.nvim" then
-          maps.v["<Leader>f"] = { desc = "Find" }
-          maps.n["<Leader>fT"] = { "<cmd>TodoTelescope<cr>", desc = "Find TODOs" }
+          maps.n["<leader>fT"] = { "<cmd>TodoTelescope<cr>", desc = "Find TODOs" }
+          maps.n["<Leader>fp"] = { "<cmd>Telescope projects<CR>", desc = "Switch Buffers In Telescope" }
+          maps.n["<Leader>bt"] = {
+            function()
+              if #vim.t.bufs > 1 then
+                require("telescope.builtin").buffers { sort_mru = true, ignore_current_buffer = true }
+              else
+                require("astrocore").notify "No other buffers open"
+              end
+            end,
+            desc = "Switch Buffers In Telescope",
+          }
         end
       end
       opts.mappings = maps

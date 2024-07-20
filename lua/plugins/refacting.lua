@@ -10,16 +10,14 @@ return {
       ---@diagnostic disable: missing-fields
       ---@diagnostic disable: missing-parameter
       opts = function(_, opts)
-        local get_icon = require("astroui").get_icon
         return require("astrocore").extend_tbl(opts, {
           mappings = {
             n = {
-              ["<Leader>r"] = { name = get_icon("Refactoring", 1, true) .. "Refactor" },
-              ["<Leader>rb"] = {
+              ["<Leader>le"] = {
                 function() require("refactoring").refactor "Extract Block" end,
                 desc = "Extract Block",
               },
-              ["<Leader>ri"] = {
+              ["<Leader>lv"] = {
                 function() require("refactoring").refactor "Inline Variable" end,
                 desc = "Inline Variable",
               },
@@ -35,57 +33,55 @@ return {
                 function() require("refactoring").debug.print_var { below = false } end,
                 desc = "Debug: Print Variable",
               },
-              ["<Leader>rbf"] = {
+              ["<Leader>lb"] = {
                 function() require("refactoring").refactor "Extract Block To File" end,
                 desc = "Extract Block To File",
               },
             },
             x = {
-              ["<Leader>r"] = { name = get_icon("Refactoring", 1, true) .. "Refactor" },
-              ["<Leader>re"] = {
+              ["<Leader>le"] = {
                 function() require("refactoring").refactor "Extract Function" end,
                 desc = "Extract Function",
               },
-              ["<Leader>rf"] = {
+              ["<Leader>lm"] = {
                 function() require("refactoring").refactor "Extract Function To File" end,
                 desc = "Extract Function To File",
               },
-              ["<Leader>rv"] = {
+              ["<Leader>lv"] = {
                 function() require("refactoring").refactor "Extract Variable" end,
                 desc = "Extract Variable",
               },
-              ["<Leader>ri"] = {
+              ["<Leader>li"] = {
                 function() require("refactoring").refactor "Inline Variable" end,
                 desc = "Inline Variable",
               },
             },
             v = {
-              ["<Leader>r"] = { name = get_icon("Refactoring", 1, true) .. "Refactor" },
-              ["<Leader>re"] = {
+              ["<Leader>le"] = {
                 function() require("refactoring").refactor "Extract Function" end,
                 desc = "Extract Function",
               },
-              ["<Leader>rf"] = {
+              ["<Leader>lm"] = {
                 function() require("refactoring").refactor "Extract Function To File" end,
                 desc = "Extract Function To File",
               },
-              ["<Leader>rv"] = {
+              ["<Leader>lv"] = {
                 function() require("refactoring").refactor "Extract Variable" end,
                 desc = "Extract Variable",
               },
-              ["<Leader>ri"] = {
+              ["<Leader>li"] = {
                 function() require("refactoring").refactor "Inline Variable" end,
                 desc = "Inline Variable",
               },
-              ["<Leader>rb"] = {
+              ["<Leader>lb"] = {
                 function() require("refactoring").refactor "Extract Block" end,
                 desc = "Extract Block",
               },
-              ["<Leader>rbf"] = {
+              ["<Leader>lB"] = {
                 function() require("refactoring").refactor "Extract Block To File" end,
                 desc = "Extract Block To File",
               },
-              ["<Leader>rr"] = {
+              ["<Leader>lR"] = {
                 function() require("refactoring").select_refactor() end,
                 desc = "Select Refactor",
               },
@@ -105,15 +101,6 @@ return {
           },
         } --[[@as AstroCoreOpts]])
       end,
-    },
-    {
-      "AstroNvim/astroui",
-      ---@type AstroUIOpts
-      opts = {
-        icons = {
-          Refactoring = "󰣪",
-        },
-      },
     },
   },
   opts = {

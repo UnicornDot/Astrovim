@@ -22,6 +22,10 @@ return {
           function() vim.cmd [[DiffviewClose]] end,
           desc = "Close Git Diffview",
         }
+        maps.n["<Leader>gf"] = {
+          function() vim.cmd[[DiffviewFileHistory]] end,
+          desc = "show file history",
+        }
       end
     end,
   },

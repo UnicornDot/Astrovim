@@ -1,9 +1,9 @@
--- NOTE:: event `AstroLargeBuf` that is triggered when a large buffer is detected.
----@type AstroCoreOpts
--- AstroCore allows you easy access to customize the default options provided in AstroNvim
+local utils = require "utils"
+
+-- @type LazySpec
 return {
-  "AstroNvim/astrocore",
   ---@type AstroCoreOpts
+  "AstroNvim/astrocore",
   opts = function(_, opts)
     local options = require("astrocore").extend_tbl(opts, {
       -- Configure project root detection, check status with `:AstroRootInfo`
@@ -18,6 +18,26 @@ return {
         cmp = true, -- enable completion at start
         highlighturl = true, -- highlight URLs at start
         notifications = true, -- enable notifications at start
+      },
+      filetypes = {
+        extension = {
+          mdx = "markdown.mdx",
+          qmd = "markdown",
+          yml = utils.yaml_ft,
+          yaml = utils.yaml_ft,
+          json = "jsonc",
+          api = "goctl",
+          MD = "markdown",
+          tpl = "gotmpl",
+        },
+        filename = {
+          [".eslintrc.json"] = "jsonc",
+        },
+        pattern = {
+          ["/tmp/neomutt.*"] = "markdown",
+          ["tsconfig*.json"] = "jsonc",
+          [".*/%.vscode/.*%.json"] = "jsonc",
+        },
       },
       autocmds = {
         auto_turnoff_paste = {
@@ -47,23 +67,6 @@ return {
             end,
           },
         },
-        auto_resession = {
-          {
-            event = "VimEnter",
-            desc = "Restore session on open",
-            callback = function()
-              if require("astrocore").is_available "resession.nvim" and false then
-                local resession = require "resession"
-                -- Only load the session if nvim was started with no args
-                if vim.fn.argc(-1) == 0 then
-                  -- Save these to a different directory, so our manual sessions don't get polluted
-                  resession.load(vim.fn.getcwd(), { dir = "dirsession", silence_errors = true })
-                  vim.cmd.doautoall "BufReadPre"
-                end
-              end
-            end,
-          },
-        },
         auto_conceallevel_for_json = {
           {
             event = "FileType",
@@ -88,7 +91,6 @@ return {
           },
         },
       },
-      mappings = require("mappings").setup(opts.mappings),
     })
     return options
   end,

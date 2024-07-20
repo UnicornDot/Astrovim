@@ -230,6 +230,8 @@ local filetype_mapping = {
         end
       end
     elseif relative_path and string.find(relative_path, "^/src/") then
+      local filename = get_filename_from_path(path)
+      if filename == "mod" then return end
       local confirm = vim.fn.confirm("Attach file to `mod.rs`?", "&Yes\n&No", 1, "Question")
       if confirm == 1 then
         local mod_path = get_parent_directory(path) .. "/mod.rs"
@@ -238,7 +240,7 @@ local filetype_mapping = {
           if confirm == 1 then
             local file = io.open(mod_path, "w")
             if file then
-              local filename = get_filename_from_path(path)
+
               if filename then file:write("mod " .. filename .. ";\n") end
               file:close()
             end
@@ -289,7 +291,7 @@ return {
           "filesystem",
         },
         source_selector = {
-          winbar = false,
+          winbar = true,
         },
         filesystem = {
           commands = {

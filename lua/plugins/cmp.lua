@@ -96,7 +96,7 @@ return {
         return {
           {
             type = "/",
-            mapping = mapping(),
+            mapping = mapping(true),
             sources = {
               { name = "buffer" },
             },
@@ -146,8 +146,8 @@ return {
       },
       formatting = formatting_style,
       sources = cmp.config.sources {
-        { 
-          name = "nvim_lsp", 
+        {
+          name = "nvim_lsp",
            ---@param entry cmp.Entry
           ---@param ctx cmp.Context
           entry_filter = function(entry, ctx)
