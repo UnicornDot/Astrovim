@@ -1,6 +1,4 @@
 local utils = require "astrocore"
-local is_available = require("astrocore").is_available
-local set_mappings = require("astrocore").set_mappings
 
 ---@type LazySpec
 return {
@@ -12,21 +10,12 @@ return {
       config = {
         basedpyright = {
           on_attach = function()
-            if is_available "venv-selector.nvim" then
-              set_mappings({
+            if require("astrocore").is_available "venv-selector.nvim" then
+              require("astrocore").set_mappings({
                 n = {
-                  ["<Leader>lv"] = {
+                  ["<Leader>lO"] = {
                     "<cmd>VenvSelect<CR>",
                     desc = "Select VirtualEnv",
-                  },
-                  ["<leader>lV"] = {
-                    function()
-                      require("astrocore").notify(
-                        "Current Env:" .. require("venv-selector").get_active_venv(),
-                        vim.log.levels.INFO
-                      )
-                    end,
-                    desc = "Show Current VirtualEnv",
                   },
                   ["<leader>lo"] = {
                     "<cmd>PyrightOrganizeImports<CR>",
