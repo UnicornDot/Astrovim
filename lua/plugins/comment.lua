@@ -6,7 +6,7 @@ return {
       maps.n["<C-/>"] = opts.mappings.n["<leader>/"]
       maps.x["<C-/>"] = opts.mappings.n["<leader>/"]
       maps.n["<leader>/"] = false
-      maps.v["<leader>/"] = false
+      maps.x["<leader>/"] = false
     end
   },
   {

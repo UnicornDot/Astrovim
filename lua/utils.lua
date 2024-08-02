@@ -1,13 +1,109 @@
 local M = {}
 
-local function file_exists(path)
-  local f = io.open(path, "r")
-  if f ~= nil then
-    io.close(f)
+function M.set_native_lsp_mapping()
+  require("astrocore").set_mappings({
+    n = {
+      ["gra"] = { function() vim.lsp.buf.code_action() end, desc = "vim.lsp.buf.code_action()" },
+      ["grn"] = { function() vim.lsp.buf.rename() end, desc = "vim.lsp.buf.rename()" },
+      ["grr"] = { function() vim.lsp.buf.references() end, desc = "vim.lsp.buf.references()" },
+    },
+    x = {
+      ["gra"] = { function() vim.lsp.buf.code_action() end, desc = "vim.lsp.buf.code_action()" },
+    },
+  }, { buffer = true })
+end
+
+function M.set_telescope_lsp_mapping()
+  require("astrocore").set_mappings({
+    n = {
+      ["gd"] = {
+        function() require("telescope.builtin").lsp_definitions { reuse_win = true } end,
+        desc = "Show the definition of current symbol",
+      },
+      ["gI"] = {
+        function() require("telescope.builtin").lsp_implementations { reuse_win = true } end,
+        desc = "Implementation of current symbol",
+      },
+      ["gy"] = {
+        function() require("telescope.builtin").lsp_type_definitions { reuse_win = true } end,
+        desc = "Definition of current type",
+      },
+      ["<Leader>lG"] = {
+        function()
+          vim.ui.input({ prompt = "Symbol Query: (leave empty for word under cursor)" }, function(query)
+            if query then
+              -- word under cursor if given query is empty
+              if query == "" then query = vim.fn.expand "<cword>" end
+              require("telescope.builtin").lsp_workspace_symbols {
+                query = query,
+                prompt_title = ("Find word (%s)"):format(query),
+              }
+            end
+          end)
+        end,
+        desc = "Search workspace symbols",
+      },
+      ["<Leader>lR"] = {
+        function() require("telescope.builtin").lsp_references() end,
+        desc = "Search references",
+      },
+      ["gr"] = {
+        function() require("telescope.builtin").lsp_references() end,
+        desc = "Search references",
+      },
+    },
+  }, { buffer = true })
+end
+
+function M.is_in_list(value, list)
+  for i = 1, #list do
+    if list[i] == value then return true end
+  end
+  return false
+end
+
+function M.remove_lsp_cwd(path, client_name)
+  local cwd = M.get_lsp_root_dir(client_name)
+
+  if cwd == nil then return nil end
+  cwd = M.escape_pattern(cwd)
+
+  return path:gsub("^" .. cwd, "")
+end
+
+function M.remove_cwd(path)
+  local cwd = vim.fn.getcwd()
+  cwd = M.escape_pattern(cwd) .. "/"
+
+  return path:gsub("^" .. cwd, "")
+
+end
+
+function M.escape_pattern(text) return text:gsub("([^%w])", "%%%1") end
+
+function M.file_exists(path)
+  local file = io.open(path, "r")
+  if file then
+    io.close(file)
     return true
   else
     return false
   end
+end
+
+function M.get_lsp_root_dir(client_name)
+  local clients = vim.lsp.get_clients()
+
+  if next(clients) == nil then return nil end
+
+  for _, client in ipairs(clients) do
+    if client.name == client_name then
+      local root_dir = client.config.root_dir
+      if root_dir then return root_dir end
+    end
+  end
+
+  return nil
 end
 
 function M.write_log(file_name, content)
@@ -100,6 +196,7 @@ end
 
 function M.remove_keymap(mode, key)
   for _, map in pairs(vim.api.nvim_get_keymap(mode)) do
+    ---@diagnostic disable-next-line: undefined-field
     if map.lhs == key then vim.api.nvim_del_keymap(mode, key) end
   end
 end
@@ -179,7 +276,7 @@ function M.toggle_yazi(path)
       end,
       on_exit = function(t, job, code, event)
         if code == 0 then
-          if file_exists(output_path) then
+          if M.file_exists(output_path) then
             local open_path = vim.fn.readfile(output_path)[1]
             vim.cmd "silent! :checktime"
             vim.loop.new_timer():start(

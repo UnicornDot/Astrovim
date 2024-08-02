@@ -1,3 +1,8 @@
+local file_exists = require("utils").file_exists
+local remove_cwd = require("utils").remove_cwd
+local get_lsp_root_dir = require("utils").get_lsp_root_dir
+local remove_lsp_cwd = require("utils").remove_lsp_cwd
+
 local function get_buffer_by_name(buf_name)
   local buffers = vim.api.nvim_list_bufs()
   for _, buf in ipairs(buffers) do
@@ -86,48 +91,12 @@ local function get_parent_dir(path)
   end
 end
 
-local function get_lsp_root_dir(client_name)
-  local clients = vim.lsp.get_clients()
-
-  if next(clients) == nil then return nil end
-
-  for _, client in ipairs(clients) do
-    if client.name == client_name then
-      local root_dir = client.config.root_dir
-      if root_dir then return root_dir end
-    end
-  end
-
-  return nil
-end
-
 local function is_file(path)
   if path:sub(-1) == "/" then
     return false
   else
     return true
   end
-end
-
-local function file_exists(path)
-  local file = io.open(path, "r")
-  if file then
-    io.close(file)
-    return true
-  else
-    return false
-  end
-end
-
-local function escape_pattern(text) return text:gsub("([^%w])", "%%%1") end
-
-local function remove_lsp_cwd(path, client_name)
-  local cwd = get_lsp_root_dir(client_name)
-
-  if cwd == nil then return nil end
-  cwd = escape_pattern(cwd)
-
-  return path:gsub("^" .. cwd, "")
 end
 
 local function get_filename_without_extension_from_path(path, client_name)
@@ -175,7 +144,7 @@ local filetype_mapping = {
   proto = function(path)
     local file = io.open(path, "w")
     if file then
-      file:write 'syntax = "proto3";'
+      file:write 'syntax = "proto3";\nimport "buf/validate/validate.proto";\n'
       file:close()
     end
   end,
@@ -201,7 +170,7 @@ local filetype_mapping = {
                 if confirm == 1 then
                   local file = io.open(lib_path, "w")
                   if file then
-                    local filename = get_filename_from_path(path)
+                    filename = get_filename_from_path(path)
                     if filename then file:write("mod " .. filename .. ";\n") end
                     file:close()
                   end
@@ -217,7 +186,7 @@ local filetype_mapping = {
                 if choice and choice == 1 then
                   local file = io.open(main_path, "w")
                   if file then
-                    local filename = get_filename_from_path(path)
+                    filename = get_filename_from_path(path)
                     if filename then file:write("mod " .. filename .. ";\n") end
                     file:close()
                   end
@@ -266,6 +235,23 @@ return {
       local neo_tree_events = require "neo-tree.events"
 
       return require("astrocore").extend_tbl(opts, {
+        commands = {
+          copy_absolute_path = function(state)
+            local absolute_path = state.tree:get_node():get_id()
+            vim.fn.setreg("+", absolute_path)
+          end,
+          copy_relative_path = function(state)
+            local absolute_path = state.tree:get_node():get_id()
+            local relative_path = remove_cwd(absolute_path)
+            vim.fn.setreg("+", relative_path)
+          end,
+        },
+        window = {
+          mappings = {
+            ["'"] = "copy_absolute_path",
+            ['"'] = "copy_relative_path",
+          },
+        },
         event_handlers = {
           {
             event = neo_tree_events.FILE_OPENED,
@@ -278,8 +264,6 @@ return {
                 -- match file_type
                 local file_type = get_filetype_from_path(path)
                 filetype_mapping[file_type](path)
-              else
-                -- match dir
               end
             end,
           },

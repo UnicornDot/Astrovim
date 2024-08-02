@@ -32,6 +32,18 @@ return {
             function() require("telescope").extensions.dap.variables() end,
             desc = "Telescope DAP variables",
           },
+           [prefix_debug .. "q"] = {
+            function() require("dap").terminate() end,
+            desc = "Down Strace",
+          },
+          [prefix_debug .. "Q"] = {
+            function() require("dap").close() end,
+            desc = "Down Strace",
+          },
+          [prefix_debug .. "j"] = {
+            function() require("dap").down() end,
+            desc = "Down Strace",
+          },
           [prefix_debug .. "j"] = {
             function() require("dap").down() end,
             desc = "Down Strace",
@@ -86,6 +98,17 @@ return {
             function() require("persistent-breakpoints.api").set_conditional_breakpoint() end,
             desc = "Conditional Breakpoint (S-F9)",
           },
+          [prefix_debug .. "S"] = {
+            function() require("dap").run_to_cursor() end,
+            desc = "Run To Cursor",
+          },
+          [prefix_debug .. "s"] = {
+            function()
+              local w = require "dap.ui.widgets"
+              w.centered_float(w.sessions, {})
+            end,
+            desc = "Switch Debug Session",
+          },
         },
       },
     },
@@ -121,6 +144,10 @@ return {
       commented = true,
       enabled = true,
       enabled_commands = true,
+      only_first_definition = true,
+      virt_text_pos = "eol",
+      highlight_changed_variables = false,
+      all_frames = false,
     },
   },
   {

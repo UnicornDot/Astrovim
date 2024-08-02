@@ -31,7 +31,6 @@ return {
       maps.v[">"] = { ">gv", desc = "Indent line" }
       maps.v["K"] = { ":move '<-2<CR>gv-gv", desc = "Move line up", silent = true }
       maps.v["J"] = { ":move '>+1<CR>gv-gv", desc = "Move line down", silent = true }
-      maps.v["p"] = { "pgvy", desc = "Paste" }
 
       maps.i["jj"] = { "<ESC>", desc = "escape", silent = true }
       maps.i["jk"] = { "<ESC>", desc = "escape", silent = true }

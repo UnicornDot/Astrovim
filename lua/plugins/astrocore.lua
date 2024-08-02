@@ -37,7 +37,8 @@ return {
           ["/tmp/neomutt.*"] = "markdown",
           ["tsconfig*.json"] = "jsonc",
           [".*/%.vscode/.*%.json"] = "jsonc",
-        },
+          [".env.*"] = "sh",
+        }
       },
       autocmds = {
         auto_turnoff_paste = {

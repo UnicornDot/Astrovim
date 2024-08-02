@@ -1,5 +1,7 @@
-return {
-  {
+if true then
+  return { }
+else
+  return {
     "nvim-pack/nvim-spectre",
     cmd = "Spectre",
     dependencies = {
@@ -29,5 +31,5 @@ return {
         },
       }
     end,
-  },
-}
+  }
+end
