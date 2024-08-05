@@ -1,29 +1,11 @@
-local utils = require "astrocore"
-local set_mappings = utils.set_mappings
-
-local function decode_json(filename)
-  -- Open the file in read mode
-  local file = io.open(filename, "r")
-  if not file then
-    return false -- File doesn't exist or cannot be opened
-  end
-
-  -- Read the contents of the file
-  local content = file:read "*all"
-  file:close()
-
-  -- Parse the JSON content
-  local json_parsed, json = pcall(vim.fn.json_decode, content)
-  if not json_parsed or type(json) ~= "table" then
-    return false -- Invalid JSON format
-  end
-  return json
-end
+local set_mappings = require("astrocore").set_mappings
+local decode_json = require("utils").decode_json
+local check_json_key_exists = require("utils").check_json_key_exists
 
 local format_filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact", "vue" }
 
-local function check_json_key_exists(json, ...) return vim.tbl_get(json, ...) ~= nil end
 local lsp_rooter, prettierrc_rooter
+
 local has_prettier = function(bufnr)
   if type(bufnr) ~= "number" then bufnr = vim.api.nvim_get_current_buf() end
   local rooter = require "astrocore.rooter"
@@ -92,20 +74,8 @@ return {
         },
       },
       config = {
-        volar = {
-          init_options = {
-            vue = {
-              hybridMode = true,
-            },
-          },
-          settings = {
-            vue = {
-              updateImportsOnFileMove = { enabled = true },
-            },
-          },
-        },
         vtsls = {
-          on_attach = function(client, _)
+          on_attach = function()
             set_mappings({
               n = {
                 ["<Leader>lA"] = {
@@ -114,21 +84,6 @@ return {
                 },
               },
             }, { buffer = true })
-            client.server_capabilities = utils.extend_tbl(client.server_capabilities, {
-              workspace = {
-                fileOperations = {
-                  didRename = {
-                    filters = {
-                      {
-                        pattern = {
-                          glob = "**/*.{ts,cts,mts,tsx,js,cjs,mjs,jsx,vue}",
-                        },
-                      },
-                    },
-                  },
-                },
-              },
-            })
           end,
           filetypes = {
             "javascript",
@@ -137,14 +92,10 @@ return {
             "typescript",
             "typescriptreact",
             "typescript.tsx",
-            "vue",
           },
           settings = {
             complete_function_calls = true,
             vtsls = {
-              tsserver = {
-                globalPlugins = {},
-              },
               enableMoveToFileCodeAction = true,
               autoUseWorkspaceTsdk = true,
               experimental = {
@@ -179,24 +130,6 @@ return {
               },
             },
           },
-          before_init = function(_, config)
-            local astrocore_ok, astrocore = pcall(require, "astrocore")
-            local registry_ok, registry = pcall(require, "mason-registry")
-            if not astrocore_ok or not registry_ok then return end
-
-            local volar_install_path = registry.get_package("vue-language-server"):get_install_path()
-              .. "/node_modules/@vue/language-server"
-
-            local vue_plugin_config = {
-              name = "@vue/typescript-plugin",
-              location = volar_install_path,
-              languages = { "vue" },
-              configNamespace = "typescript",
-              enableForWorkspaceTypeScriptVersions = true,
-            }
-
-            astrocore.list_insert_unique(config.settings.vtsls.tsserver.globalPlugins, { vue_plugin_config })
-          end,
         },
       },
     },
@@ -206,29 +139,39 @@ return {
     optional = true,
     opts = function(_, opts)
       if opts.ensure_installed ~= "all" then
-        opts.ensure_installed =
-          utils.list_insert_unique(opts.ensure_installed, { "javascript", "typescript", "tsx", "jsdoc", "vue" })
+        opts.ensure_installed = require("astrocore").list_insert_unique(
+          opts.ensure_installed,
+          { "javascript", "typescript", "tsx", "jsdoc", "vue" }
+        )
       end
     end,
   },
   {
     "williamboman/mason-lspconfig.nvim",
     opts = function(_, opts)
-      opts.ensure_installed = utils.list_insert_unique(opts.ensure_installed, { "eslint", "vtsls", "volar" })
+      opts.ensure_installed = require("astrocore").list_insert_unique(
+        opts.ensure_installed,
+        { "eslint", "vtsls", "volar" }
+      )
     end,
   },
   {
     "jay-babu/mason-null-ls.nvim",
     optional = true,
     opts = function(_, opts)
-      opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, { "prettierd" })
+      opts.ensure_installed = require("astrocore").list_insert_unique(
+        opts.ensure_installed,
+        { "prettierd" }
+      )
 
       if not opts.handlers then opts.handlers = {} end
 
       opts.handlers.prettierd = function(source_name, methods)
         local null_ls = require "null-ls"
         for _, method in ipairs(methods) do
-          null_ls.register(null_ls.builtins[method][source_name].with { runtime_condition = null_ls_formatter })
+          null_ls.register(null_ls.builtins[method][source_name].with {
+            runtime_condition = null_ls_formatter
+          })
         end
       end
     end,
@@ -236,7 +179,12 @@ return {
   {
     "jay-babu/mason-nvim-dap.nvim",
     optional = true,
-    opts = function(_, opts) opts.ensure_installed = utils.list_insert_unique(opts.ensure_installed, { "js" }) end,
+    opts = function(_, opts)
+      opts.ensure_installed = require("astrocore").list_insert_unique(
+        opts.ensure_installed,
+        { "js" }
+      )
+    end,
   },
   {
     "vuki656/package-info.nvim",
@@ -254,6 +202,12 @@ return {
     "mfussenegger/nvim-dap",
     optional = true,
     config = function()
+      local success, js_debug_adapter_path = pcall(function ()
+        return require("mason-registry").get_package("js-debug-adapter"):get_install_path()
+          .."/js-debug/src/dapDebugServer.js"
+      end)
+      if not success then return end
+
       local dap = require "dap"
       if not dap.adapters["pwa-node"] then
         require("dap").adapters["pwa-node"] = {
@@ -263,8 +217,7 @@ return {
           executable = {
             command = "node",
             args = {
-              require("mason-registry").get_package("js-debug-adapter"):get_install_path()
-                .. "/js-debug/src/dapDebugServer.js",
+              js_debug_adapter_path,
               "${port}",
             },
           },
@@ -309,30 +262,6 @@ return {
         end
       end
     end,
-  },
-  {
-    "yioneko/nvim-vtsls",
-    lazy = true,
-    dependencies = {
-      "AstroNvim/astrocore",
-      opts = {
-        autocmds = {
-          nvim_vtsls = {
-            {
-              event = "LspAttach",
-              desc = "Load nvim-vtsls with vtsls",
-              callback = function(args)
-                if assert(vim.lsp.get_client_by_id(args.data.client_id)).name == "vtsls" then
-                  require("vtsls")._on_attach(args.data.client_id, args.buf)
-                  vim.api.nvim_del_augroup_by_name "nvim_vtsls"
-                end
-              end,
-            },
-          },
-        },
-      },
-    },
-    config = function(_, opts) require("vtsls").config(opts) end,
   },
   {
     "nvim-neotest/neotest",

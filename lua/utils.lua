@@ -1,58 +1,56 @@
 local M = {}
 
-function M.set_native_lsp_mapping()
-  require("astrocore").set_mappings({
-    n = {
-      ["gra"] = { function() vim.lsp.buf.code_action() end, desc = "vim.lsp.buf.code_action()" },
-      ["grn"] = { function() vim.lsp.buf.rename() end, desc = "vim.lsp.buf.rename()" },
-      ["grr"] = { function() vim.lsp.buf.references() end, desc = "vim.lsp.buf.references()" },
-    },
-    x = {
-      ["gra"] = { function() vim.lsp.buf.code_action() end, desc = "vim.lsp.buf.code_action()" },
-    },
-  }, { buffer = true })
+function M.decode_json(filename)
+  -- Open the file in read mode
+  local file = io.open(filename, "r")
+  if not file then
+    return false -- File doesn't exist or cannot be opened
+  end
+
+  -- Read the contents of the file
+  local content = file:read "*all"
+  file:close()
+
+  -- Parse the JSON content
+  local json_parsed, json = pcall(vim.fn.json_decode, content)
+  if not json_parsed or type(json) ~= "table" then
+    return false -- Invalid JSON format
+  end
+  return json
 end
 
-function M.set_telescope_lsp_mapping()
-  require("astrocore").set_mappings({
-    n = {
-      ["gd"] = {
-        function() require("telescope.builtin").lsp_definitions { reuse_win = true } end,
-        desc = "Show the definition of current symbol",
-      },
-      ["gI"] = {
-        function() require("telescope.builtin").lsp_implementations { reuse_win = true } end,
-        desc = "Implementation of current symbol",
-      },
-      ["gy"] = {
-        function() require("telescope.builtin").lsp_type_definitions { reuse_win = true } end,
-        desc = "Definition of current type",
-      },
-      ["<Leader>lG"] = {
-        function()
-          vim.ui.input({ prompt = "Symbol Query: (leave empty for word under cursor)" }, function(query)
-            if query then
-              -- word under cursor if given query is empty
-              if query == "" then query = vim.fn.expand "<cword>" end
-              require("telescope.builtin").lsp_workspace_symbols {
-                query = query,
-                prompt_title = ("Find word (%s)"):format(query),
-              }
-            end
-          end)
+function M.check_json_key_exists(json, ...) return vim.tbl_get(json, ...) ~= nil end
+
+function M.is_vue_project(bufnr)
+  local lsp_rooter
+  if type(bufnr) ~= "number" then bufnr = vim.api.nvim_get_current_buf() end
+  local rooter = require "astrocore.rooter"
+  if not lsp_rooter then
+    lsp_rooter = rooter.resolve("lsp", {
+      ignore = {
+        servers = function(client)
+          return not vim.tbl_contains({ "vtsls", "typescript-tools", "volar", "eslint", "tsserver" }, client.name)
         end,
-        desc = "Search workspace symbols",
       },
-      ["<Leader>lR"] = {
-        function() require("telescope.builtin").lsp_references() end,
-        desc = "Search references",
-      },
-      ["gr"] = {
-        function() require("telescope.builtin").lsp_references() end,
-        desc = "Search references",
-      },
-    },
-  }, { buffer = true })
+    })
+  end
+
+  local vue_dependency = false
+  for _, root in ipairs(require("astrocore").list_insert_unique(lsp_rooter(bufnr), { vim.fn.getcwd() })) do
+    local package_json = M.decode_json(root .. "/package.json")
+    if
+      package_json
+      and (
+        M.check_json_key_exists(package_json, "dependencies", "vue")
+        or M.check_json_key_exists(package_json, "devDependencies", "vue")
+      )
+    then
+      vue_dependency = true
+      break
+    end
+  end
+
+  return vue_dependency
 end
 
 function M.is_in_list(value, list)
@@ -165,27 +163,6 @@ function M.write_to_file(content, file_path)
   file:close()
 end
 
-function M.check_json_key_exists(filename, key)
-  -- Open the file in read mode
-  local file = io.open(filename, "r")
-  if not file then
-    return false -- File doesn't exist or cannot be opened
-  end
-
-  -- Read the contents of the file
-  local content = file:read "*all"
-  file:close()
-
-  -- Parse the JSON content
-  local json_parsed, json = pcall(vim.fn.json_decode, content)
-  if not json_parsed or type(json) ~= "table" then
-    return false -- Invalid JSON format
-  end
-
-  -- Check if the key exists in the JSON object
-  return json[key] ~= nil
-end
-
 function M.better_search(key)
   return function()
     local searched, error =
@@ -205,6 +182,7 @@ function M.toggle_lazy_docker()
   return function()
     require("astrocore").toggle_term_cmd {
       cmd = "lazydocker",
+      direction = "float",
       hidden = true,
       on_open = function()
         M.remove_keymap("t", "<C-H>")
@@ -232,6 +210,7 @@ function M.toggle_lazy_git()
     local flags = worktree and (" --work-tree=%s --git-dir=%s"):format(worktree.toplevel, worktree.gitdir) or ""
     require("astrocore").toggle_term_cmd {
       cmd = "lazygit " .. flags,
+      direction = "float",
       hidden = true,
       on_open = function()
         M.remove_keymap("t", "<C-H>")
@@ -261,6 +240,7 @@ function M.toggle_yazi(path)
     local cmd = string.format('yazi "%s" --chooser-file "%s"', path, output_path)
     require("astrocore").toggle_term_cmd {
       cmd = cmd,
+      direction = "float",
       hidden = true,
       on_open = function()
         M.remove_keymap("t", "<C-H>")
