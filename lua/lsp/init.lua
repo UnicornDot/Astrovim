@@ -28,7 +28,7 @@ return {
       semantic_tokens = true, -- enable/disable semantic token highlighting
       inlay_hints = true,
       diagnostics_mode = 3,
-      signature_help = true,
+      signature_help = false,
     },
     -- Configuration options for controlling formatting with language servers
     formatting = {

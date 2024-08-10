@@ -60,6 +60,42 @@ function M.is_in_list(value, list)
   return false
 end
 
+function M.get_parent_dir(path) return path:match("(.+)/") end
+
+function M.copy_file(source_file, target_file)
+  local target_file_parent_path = M.get_parent_dir(target_file)
+  local cmd = string.format("mkdir -p %s", vim.fn.shellescape(target_file_parent_path))
+  os.execute(cmd)
+  cmd = string.format("cp %s %s", vim.fn.shellescape(source_file), vim.fn.shellescape(target_file))
+  os.execute(cmd)
+
+  vim.notify("File " .. target_file .. " created success.", vim.log.levels.INFO)
+end
+
+function M.get_filename_with_extension_from_path(path)
+  return string.match(path, "([^/]+)$")
+end
+
+function M.create_launch_json() 
+  vim.ui.select(
+    {"go"}, 
+    { prompt = "Select Language Debug Template", default = "go"}, 
+    function(select) 
+      if not select then return end
+      if select == "go" then
+        local source_file = vim.fn.stdpath("config") .. "/.vscode/go_launvh.json"
+        local target_file = vim.fn.getcwd() .. "/.vscode/launch.json"
+        local file_exist = M.file_exists(target_file)
+        if file_exist then
+          local confirm = vim.fn.confirm("File `.vscode/launch.json` Exist, Override it ?", "&Yes\n&No", 1, "Question")
+          if confirm == 1 then M.copy_file(source_file, target_file) end
+        else
+          M.copy_file(source_file, target_file)
+        end
+      end
+    end)
+end
+
 function M.remove_lsp_cwd(path, client_name)
   local cwd = M.get_lsp_root_dir(client_name)
 
@@ -224,6 +260,22 @@ function M.toggle_lazy_git()
         vim.api.nvim_set_keymap("t", "<C-K>", "<cmd>wincmd k<cr>", { silent = true, noremap = true })
         vim.api.nvim_set_keymap("t", "<C-L>", "<cmd>wincmd l<cr>", { silent = true, noremap = true })
       end,
+      on_exit = function()
+        -- For Stop Term Mode
+        vim.cmd [[stopinsert]]
+      end,
+    }
+  end
+end
+
+function M.toggle_btm()
+  return function()
+    require("astrocore").toggle_term_cmd {
+      cmd = "btm",
+      direction = "float",
+      hidden = true,
+      on_open = function() M.remove_keymap("t", "<Esc>") end,
+      on_close = function() vim.api.nvim_set_keymap("t", "<Esc>", [[<C-\><C-n>]], { silent = true, noremap = true }) end,
       on_exit = function()
         -- For Stop Term Mode
         vim.cmd [[stopinsert]]

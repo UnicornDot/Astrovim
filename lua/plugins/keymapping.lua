@@ -59,42 +59,43 @@ return {
       maps.n.N = { require("utils").better_search "N", desc = "Previous search" }
 
       if vim.fn.executable "btm" == 1 then
-        maps.n["<Leader>tT"] = { function() utils.toggle_term_cmd "btm" end, desc = "ToggleTerm btm" }
+        maps.n["<Leader>tt"] = {
+          require("utils").toggle_btm(),
+          desc = "ToggleTerm btm"
+        }
       end
 
 
-      if is_available "toggleterm.nvim" then
-        if vim.fn.executable "lazygit" == 1 then
-          maps.n["<Leader>gg"] = {
-            require("utils").toggle_lazy_git(),
-            desc = "ToggleTerm lazygit",
-          }
-        end
-
-        -- if vim.fn.executable "joshuto" == 1 then
-        --   maps.n["<leader>tj"] = {
-        --     require("utils").toggle_joshuto(),
-        --     desc = "ToggleTerm joshuto",
-        --   }
-        -- end
-
-        if vim.fn.executable "lazydocker" == 1 then
-          maps.n["<Leader>td"] = {
-            require("utils").toggle_lazy_docker(),
-            desc = "ToggleTerm lazydocker",
-          }
-        end
-
-        -- multi style open terminal
-        maps.n["<M-3>"] = { "<cmd>ToggleTerm direction=float<cr>", desc = "ToggleTerm float" }
-        maps.t["<M-3>"] = { "<cmd>ToggleTerm direction=float<cr>", desc = "ToggleTerm float" }
-        maps.n["<M-1>"] = { "<cmd>ToggleTerm size=10 direction=horizontal<cr>", desc = "ToggleTerm horizontal split" }
-        maps.t["<M-1>"] = { "<cmd>ToggleTerm size=10 direction=horizontal<cr>", desc = "ToggleTerm horizontal split" }
-        maps.n["<M-2>"] = { "<cmd>ToggleTerm size=80 direction=vertical<cr>", desc = "ToggleTerm vertical split" }
-        maps.t["<M-2>"] = { "<cmd>ToggleTerm size=80 direction=vertical<cr>", desc = "ToggleTerm vertical split" }
-        maps.n["<C-\\>"] = { "<cmd>ToggleTerm<cr>", desc = "Toggle terminal" }
-        maps.t["<C-\\>"] = maps.n["<C-\\>"]
+      if vim.fn.executable "lazygit" == 1 then
+        maps.n["<Leader>gg"] = {
+          require("utils").toggle_lazy_git(),
+          desc = "ToggleTerm lazygit",
+        }
       end
+
+      -- if vim.fn.executable "joshuto" == 1 then
+      --   maps.n["<leader>tj"] = {
+      --     require("utils").toggle_joshuto(),
+      --     desc = "ToggleTerm joshuto",
+      --   }
+      -- end
+
+      if vim.fn.executable "lazydocker" == 1 then
+        maps.n["<Leader>td"] = {
+          require("utils").toggle_lazy_docker(),
+          desc = "ToggleTerm lazydocker",
+        }
+      end
+
+      -- multi style open terminal
+      maps.n["<M-3>"] = { "<cmd>ToggleTerm direction=float<cr>", desc = "ToggleTerm float" }
+      maps.t["<M-3>"] = { "<cmd>ToggleTerm direction=float<cr>", desc = "ToggleTerm float" }
+      maps.n["<M-1>"] = { "<cmd>ToggleTerm size=10 direction=horizontal<cr>", desc = "ToggleTerm horizontal split" }
+      maps.t["<M-1>"] = { "<cmd>ToggleTerm size=10 direction=horizontal<cr>", desc = "ToggleTerm horizontal split" }
+      maps.n["<M-2>"] = { "<cmd>ToggleTerm size=80 direction=vertical<cr>", desc = "ToggleTerm vertical split" }
+      maps.t["<M-2>"] = { "<cmd>ToggleTerm size=80 direction=vertical<cr>", desc = "ToggleTerm vertical split" }
+      maps.n["<C-\\>"] = { "<cmd>ToggleTerm size=90 direction=float<cr>", desc = "Toggle float terminal" }
+      maps.t["<C-\\>"] = maps.n["<C-\\>"]
 
       -- 分屏快捷键
       maps.n["<leader>wc"] = { "<C-w>c", desc = "Close current screen" }
