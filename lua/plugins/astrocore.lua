@@ -41,11 +41,6 @@ return {
         }
       },
       autocmds = {
-        auto_turnoff_paste = {
-          event = "InsertLeave",
-          pattern = "*",
-          command = "set nopaste",
-        },
         auto_spell = {
           {
             event = "FileType",
