@@ -13,19 +13,4 @@ if string.match(vim.loop.os_uname().sysname,"Windows") == "Windows" then
     ]])
 end
 
-vim.opt.conceallevel = 2 -- enable conceal
-vim.opt.concealcursor = ""
-vim.opt.list = false -- show whitespace characters
-vim.opt.listchars = { tab = "│→", extends = "⟩", precedes = "⟨", trail = "·", nbsp = "␣" }
-vim.opt.showbreak = "↪ "
-vim.opt.showtabline = (vim.t.bufs and #vim.t.bufs > 1) and 2 or 1
-vim.opt.spellfile = vim.fn.expand "~/.config/nvim/spell/en.utf-8.add"
-vim.opt.splitkeep = "screen"
-vim.opt.swapfile = false
-vim.opt.thesaurus = vim.fn.expand "~/.config/nvim/spell/mthesaur.txt"
-vim.opt.wrap = false -- soft wrap lines
-vim.opt.scrolloff = 8 -- keep 3 lines when scrolling
 
-vim.g.resession_enabled = false
-vim.g.transparent_background = true
-vim.g.autoformat = true

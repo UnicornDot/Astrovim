@@ -1,4 +1,6 @@
 local utils = require "astrocore"
+local is_available = require("astrocore").is_available
+local set_mappings = require("astrocore").set_mappings
 
 ---@type LazySpec
 return {
@@ -10,8 +12,8 @@ return {
       config = {
         basedpyright = {
           on_attach = function()
-            if require("astrocore").is_available "venv-selector.nvim" then
-              require("astrocore").set_mappings({
+            if is_available "venv-selector.nvim" then
+              set_mappings({
                 n = {
                   ["<Leader>lO"] = {
                     "<cmd>VenvSelect<CR>",
@@ -24,6 +26,11 @@ return {
                 },
               }, { buffer = true })
             end
+          end,
+          before_init = function(_, c)
+            if not c.settings then c.settings = {} end
+            if not c.settings.python then c.settings.python = {} end
+            c.settings.python.pythonPath = vim.fn.exepath("python")
           end,
           filetypes = { "python" },
           single_file_support = true,
@@ -42,11 +49,21 @@ return {
           settings = {
             basedpyright = {
               analysis = {
+                typeCheckingMode = "basic",
+                autoImportCompletions = true,
                 autoSearchPaths = true,
                 diagnosticMode = "openFilesOnly",
                 useLibraryCodeForTypes = true,
                 reportMissingTypeStubs = false,
-                typeCheckingMode = "basic",
+                diagnosticSeverityOverrides = {
+                  reportUnusedImport = "information",
+                  reportUnusedFunction = "information",
+                  reportUnusedVariable = "information",
+                  reportGeneralTypeIssues = "none",
+                  reportOptionalMemberAccess = "none",
+                  reportOptionalSubscript = "none",
+                  reportPrivateImportUsage = "none",
+                },
               },
             },
           },
@@ -105,14 +122,8 @@ return {
     "mfussenegger/nvim-dap-python",
     dependencies = "mfussenegger/nvim-dap",
     ft = "python", -- NOTE: ft: lazy-load on filetype
-    config = function(_, opts)
-      local path = require("mason-registry").get_package("debugpy"):get_install_path()
-      if vim.fn.has "win32" == 1 then
-        path = path .. "/venv/Scripts/python"
-      else
-        path = path .. "/venv/bin/python"
-      end
-      require("dap-python").setup(path, opts)
+    config = function()
+      require("dap-python").setup("python", {})
     end,
   },
   {

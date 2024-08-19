@@ -4,10 +4,17 @@ local utils = require "utils"
 return {
   ---@type AstroCoreOpts
   "AstroNvim/astrocore",
+  ---@type AstroCoreOpts
+  ---@diagnostic disable-next-line: assign-type-mismatch
   opts = function(_, opts)
-    local options = require("astrocore").extend_tbl(opts, {
+    local mappings = require("keymapping").core_mappings(opts.mappings)
+
+    return require("astrocore").extend_tbl(opts, {
       -- Configure project root detection, check status with `:AstroRootInfo`
       diagnostics = {
+        virtual_text = {
+          prefix = "",
+        },
         underline = false,
         update_in_insert = false,
       },
@@ -16,30 +23,28 @@ return {
         large_buf = { size = 1024 * 100, lines = 10000 }, -- set global limits for large files for disabling features like treesitter
         autopairs = true, -- enable autopairs at start
         cmp = true, -- enable completion at start
+        diagnostics_mode = 3, -- diagnostics_mode on start (0 = off, 1 = no sign/virtual text, 2 = no virtual text, 3 = on)
         highlighturl = true, -- highlight URLs at start
         notifications = true, -- enable notifications at start
       },
-      filetypes = {
-        extension = {
-          mdx = "markdown.mdx",
-          qmd = "markdown",
-          yml = utils.yaml_ft,
-          yaml = utils.yaml_ft,
-          json = "jsonc",
-          api = "goctl",
-          MD = "markdown",
-          tpl = "gotmpl",
+      options = {
+        opt = {
+          conceallevel = 2, -- enable conceal
+          concealcursor = "",
+          list = false, -- show whitespace characters
+          listchars = { tab = "│→", extends = "⟩", precedes = "⟨", trail = "·", nbsp = "␣" },
+          showbreak = "↪ ",
+          splitkeep = "screen",
+          swapfile = false,
+          wrap = false, -- soft wrap lines
+          scrolloff = 8, -- keep 3 lines when scrolling
         },
-        filename = {
-          [".eslintrc.json"] = "jsonc",
-        },
-        pattern = {
-          ["/tmp/neomutt.*"] = "markdown",
-          ["tsconfig*.json"] = "jsonc",
-          [".*/%.vscode/.*%.json"] = "jsonc",
-          [".env.*"] = "sh",
+        g = {
+          -- resession_enabled = false,
+          -- transparent_background = true,
         }
       },
+      mappings = mappings,
       autocmds = {
         auto_spell = {
           {
@@ -88,6 +93,5 @@ return {
         },
       },
     })
-    return options
   end,
 }

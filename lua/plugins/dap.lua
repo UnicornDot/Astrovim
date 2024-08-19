@@ -32,17 +32,13 @@ return {
             function() require("telescope").extensions.dap.variables() end,
             desc = "Telescope DAP variables",
           },
-           [prefix_debug .. "q"] = {
-            function() require("dap").terminate() end,
-            desc = "Down Strace",
-          },
-          [prefix_debug .. "Q"] = {
-            function() require("dap").close() end,
-            desc = "Down Strace",
-          },
-          [prefix_debug .. "j"] = {
-            function() require("dap").down() end,
-            desc = "Down Strace",
+          [prefix_debug .. "q"] = {
+            function()
+              require("dap").close()
+              local controls = require("dapui.controls")
+              controls.refresh_control_panel()
+            end,
+            desc = "Close Session",
           },
           [prefix_debug .. "j"] = {
             function() require("dap").down() end,
@@ -112,6 +108,10 @@ return {
           [prefix_debug .. "G"] = {
             require("utils").create_launch_json,
             desc = "Create Dap Launch Json"
+          },
+          [prefix_debug .. "h"] = {
+            function() require("dap.ui.widgets").hover()end,
+            desc = "Debugger Hover",
           }
         },
       },
@@ -149,13 +149,16 @@ return {
       enabled = true,
       enabled_commands = true,
       only_first_definition = true,
+      clear_on_continue = true,
       virt_text_pos = "eol",
-      highlight_changed_variables = false,
+      highlight_changed_variables = true,
       all_frames = false,
+      show_stop_reason = true,
     },
   },
   {
     "rcarriga/nvim-dap-ui",
+    commit = "317963ac9db86ebb9f2c4010d0d978fc06d493aa",
     config = function(_, opts)
       local dap, dapui = require "dap", require "dapui"
       dap.listeners.after.event_initialized["dapui_config"] = function()
