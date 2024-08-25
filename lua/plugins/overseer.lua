@@ -15,24 +15,28 @@ return {
   },
   {
     "stevearc/overseer.nvim",
-    config = function()
-      local overseer = require("overseer")
-      overseer.setup({
+    ---@param opts overseer.Config
+    opts = function(_, opts)
+      local astrocore = require("astrocore")
+      if astrocore.is_available("toggleterm.nvim") then opts.strategy = "toggleterm" end
+      return require("astrocore").extend_tbl(opts,  {
         dap = false,
-        templates = { "make", "cargo", "shell", "run_script", "npm", "run_web" },
+        templates = { "make", "cargo", "shell", "run_script", "npm", "run_web", "run_python" },
         task_list = {
-          direction = "left",
+          direction = "right",
           bindings = {
-            ["<C-u>"] = false,
-            ["<C-d>"] = false,
             ["<C-h>"] = false,
             ["<C-j>"] = false,
             ["<C-k>"] = false,
             ["<C-l>"] = false,
+            q = "<Cmd>close<CR>"
           },
         }
       })
-      -- custom behavior of make templates
+    end,
+    config = function(_, opts)
+      local overseer = require("overseer")
+      overseer.setup(opts)
       overseer.add_template_hook(
         {
           module = "^make$",
@@ -44,6 +48,7 @@ return {
         end
       )
     end
+      -- custom behavior of make templates
   }
 }
 

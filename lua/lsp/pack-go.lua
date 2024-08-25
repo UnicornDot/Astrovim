@@ -60,6 +60,7 @@ return {
               buildFlags = { "-tags", "integration" },
               completeUnimported = true,
               diagnosticsDelay = "500ms",
+              gofumpt = true,
               matcher = "Fuzzy",
               semanticTokens = true,
               staticcheck = true,
@@ -79,7 +80,7 @@ return {
       if opts.ensure_installed ~= "all" then
         opts.ensure_installed = require("astrocore").list_insert_unique(
           opts.ensure_installed,
-          { "go", "gomod", "gosum", "gowork", "goctl", "gotmpl" }
+          { "go", "gomod", "gosum", "gowork" }
         )
       end
     end,
@@ -93,6 +94,7 @@ return {
         "gotests",
         "iferr",
         "impl",
+        "goimports",
       })
     end,
   },
@@ -163,4 +165,16 @@ return {
       })
     end,
   },
+  {
+    "echasnovski/mini.icons",
+    optional = true,
+    opts = {
+      file = {
+        [".go-version"] = { glyph = "", hl = "MiniIconsBlue" },
+      },
+      filetype = {
+        gotmpl = { glyph = "󰟓", hl = "MiniIconsGrey" },
+      },
+    },
+  }
 }

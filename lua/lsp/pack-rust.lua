@@ -34,6 +34,7 @@ return {
     "AstroNvim/astrolsp",
     --- @type AstroLSPOpts
     opts = {
+      handlers = { rust_analyzer = false }, -- disable setup of `rust_analyzer`
       config = {
         rust_analyzer = {
           on_attach = function(_, bufnr)

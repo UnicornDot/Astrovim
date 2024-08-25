@@ -14,17 +14,20 @@ return {
   -- 作为弹出的窗口的名称
   name = "run script",
   condition = {
-    filetype = { "sh", "python" }
+    filetype = { "sh" }
+  },
+  params = {
+    args = { optional = false, type = "list", delimiter = " "},
   },
   -- 执行任务时的一些配置
-  builder = function()
+  builder = function(params)
     return {
       name = vim.fn.expand "%:t",
-      cmd = vim.bo.filetype == "sh" and "sh" or "python3",
+      cmd =  "sh",
       cwd = vim.fn.expand "%:p:h",
-      args = { vim.fn.expand "%:p" },
+      args = vim.list_extend({ vim.fn.expand "%:p" }, params.args),
       components = {
-        -- "task_list_on_start",
+        "task_list_on_start",
         "display_duration",
         "on_exit_set_status",
         "on_complete_notify"
