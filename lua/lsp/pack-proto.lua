@@ -21,7 +21,7 @@ local function create_buf_gen_config_file()
   os.execute(cmd)
 end
 
-local function diagnostic_auto_import_config()
+local function formatting_auto_import_config()
 
   local system_config = vim.fn.stdpath "config" .. "buf.yaml"
   local project_config = vim.fn.getcwd() .. "buf.yaml"
@@ -37,7 +37,7 @@ local function diagnostic_auto_import_config()
   null_ls.register(null_ls.builtins.formatting.buf.with(buf_buildins))
 end
 
-local function formatting_auto_import_config()
+local function diagnostic_auto_import_config()
   local system_config = vim.fn.stdpath("config") .. "buf.yaml"
   local project_config = vim.fn.getcwd() .. "buf.yaml"
 

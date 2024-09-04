@@ -9,6 +9,14 @@ return {
       ---@diagnostic disable: missing-fields
       config = {
         emmet_language_server = {
+          init_options = {
+            ---@type boolean Dafault to `true`
+            showAbbreviationSuggestions = false,
+            ---@type "always" | "never" Default to `always`
+            showExpandedAbbreviation = "always",
+            ---@type boolean Default to `false`
+            showSuggestionsAsSignppets = true,
+          },
           filetypes = {
             "css",
             "eruby",

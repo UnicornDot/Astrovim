@@ -8,6 +8,33 @@ return {
   ---@diagnostic disable-next-line: assign-type-mismatch
   opts = function(_, opts)
     local mappings = require("keymapping").core_mappings(opts.mappings)
+    local options = {
+        opt = {
+          conceallevel = 2, -- enable conceal
+          concealcursor = "",
+          list = false, -- show whitespace characters
+          listchars = { tab = "│→", extends = "⟩", precedes = "⟨", trail = "·", nbsp = "␣" },
+          showbreak = "↪ ",
+          splitkeep = "screen",
+          swapfile = false,
+          wrap = false, -- soft wrap lines
+          scrolloff = 8, -- keep 3 lines when scrolling
+        },
+        g = {
+          -- resession_enabled = false,
+          -- transparent_background = true,
+        }
+    }
+
+    if vim.fn.has "nvim-0.10" == 1 then
+      options.opt.smoothscroll = true
+      options.opt.foldexpr = "vim:lua.require'ui'.foldexpr()"
+      options.opt.foldmethod = "expr"
+      options.opt.foldtext = ""
+    else
+      options.opt.foldmethod = "indent"
+      options.opt.foldtext = "vim:lua.require'ui'.foldtext()"
+    end
 
     return require("astrocore").extend_tbl(opts, {
       -- Configure project root detection, check status with `:AstroRootInfo`
@@ -27,23 +54,7 @@ return {
         highlighturl = true, -- highlight URLs at start
         notifications = true, -- enable notifications at start
       },
-      options = {
-        opt = {
-          conceallevel = 2, -- enable conceal
-          concealcursor = "",
-          list = false, -- show whitespace characters
-          listchars = { tab = "│→", extends = "⟩", precedes = "⟨", trail = "·", nbsp = "␣" },
-          showbreak = "↪ ",
-          splitkeep = "screen",
-          swapfile = false,
-          wrap = false, -- soft wrap lines
-          scrolloff = 8, -- keep 3 lines when scrolling
-        },
-        g = {
-          -- resession_enabled = false,
-          -- transparent_background = true,
-        }
-      },
+      options = options,
       mappings = mappings,
       autocmds = {
         auto_spell = {
