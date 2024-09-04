@@ -1,5 +1,5 @@
 --TODO: https://github.com/golang/go/issues/60903
-
+local set_mapppings = require("astrocore").set_mappings
 ---@type LazySpec
 return {
   {
@@ -11,6 +11,14 @@ return {
       config = {
         gopls = {
           on_attach = function(client, _)
+            set_mapppings({
+              n = {
+                ["gi"] = {
+                  [[<cmd>lua require'telescope'.extensions.goimpl.goimpl{}<CR>]],
+                  desc = "Find go interface implementation",
+                },
+              },
+            }, { buffer = true })
             if not client.server_capabilities.semanticTokensProvider then
               local semantic = client.config.capabilities.textDocument.semanticTokens
               client.server_capabilities.semanticTokensProvider = {
@@ -118,6 +126,17 @@ return {
         end,
       },
     },
+  },
+  {
+    "edolphin-ydf/goimpl.nvim",
+    ft = "go",
+    requires = {
+      { "nvim-lua/plenary.nvim" },
+      { "nvim-lua/popup.nvim" },
+      { "nvim-telescope/telescope.nvim" },
+      { "nvim-treesitter/nvim-treesitter" },
+    },
+    config = function() require("telescope").load_extension "goimpl" end,
   },
   {
     "olexsmir/gopher.nvim",
