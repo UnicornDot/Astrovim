@@ -1,6 +1,6 @@
-local utils = require "astrocore"
-local is_available = require("astrocore").is_available
-local set_mappings = require("astrocore").set_mappings
+local astrocore = require "astrocore"
+local is_available = astrocore.is_available
+local set_mappings = astrocore.set_mappings
 
 ---@type LazySpec
 return {
@@ -76,7 +76,7 @@ return {
     optional = true,
     opts = function(_, opts)
       if opts.ensure_installed ~= "all" then
-        opts.ensure_installed = utils.list_insert_unique(opts.ensure_installed, { "python", "toml", "ninja", "rst" })
+        opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "python", "toml", "ninja", "rst" })
       end
     end,
   },
@@ -84,14 +84,14 @@ return {
     "jay-babu/mason-null-ls.nvim",
     optional = true,
     opts = function(_, opts)
-      opts.ensure_installed = utils.list_insert_unique(opts.ensure_installed, { "black", "isort" })
+      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "black", "isort" })
     end,
   },
   {
     "jay-babu/mason-nvim-dap.nvim",
     optional = true,
     opts = function(_, opts)
-      opts.ensure_installed = utils.list_insert_unique(opts.ensure_installed, { "python" })
+      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "python" })
       if not opts.handlers then opts.handlers = {} end
       opts.handlers.python = function() end -- make sure python doesn't get set up by mason-nvim-dap, it's being set up by nvim-dap-python
     end,
@@ -100,7 +100,7 @@ return {
     "williamboman/mason-lspconfig.nvim",
     optional = true,
     opts = function(_, opts)
-      opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, { "basedpyright" })
+      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "basedpyright" })
     end,
   },
   {

@@ -1,5 +1,5 @@
-local utils = require "astrocore"
-local is_available = utils.is_available
+local astrocore = require "astrocore"
+local is_available = astrocore.is_available
 
 ---@type LazySpec
 return {
@@ -7,7 +7,7 @@ return {
     "nvim-treesitter/nvim-treesitter",
     opts = function(_, opts)
       if opts.ensure_installed ~= "all" then
-        opts.ensure_installed = require("astrocore").list_insert_unique(
+        opts.ensure_installed = astrocore.list_insert_unique(
           opts.ensure_installed,
           { "bash", "markdown", "markdown_inline", "regex", "vim" }
         )
@@ -19,7 +19,7 @@ return {
     optional = true,
     ---@param opts AstroLSPOpts
     opts = function(_, opts)
-      local noice_opts = require("astrocore").plugin_opts "noice.nvim"
+      local noice_opts = astrocore.plugin_opts "noice.nvim"
       -- disable the necessary handlers in AstroLSP
       if not opts.lsp_handlers then opts.lsp_handlers = {} end
       if vim.tbl_get(noice_opts, "lsp", "hover", "enabled") ~= false then
@@ -34,7 +34,7 @@ return {
     "heirline.nvim",
     optional = true,
     opts = function(_, opts)
-      local noice_opts = require("astrocore").plugin_opts "noice.nvim"
+      local noice_opts = astrocore.plugin_opts "noice.nvim"
       if vim.tbl_get(noice_opts, "lsp", "progress", "enabled") ~= false then -- check if lsp progress is enabled
         opts.statusline[9] = require("astroui.status").component.lsp { lsp_progress = false }
       end
@@ -46,12 +46,15 @@ return {
     dependencies = {
       "MunifTanjim/nui.nvim",
       "karb94/neoscroll.nvim",
+    },
+    specs = {
+      { "rcarriga/nvim-notify", init = false, config = true },
       {
         "AstroNvim/astrocore",
         ---@param opts AstroLSPOpts
         opts = function(_, opts)
           -- WARNING: There will be a conflict between this button and the neo-scroll button, and we will determine whether to resolve it based on the situation
-          if not opts.mappings then opts.mappings = require("astrocore").empty_map_table() end
+          if not opts.mappings then opts.mappings = astrocore.empty_map_table() end
           local maps = opts.mappings
           if maps then
             if is_available "noice.nvim" then
@@ -113,7 +116,7 @@ return {
       },
     },
     opts = function(_, opts)
-      return utils.extend_tbl(opts, {
+      return astrocore.extend_tbl(opts, {
         lsp = {
           hover = {
             silent = true,

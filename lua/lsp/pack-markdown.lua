@@ -1,4 +1,4 @@
-local utils = require "astrocore"
+local astrocore = require "astrocore"
 
 local markdown_table_change = function()
   vim.ui.input({ prompt = "Separate Char: " }, function(input)
@@ -14,7 +14,7 @@ return {
     "AstroNvim/astrocore",
     ---@param opts AstroCoreOpts
     opts = function(_, opts)
-      return require("astrocore").extend_tbl(opts, {
+      return astrocore.extend_tbl(opts, {
         options = {
           g = {
             mkdp_auto_close = 0,
@@ -32,8 +32,8 @@ return {
       config = {
         marksman = {
           on_attach = function()
-            if utils.is_available "markdown-preview.nvim" then
-              utils.set_mappings({
+            if astrocore.is_available "markdown-preview.nvim" then
+              astrocore.set_mappings({
                 n = {
                   ["<Leader>lz"] = { "<cmd>MarkdownPreview<CR>", desc = "Markdown Start Preview" },
                   ["<Leader>lZ"] = { "<cmd>MarkdownPreviewStop<CR>", desc = "Markdown Stop Preview" },
@@ -55,22 +55,20 @@ return {
     optional = true,
     opts = function(_, opts)
       if opts.ensure_installed ~= "all" then
-        opts.ensure_installed = utils.list_insert_unique(opts.ensure_installed, { "markdown", "markdown_inline", "html" })
+        opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "markdown", "markdown_inline", "html", "latex" })
       end
     end,
   },
   {
     "williamboman/mason-lspconfig.nvim",
     optional = true,
-    opts = function(_, opts) opts.ensure_installed = utils.list_insert_unique(opts.ensure_installed, { "marksman" }) end,
+    opts = function(_, opts) opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "marksman" }) end,
   },
   {
     "jay-babu/mason-null-ls.nvim",
     optional = true,
     opts = function(_, opts)
-      opts.ensure_installed =
-        require("astrocore").list_insert_unique(opts.ensure_installed, { "prettierd", "markdownlint" })
-
+      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed,{ "prettierd", "markdownlint" })
       opts.handlers.markdownlint = function()
         local null_ls = require "null-ls"
         local markdownlint_diagnostics_buildins = null_ls.builtins.diagnostics.markdownlint
@@ -119,4 +117,10 @@ return {
     },
     dependencies = { "nvim-treesitter/nvim-treesitter", "echasnovski/mini.nvim" },
   },
+  {
+    "mattn/vim-maketable",
+    cmd = "MakeTable",
+    event = "BufEnter",
+    ft = "markdown",
+  }
 }

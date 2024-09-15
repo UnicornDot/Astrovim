@@ -111,6 +111,7 @@ pip install pynvim
 
 ```shell
 pip install pillow
+pin install pylatexenc
 ```
 
 ### Input Auto Switch

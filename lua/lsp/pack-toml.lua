@@ -1,5 +1,5 @@
-local utils = require "astrocore"
-local set_mappings = require("astrocore").set_mappings
+local astrocore = require "astrocore"
+local set_mappings = astrocore.set_mappings
 
 ---@type LazySpec
 return {
@@ -37,13 +37,13 @@ return {
     opts = function(_, opts)
       -- Ensure that opts.ensure_installed exists and is a table or string "all".
       if opts.ensure_installed ~= "all" then
-        opts.ensure_installed = utils.list_insert_unique(opts.ensure_installed, { "toml" })
+        opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "toml" })
       end
     end,
   },
   {
     "williamboman/mason-lspconfig.nvim",
     optional = true,
-    opts = function(_, opts) opts.ensure_installed = utils.list_insert_unique(opts.ensure_installed, { "taplo" }) end,
+    opts = function(_, opts) opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "taplo" }) end,
   },
 }

@@ -1,5 +1,27 @@
 --TODO: https://github.com/golang/go/issues/60903
-local set_mapppings = require("astrocore").set_mappings
+local astrocore = require("astrocore")
+local set_mapppings = astrocore.set_mappings
+
+local function preview_stack_trace()
+  local current_line = vim.api.nvim_get_current_line()
+  local patterns_list = {
+    "([^%s]+/[^%s]+%.go):(%d+)", -- 匹配文件路径和行号
+  }
+  local function try_patterns(patterns, line)
+    for _, pattern in ipairs(patterns) do
+      local filepath, line_nr = string.match(line, pattern)
+      if filepath and line_nr then return filepath, tonumber(line_nr), 0 end
+    end
+    return nil, nil, nil
+  end
+  local filepath, line_nr, column_nr = try_patterns(patterns_list, current_line)
+  if filepath then
+    vim.cmd ":wincmd k"
+    vim.cmd("e " .. filepath)
+    vim.api.nvim_win_set_cursor(0, { line_nr, column_nr })
+  end
+end
+
 ---@type LazySpec
 return {
   {
@@ -11,6 +33,23 @@ return {
       config = {
         gopls = {
           on_attach = function(client, _)
+            vim.api.nvim_create_autocmd({ "TermOpen", "TermClose", "BufEnter" },{
+                pattern =  "*",
+                desc = "Jump to error line",
+                callback = function()
+                local buf_name = vim.api.nvim_buf_get_get_name(0)
+                if vim.bo.filetype == "dap-repl" and buf_name:match("%[dap%-repl%-%d+%]") then
+                  set_mapppings({
+                    n = {
+                      ["gd"] = {
+                        preview_stack_trace,
+                        desc = "Jump to error line"
+                      }
+                    }
+                  }, { buffer = true })
+                end
+              end
+            })
             set_mapppings({
               n = {
                 ["gi"] = {
@@ -65,7 +104,6 @@ return {
                 parameterNames = true,
                 rangeVariableTypes = true,
               },
-              buildFlags = { "-tags", "integration" },
               completeUnimported = true,
               diagnosticsDelay = "500ms",
               gofumpt = true,
@@ -86,7 +124,7 @@ return {
     optional = true,
     opts = function(_, opts)
       if opts.ensure_installed ~= "all" then
-        opts.ensure_installed = require("astrocore").list_insert_unique(
+        opts.ensure_installed = astrocore.list_insert_unique(
           opts.ensure_installed,
           { "go", "gomod", "gosum", "gowork" }
         )
@@ -97,7 +135,7 @@ return {
     "jay-babu/mason-null-ls.nvim",
     optional = true,
     opts = function(_, opts)
-      opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, {
+      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, {
         "gomodifytags",
         "gotests",
         "iferr",
@@ -110,20 +148,23 @@ return {
     "williamboman/mason-lspconfig.nvim",
     optional = true,
     opts = function(_, opts)
-      opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, { "gopls" })
+      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "gopls" })
     end,
   },
   {
-    "leoluz/nvim-dap-go",
-    ft = "go",
+    "jay-babu/mason-nvim-dap.nvim",
+    optional = true,
+    opts = function(_, opts)
+      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "delve" })
+    end,
+  },
+  {
+    "mfussenegger/nvim-dap",
+    optional = true,
     dependencies = {
-      "mfussenegger/nvim-dap",
       {
-        "jay-babu/mason-nvim-dap.nvim",
-        optional = true,
-        opts = function(_, opts)
-          opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, { "delve" })
-        end,
+        "leoluz/nvim-dap-go",
+        opts =  {}
       },
     },
   },
@@ -160,7 +201,7 @@ return {
     dependencies = { "nvim-neotest/neotest-go" },
     opts = function(_, opts)
       if not opts.adapters then opts.adapters = {} end
-      table.insert(opts.adapters, require "neotest-go"(require("astrocore").plugin_opts "neotest-go"))
+      table.insert(opts.adapters, require "neotest-go"(astrocore.plugin_opts "neotest-go"))
     end,
   },
   {

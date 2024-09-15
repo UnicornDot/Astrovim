@@ -1,3 +1,4 @@
+local astrocore = require("astrocore")
 local is_vue_project = require("utils").is_vue_project
 
 return {
@@ -7,7 +8,6 @@ return {
     ---@type AstroLSPOpts
     ---@diagnostic disable-next-line: assign-type-mismatch
     opts = function(_, opts)
-      local astrocore = require "astrocore"
       local volar_handler = opts.handlers.volar
       local vtsls_handler = opts.handlers.vtsls
       if not is_vue_project() then
@@ -56,7 +56,7 @@ return {
     optional = true,
     opts = function(_, opts)
       if opts.ensure_installed ~= "all" then
-        opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, { "vue" })
+        opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "vue" })
       end
     end,
   },
@@ -64,14 +64,14 @@ return {
     "williamboman/mason-lspconfig.nvim",
     optional = true,
     opts = function(_, opts)
-      opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, { "volar" })
+      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "volar" })
     end,
   },
   {
     "jay-babu/mason-nvim-dap.nvim",
     optional = true,
     opts = function(_, opts)
-      opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, { "js" })
+      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "js" })
     end,
   },
 }

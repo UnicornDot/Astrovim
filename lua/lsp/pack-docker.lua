@@ -1,18 +1,25 @@
-local utils = require "astrocore"
+local astrocore = require "astrocore"
 
 ---@type LazySpec
 return {
   {
     "AstroNvim/astrocore",
     ---@type AstroCoreOpts
-    opts = { filetypes = { filename = { ["docker-compose.yaml"] = "yaml.docker-compose" } } },
+    opts = {
+      filetypes = {
+        filename = {
+          ["docker-compose.yaml"] = "yaml.docker-compose",
+          ["docker-compose.yml"] = "yaml.docker-compose"
+        },
+      },
+    },
   },
   {
     "nvim-treesitter/nvim-treesitter",
     optional = true,
     opts = function(_, opts)
       if opts.ensure_installed ~= "all" then
-        opts.ensure_installed = utils.list_insert_unique(opts.ensure_installed, { "dockerfile" })
+        opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "dockerfile" })
       end
     end,
   },
@@ -22,14 +29,14 @@ return {
     opts = function(_, opts)
       -- lsp
       opts.ensure_installed =
-        utils.list_insert_unique(opts.ensure_installed, { "docker_compose_language_service", "dockerls" })
+        astrocore.list_insert_unique(opts.ensure_installed, { "docker_compose_language_service", "dockerls" })
     end,
   },
   {
     "jay-babu/mason-null-ls.nvim",
     optional = true,
     opts = function(_, opts)
-      opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, { "hadolint" })
+      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "hadolint" })
     end,
   },
 }

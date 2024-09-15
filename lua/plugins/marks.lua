@@ -28,7 +28,7 @@ return {
         "TelescopePrompt",
         "alpha",
         "netrw",
-        "NeoTree",
+        "neo-tree",
       },
     },
   },

@@ -1,3 +1,4 @@
+local astrocore = require("astrocore")
 return {
   {
     "AstroNvim/astrolsp",
@@ -13,7 +14,7 @@ return {
     optional = true,
     opts = function(_, opts)
       if opts.ensure_installed ~= "all" then
-        opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, { "dart" })
+        opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "dart" })
       end
     end,
   },
@@ -39,14 +40,14 @@ return {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
     optional = true,
     opts = function(_, opts)
-      opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, { "dart-debug-adapter" })
+      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "dart-debug-adapter" })
     end,
   },
   {
     "jay-babu/mason-nvim-dap.nvim",
     optional = true,
     opts = function(_, opts)
-      opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, { "dart" })
+      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "dart" })
     end,
   },
 }

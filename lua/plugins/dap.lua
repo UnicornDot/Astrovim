@@ -33,14 +33,11 @@ return {
             desc = "Telescope DAP variables",
           },
           [prefix_debug .. "q"] = {
-            function()
-              require("dap").close()
-              vim.schedule(function()
-                local controls = require("dapui.controls")
-                controls.refresh_control_panel()
-                vim.cmd [[DapVirtualTextForceRefresh]]
-              end)
-            end,
+            function() require("dap").terminate() end,
+            desc = "Terminal Session(S-F5)",
+          },
+          [prefix_debug .. "Q"] = {
+            function() require("dap").close() end,
             desc = "Close Session",
           },
           [prefix_debug .. "j"] = {

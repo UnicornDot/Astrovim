@@ -88,6 +88,27 @@ return {
   "hrsh7th/nvim-cmp",
   dependencies = {
     {
+      "petertriho/cmp-git",
+      ft = { "gitcommit", "octo", "NeogitCommitMessage" },
+      dependencies = { "hrsh7th/nvim-cmp" },
+      opts = function(plugin, opts)
+        opts.filetypes = require("lazy.core.plugin").values(assert(require("astrocore").get_plugin(plugin.name)), "ft")
+      end,
+      config = function(_, opts)
+        local cmp = require "cmp"
+        if opts.filetypes then
+          cmp.setup.filetype(opts.filetypes, {
+            sources = cmp.config.sources({
+              { name = "git" },
+            }, {
+              { name = "buffer" },
+            }),
+          })
+        end
+        require("cmp_git").setup(opts)
+      end,
+    },
+    {
       "hrsh7th/cmp-cmdline",
       keys = { ":", "/", "?" }, -- lazy load cmp on more keys along with insert mode
       dependencies = { "hrsh7th/nvim-cmp" },
@@ -165,7 +186,9 @@ return {
               return true
             end
           end,
-          priority = 1000 },
+          option = { markdown_oxide = { keyword_pattern = [[\(\k\| \|\/\|#\)\+]] } },
+          priority = 1000
+        },
         { name = "luasnip", priority = 750 },
         { name = "pandoc_references", priority = 725 },
         { name = "latex_symbols", priority = 700 },

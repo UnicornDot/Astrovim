@@ -1,10 +1,11 @@
+local astrocore = require("astrocore")
 return {
   {
     "nvim-treesitter/nvim-treesitter",
     optional = true,
     opts = function(_, opts)
       if opts.ensure_installed ~= "all" then
-        opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, { "kotlin" })
+        opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "kotlin" })
       end
     end,
   },
@@ -13,7 +14,7 @@ return {
     optional = true,
     opts = function(_, opts)
       opts.ensure_installed =
-        require("astrocore").list_insert_unique(opts.ensure_installed, { "kotlin_language_server" })
+        astrocore.list_insert_unique(opts.ensure_installed, { "kotlin_language_server" })
     end,
   },
 
@@ -21,7 +22,7 @@ return {
     "jay-babu/mason-null-ls.nvim",
     optional = true,
     opts = function(_, opts)
-      opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, { "ktlint" })
+      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "ktlint" })
     end,
   },
 
@@ -29,14 +30,14 @@ return {
     "jay-babu/mason-nvim-dap.nvim",
     optional = true,
     opts = function(_, opts)
-      opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, { "kotlin" })
+      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "kotlin" })
     end,
   },
   {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
     optional = true,
     opts = function(_, opts)
-      opts.ensure_installed = require("astrocore").list_insert_unique(
+      opts.ensure_installed = astrocore.list_insert_unique(
         opts.ensure_installed,
         { "kotlin-language-server", "ktlint", "kotlin-debug-adapter" }
       )

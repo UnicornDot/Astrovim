@@ -1,4 +1,5 @@
-local set_mappings = require("astrocore").set_mappings
+local astrocore = require("astrocore")
+local set_mappings = astrocore.set_mappings
 local decode_json = require("utils").decode_json
 local check_json_key_exists = require("utils").check_json_key_exists
 
@@ -35,7 +36,7 @@ local has_prettier = function(bufnr)
     }
   end
   local prettier_dependency = false
-  for _, root in ipairs(require("astrocore").list_insert_unique(lsp_rooter(bufnr), { vim.fn.getcwd() })) do
+  for _, root in ipairs(astrocore.list_insert_unique(lsp_rooter(bufnr), { vim.fn.getcwd() })) do
     local package_json = decode_json(root .. "/package.json")
     if
       package_json
@@ -141,7 +142,7 @@ return {
     optional = true,
     opts = function(_, opts)
       if opts.ensure_installed ~= "all" then
-        opts.ensure_installed = require("astrocore").list_insert_unique(
+        opts.ensure_installed = astrocore.list_insert_unique(
           opts.ensure_installed,
           { "javascript", "typescript", "tsx", "jsdoc", "vue" }
         )
@@ -151,7 +152,7 @@ return {
   {
     "williamboman/mason-lspconfig.nvim",
     opts = function(_, opts)
-      opts.ensure_installed = require("astrocore").list_insert_unique(
+      opts.ensure_installed = astrocore.list_insert_unique(
         opts.ensure_installed,
         { "eslint", "vtsls", "volar" }
       )
@@ -161,7 +162,7 @@ return {
     "jay-babu/mason-null-ls.nvim",
     optional = true,
     opts = function(_, opts)
-      opts.ensure_installed = require("astrocore").list_insert_unique(
+      opts.ensure_installed = astrocore.list_insert_unique(
         opts.ensure_installed,
         { "prettierd" }
       )
@@ -182,7 +183,7 @@ return {
     "jay-babu/mason-nvim-dap.nvim",
     optional = true,
     opts = function(_, opts)
-      opts.ensure_installed = require("astrocore").list_insert_unique(
+      opts.ensure_installed = astrocore.list_insert_unique(
         opts.ensure_installed,
         { "js" }
       )
@@ -269,11 +270,13 @@ return {
     "nvim-neotest/neotest",
     optional = true,
     dependencies = {
-      "marilari88/neotest-vitest",
+      { "marilari88/neotest-vitest" },
+      { "nvim-neotest/neotest-jest", config = function() end } 
     },
     opts = function(_, opts)
       if not opts.adapters then opts.adapters = {} end
       table.insert(opts.adapters, require "neotest-vitest"(require("astrocore").plugin_opts "neotest-vitest"))
+      table.insert(opts.adapters, require "neotest-jest"(require("astrocore").plugin_opts "neotest-jest"))
     end,
   },
   {

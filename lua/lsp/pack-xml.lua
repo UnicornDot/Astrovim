@@ -1,10 +1,11 @@
+local astrocore = require("astrocore")
 return {
   {
     "nvim-treesitter/nvim-treesitter",
     optional = true,
     opts = function(_, opts)
       if opts.ensure_installed ~= "all" then
-        opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, { "xml", "html" })
+        opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "xml", "html" })
       end
     end,
   },
@@ -12,7 +13,7 @@ return {
     "williamboman/mason-lspconfig.nvim",
     optional = true,
     opts = function(_, opts)
-      opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, { "lemminx" })
+      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "lemminx" })
     end,
   },
 }

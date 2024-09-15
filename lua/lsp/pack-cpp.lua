@@ -1,4 +1,4 @@
-local utils = require("astrocore")
+local astrocore = require("astrocore")
 local uname = (vim.uv or vim.loop).os_uname()
 local is_linux_arm = uname.sysname == "Linux" and (uname.machine == "aarch64" or vim.startswith(uname.machine, "arm"))
 
@@ -15,7 +15,7 @@ return {
         },
       })
       if is_linux_arm then
-        opts.servers = require("astrocore").list_insert_unique(opts.servers, { "clangd"})
+        opts.servers = astrocore.list_insert_unique(opts.servers, { "clangd"})
       end
     end
   },
@@ -24,7 +24,7 @@ return {
     optional = true,
     opts = function(_, opts)
       if opts.ensure_installed ~= "all" then
-        opts.ensure_installed = utils.list_insert_unique(opts.ensure_installed, { "c", "cpp", "objc", "cuda", "proto" })
+        opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "c", "cpp", "objc", "cuda", "proto" })
       end
     end,
   },
@@ -33,7 +33,7 @@ return {
     optional = true,
     opts = function(_, opts)
       if not is_linux_arm then
-        opts.ensure_installed = utils.list_insert_unique(opts.ensure_installed, { "clangd" })
+        opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "clangd" })
       end
     end,
   },
@@ -62,7 +62,7 @@ return {
               desc = "Load clangd_extensions with clangd",
               callback = function(args)
                 if assert(vim.lsp.get_client_by_id(args.data.client_id)).name == "clangd" then
-                  require("astrocore").set_mappings({
+                  astrocore.set_mappings({
                     n = {
                       ["<Leader>lw"] = { "<Cmd>ClangdSwitchSourceHeader<CR>", desc = "Switch source/header file" },
                     },
@@ -82,7 +82,7 @@ return {
       {
         "jay-babu/mason-nvim-dap.nvim",
         opts = function(_, opts)
-          opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, { "codelldb" })
+          opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "codelldb" })
         end,
       },
     },
@@ -94,7 +94,7 @@ return {
     opts = function(_, opts)
       local tools = { "codelldb" }
       if not is_linux_arm then table.insert(tools, "clangd") end
-      opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, tools)
+      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, tools)
     end,
   }
 }
