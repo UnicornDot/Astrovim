@@ -37,7 +37,7 @@ return {
                 pattern =  "*",
                 desc = "Jump to error line",
                 callback = function()
-                local buf_name = vim.api.nvim_buf_get_get_name(0)
+                local buf_name = vim.api.nvim_buf_get_name(0)
                 if vim.bo.filetype == "dap-repl" and buf_name:match("%[dap%-repl%-%d+%]") then
                   set_mapppings({
                     n = {
