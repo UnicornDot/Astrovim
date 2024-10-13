@@ -1,6 +1,7 @@
 local astrocore = require "astrocore"
 local is_available = astrocore.is_available
 local set_mappings = astrocore.set_mappings
+local utils = require("utils")
 
 ---@type LazySpec
 return {
@@ -105,25 +106,29 @@ return {
   },
   {
     "linux-cultist/venv-selector.nvim",
-    opts = {
-      anaconda_base_path = "~/miniconda3",
-      anaconda_envs_path = "~/miniconda3/envs",
-      stay_on_this_version = true,
-      dap_enabled = true,
-      settings = {
-        options = {
-          notify_user_on_venv_activation = true,
-        },
-      },
+    ft = "python",
+    branch = "regexp",
+    enabled = vim.fn.executable("fd") == 1 or vim.fn.executable("fdfind") == 1 or vim.fn.executable("fd-find") == 1,
+    dependencies = {
+      "nvim-telescope/telescope.nvim",
+      branch = "0.1.x",
+      dependencies = {
+        "nvim-lua/plenary.nvim"
+      }
     },
-    cmd = { "VenvSelect", "VenvSelectCached" },
+    opts = {},
+    cmd = "VenvSelect",
   },
   {
     "mfussenegger/nvim-dap-python",
     dependencies = "mfussenegger/nvim-dap",
     ft = "python", -- NOTE: ft: lazy-load on filetype
     config = function()
-      require("dap-python").setup("python", {})
+      if vim.fn.has("win32") == 1 then
+        require("dap-python").setup(utils.get_pkg_path("debugpy", "/venv/Scripts/python.exe"))
+      else
+        require("dap-python").setup(utils.get_pkg_path("debugpy", "/venv/bin/python"))
+      end
     end,
   },
   {

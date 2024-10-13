@@ -109,6 +109,10 @@ return {
             require("utils").create_launch_json,
             desc = "Create Dap Launch Json"
           },
+          [prefix_dap .. "g"] = {
+            function() vim.cmd [[DapShowLog]] end,
+            desc = "Show Dap Log",
+          },
           [prefix_debug .. "h"] = {
             function() require("dap.ui.widgets").hover()end,
             desc = "Debugger Hover",

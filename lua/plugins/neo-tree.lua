@@ -106,10 +106,13 @@ local file_extension_mapping = {
 return {
   {
     "nvim-neo-tree/neo-tree.nvim",
+    deactivate = function() vim.cmd [[Neotree close]] end,
     opts = function(_, opts)
       local neo_tree_events = require "neo-tree.events"
-
       return require("astrocore").extend_tbl(opts, {
+        open_files_do_not_replace_types = {
+          "terminal", "Trouble", "trouble", "qf", "Outline"
+        },
         event_handlers = {
           {
             event = neo_tree_events.FILE_ADDED,

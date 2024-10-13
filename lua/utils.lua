@@ -3,7 +3,37 @@ local M = {}
 local astro = require("astrocore")
 local uv = vim.uv or vim.loop
 
-function M.file_exists(filepath) 
+
+--- Get a path to a package in the mason registry
+--- prefer this to `get_package`, since the package might not always be
+--- available yet and trigger errors
+--- @param pkg string
+--- @param path? string
+--- @param opts? { warn?: boolean}
+function M.get_pkg_path(pkg, path, opts)
+  pcall(require,"mason") -- make sure Mason is loaded, will fail when generating docs
+  local root = vim.env.MASON or (vim.fn.stdpath "data" .. "/mason")
+  opts = opts or {}
+  opts.warn = opts.warn == nil and true or opts.warn
+  path = path or ""
+  local ret = root .. "/packages/" .. pkg .. "/" .. path
+  if opts.warn and not vim.loop.fs_stat(ret) and not require("lazy.core.config").headless() then
+    M.warn(
+      ("Mason package path not found for **%s**:\n- `%s`\nYou may need to force update the package."):format(pkg, path)
+    )
+  end
+  return ret
+end
+
+
+function M.get_global_npm_path()
+  if uv.os_uname().version:find("Windows") then
+    return vim.fn.system "cmd.exe /c npm root -g"
+  end
+  return vim.fn.system "npm root -g"
+end
+
+function M.file_exists(filepath)
   return vim.fn.glob(filepath) ~= ""
 end
 
@@ -16,7 +46,7 @@ function M.insert_to_file_first_line(path, content)
   end
 
   stat, _, err_msg = uv.fs_stat(fd)
-  if not stat then 
+  if not stat then
     print("Error getting file stats: " .. (err_msg or "unknown error"))
     uv.fs_close(fd)
     return
