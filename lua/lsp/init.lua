@@ -23,6 +23,9 @@ end
 
 return {
   "AstroNvim/astrolsp",
+  version = false,
+  branch = "v3",
+
   ---@type AstroLSPOpts
   ---@diagnostic disable-next-line: assign-type-mismatch
   opts = function(_, opts)
@@ -35,12 +38,14 @@ return {
         lsp_handlers = true, -- enable/disable setting of lsp_handlers
         semantic_tokens = true, -- enable/disable semantic token highlighting
         inlay_hints = true,
-        signature_help = false,
+        signature_help = true,
       },
       -- Configuration options for controlling formatting with language servers
       formatting = {
         -- control auto formatting on save
-        format_on_save = false,
+        format_on_save = {
+          enabled = false,
+        },
         -- disable formatting capabilities for specific language servers
         disabled = {},
         -- default format timeout

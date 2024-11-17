@@ -1,45 +1,13 @@
 local astrocore = require "astrocore"
 local is_available = astrocore.is_available
 
+-- test filter
+-- string.find(
+--   'vim.lsp.get_active_clients() is deprecated, Run ":checkhealth vim.deprecated" fror more information',
+--   ".*vim.lsp.get_active_clients() is deprecated.*"
+-- )
 ---@type LazySpec
 return {
-  {
-    "nvim-treesitter/nvim-treesitter",
-    opts = function(_, opts)
-      if opts.ensure_installed ~= "all" then
-        opts.ensure_installed = astrocore.list_insert_unique(
-          opts.ensure_installed,
-          { "bash", "markdown", "markdown_inline", "regex", "vim" }
-        )
-      end
-    end,
-  },
-  {
-    "AstroNvim/astrolsp",
-    optional = true,
-    ---@param opts AstroLSPOpts
-    opts = function(_, opts)
-      local noice_opts = astrocore.plugin_opts "noice.nvim"
-      -- disable the necessary handlers in AstroLSP
-      if not opts.lsp_handlers then opts.lsp_handlers = {} end
-      if vim.tbl_get(noice_opts, "lsp", "hover", "enabled") ~= false then
-        opts.lsp_handlers["textDocument/hover"] = false
-      end
-      if vim.tbl_get(noice_opts, "lsp", "signature", "enabled") ~= false then
-        opts.lsp_handlers["textDocument/signatureHelp"] = false
-      end
-    end,
-  },
-  {
-    "heirline.nvim",
-    optional = true,
-    opts = function(_, opts)
-      local noice_opts = astrocore.plugin_opts "noice.nvim"
-      if vim.tbl_get(noice_opts, "lsp", "progress", "enabled") ~= false then -- check if lsp progress is enabled
-        opts.statusline[9] = require("astroui.status").component.lsp { lsp_progress = false }
-      end
-    end,
-  },
   {
     "folke/noice.nvim",
     event = "VeryLazy",
@@ -48,7 +16,6 @@ return {
       "karb94/neoscroll.nvim",
     },
     specs = {
-      { "rcarriga/nvim-notify", init = false, config = true },
       {
         "AstroNvim/astrocore",
         ---@param opts AstroLSPOpts
@@ -114,11 +81,49 @@ return {
           opts.mappings = maps
         end,
       },
+      {
+        "AstroNvim/astrolsp",
+        optional = true,
+        ---@param opts AstroLSPOpts
+        opts = function(_, opts)
+          local noice_opts = astrocore.plugin_opts "noice.nvim"
+          -- disable the necessary handlers in AstroLSP
+          if not opts.lsp_handlers then opts.lsp_handlers = {} end
+          if vim.tbl_get(noice_opts, "lsp", "hover", "enabled") ~= false then
+            opts.lsp_handlers["textDocument/hover"] = false
+          end
+          if vim.tbl_get(noice_opts, "lsp", "signature", "enabled") ~= false then
+            opts.lsp_handlers["textDocument/signatureHelp"] = false
+          end
+        end,
+      },
+      {
+        "nvim-treesitter/nvim-treesitter",
+        opts = function(_, opts)
+          if opts.ensure_installed ~= "all" then
+            opts.ensure_installed = astrocore.list_insert_unique(
+              opts.ensure_installed,
+              { "bash", "markdown", "markdown_inline", "regex", "vim" }
+            )
+          end
+        end,
+      },
+      {
+        "heirline.nvim",
+        optional = true,
+        opts = function(_, opts)
+          local noice_opts = astrocore.plugin_opts "noice.nvim"
+          if vim.tbl_get(noice_opts, "lsp", "progress", "enabled") ~= false then -- check if lsp progress is enabled
+            opts.statusline[9] = require("astroui.status").component.lsp { lsp_progress = false }
+          end
+        end,
+      },
     },
     opts = function(_, opts)
       return astrocore.extend_tbl(opts, {
         lsp = {
           hover = {
+            enabled = false,
             silent = true,
           },
           -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
@@ -128,7 +133,7 @@ return {
             ["cmp.entry.get_documentation"] = true,
           },
           signature = {
-            enabled = true,
+            enabled = false,
             auto_open = {
               enabled = true,
               trigger = true, -- Automatically show signature help when typing a trigger character from the LSP
@@ -155,9 +160,12 @@ return {
           { filter = { event = "msg_show", find = "DB: Query%s" }, opts = { skip = true } },
           { filter = { event = "msg_show", find = "%swritten" }, opts = { skip = true } },
           { filter = { event = "msg_show", find = "%schange;%s" }, opts = { skip = true } },
-          {
-            filter = { event = 'lsp', find = "%-32603: Invalid offset%" }, opts = { skip = true},
-          }
+          { filter = { event = "msg_show", find = "%s已写入" }, opts = { skip = true } },
+          { filter = { event = "msg_show", find = ".*行发生改变.*" }, opts = { skip = true } },
+          { filter = { event = "msg_show", find = ".*fewer lines" }, opts = { skip = true } },
+          { filter = { event = "msg_show", find = ".*vim.tbl_islist is deprecated.*" }, opts = { skip = true } },
+          { filter = { event = 'msg_show', find = '.*Run ":checkhealth vim.deprecated".*' }, opts = { skip = true} },
+          { filter = { event = 'msg_show', find = "%-32603: Invalid offset%" }, opts = { skip = true} },
         },
       })
     end,

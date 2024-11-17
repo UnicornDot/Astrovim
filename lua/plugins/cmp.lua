@@ -1,3 +1,15 @@
+local function tailwind(entry, item)
+  local entryItem = entry:get_completion_item()
+  local color = entryItem.documentation
+
+  if color and type(color) == "string" and color:match "#%x%x%x%x%x%x" then
+    local hl = "hex-" .. color:sub(2)
+    if #vim.api.nvim_get_hl(0, { name = hl }) == 0 then vim.api.nvim_set_hl(0, hl, { fg = color }) end
+    item.kind = " 󱓻 "
+    item.kind_hl_group = hl
+  end
+end
+
 local function has_words_before()
   local line, col = unpack(vim.api.nvim_win_get_cursor(0))
   return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match "%s" == nil
@@ -41,7 +53,7 @@ local function mapping(is_cmdline)
           fallback()
         end
       end
-    end, { "i", "c" }),
+    end, { "i", "s", "c" }),
     ["<S-Tab>"] = cmp.config.disable,
   }
 end
@@ -51,17 +63,10 @@ local function trim(s)
   return (s:gsub("^%s*(.-)%s*$", "%1"))
 end
 
-local function truncateString(s, maxLength)
-  if #s > maxLength then
-    return string.sub(s, 1, maxLength) .. "..."
-  else
-    return s
-  end
-end
-
 local formatting_style = {
   fields = { "kind", "abbr", "menu"},
   format = function(entry, item)
+    local _, hl, _ = require("mini.icons").get("lsp", item.kind or "")
     local icons = require "icons.lspkind"
     local icon = icons[item.kind] or ""
     local source_names = {
@@ -78,40 +83,21 @@ local formatting_style = {
       treesitter = "(TreeSitter)",
     }
     item.kind = string.format("%s", icon)
+    item.kind_hl_group = hl
     item.abbr = trim(item.abbr)
     item.menu = source_names[entry.source.name]
+    item.menu_hl_group = "Comment"
+    tailwind(entry, item)
     return item
   end,
 }
 
 return {
   "hrsh7th/nvim-cmp",
-  dependencies = {
-    {
-      "petertriho/cmp-git",
-      ft = { "gitcommit", "octo", "NeogitCommitMessage" },
-      dependencies = { "hrsh7th/nvim-cmp" },
-      opts = function(plugin, opts)
-        opts.filetypes = require("lazy.core.plugin").values(assert(require("astrocore").get_plugin(plugin.name)), "ft")
-      end,
-      config = function(_, opts)
-        local cmp = require "cmp"
-        if opts.filetypes then
-          cmp.setup.filetype(opts.filetypes, {
-            sources = cmp.config.sources({
-              { name = "git" },
-            }, {
-              { name = "buffer" },
-            }),
-          })
-        end
-        require("cmp_git").setup(opts)
-      end,
-    },
+  specs = {
     {
       "hrsh7th/cmp-cmdline",
       keys = { ":", "/", "?" }, -- lazy load cmp on more keys along with insert mode
-      dependencies = { "hrsh7th/nvim-cmp" },
       opts = function()
         local cmp = require "cmp"
         return {
@@ -143,10 +129,18 @@ return {
         vim.tbl_map(function(val) cmp.setup.cmdline(val.type, val) end, opts)
       end,
     },
+  },
+  dependencies = {
     "hrsh7th/cmp-calc",
     "hrsh7th/cmp-emoji",
+    "SergioRibera/cmp-dotenv",
     "jc-doyle/cmp-pandoc-references",
     "kdheepak/cmp-latex-symbols",
+    {
+      "vrslev/cmp-pypi",
+      ft = "toml",
+    },
+    "echasnovski/mini.icons",
   },
   opts = function(_, opts)
     local cmp = require "cmp"
@@ -158,8 +152,14 @@ return {
         completion = {
           col_offset = 1,
           side_padding = 1,
-          scrollbar = false
+          scrollbar = false,
+          border = "rounded",
+          winhighlight = "Normal:CmpDocumentation,CursorLine:PmenuSel,Search:None,FloatBorder:CmpDocumentationBorder",
         },
+        documentation = {
+          border = "rounded",
+          winhighlight = "Normal:CmpDocumentation,FloatBorder:CmpDocumentationBorder",
+        }
       },
       confirm_opts = {
         behavior = ConformBehavior.Replace,
@@ -190,12 +190,14 @@ return {
           priority = 1000
         },
         { name = "luasnip", priority = 750 },
+        { name = "dotenv", priority = 730 },
         { name = "pandoc_references", priority = 725 },
         { name = "latex_symbols", priority = 700 },
         { name = "emoji", priority = 700 },
         { name = "calc", priority = 650 },
         { name = "path", priority = 500 },
         { name = "buffer", priority = 250 },
+        { name = "pypi", keyword_length = 4 },
       },
       sorting = {
         comparators = {

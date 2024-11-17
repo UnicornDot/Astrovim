@@ -13,6 +13,12 @@ return {
           ---@diagnostic disable: missing-fields
           config = {
             yamlls = {
+              on_attach = function(client, _)
+                -- Neovim < 0.10 does not have dynamic refistration for formatting
+                if vim.fn.has "nvim-0.10" == 0 then
+                  client.server_capabilities.documentFormattingProvider = true 
+                end
+              end,
               on_new_config = function(config)
                 config.settings.yaml.schemas = vim.tbl_deep_extend(
                   "force",
@@ -37,15 +43,20 @@ return {
     end,
   },
   {
-    "williamboman/mason-lspconfig.nvim",
+    "WhoIsSethDaniel/mason-tool-installer.nvim",
     optional = true,
-    opts = function(_, opts) opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "yamlls" }) end,
-  },
-  {
-    "jay-babu/mason-null-ls.nvim",
-    optional = true,
-    opts = function(_, opts)
-      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "prettierd" })
+    opts = function(_, opts) opts.ensure_installed = astrocore.list_insert_unique(
+      opts.ensure_installed,
+      { "yaml-language-server", "prettierd" })
     end,
   },
+  {
+    "stevearc/conform.nvim",
+    optional = true,
+    opts = {
+      formatters_by_ft = {
+        yaml = { "prettierd", "prettier", stop_after_first = true },
+      },
+    },
+  }
 }

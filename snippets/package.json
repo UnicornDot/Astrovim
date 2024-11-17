@@ -62,6 +62,10 @@
       {
         "language": "markdown",
         "path": "./jinja/jinja-markdown.json"
+      },
+      {
+        "language": "rust",
+        "path": "./init/rust.json"
       }
     ]
   }

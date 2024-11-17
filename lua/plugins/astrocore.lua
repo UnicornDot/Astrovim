@@ -3,6 +3,8 @@ local utils = require "utils"
 -- @type LazySpec
 return {
   "AstroNvim/astrocore",
+  version = false,
+  branch = "v2",
   ---@type AstroCoreOpts
   ---@diagnostic disable-next-line: assign-type-mismatch
   opts = function(_, opts)
@@ -22,6 +24,7 @@ return {
       g = {
         -- resession_enabled = false,
         -- transparent_background = true,
+        autoformat = false,
       }
     }
 
@@ -46,7 +49,7 @@ return {
       },
       -- modify core features of AstroNvim
       features = {
-        large_buf = { size = 1024 * 100, lines = 10000 }, -- set global limits for large files for disabling features like treesitter
+        large_buf = { size = 1024 * 1024 * 1.5, lines = 10000 }, -- set global limits for large files for disabling features like treesitter
         autopairs = true, -- enable autopairs at start
         cmp = true, -- enable completion at start
         diagnostics_mode = 3, -- diagnostics_mode on start (0 = off, 1 = no sign/virtual text, 2 = no virtual text, 3 = on)

@@ -1,5 +1,6 @@
 local M = {}
 local utils = require "utils"
+local astrobuffer = require "astrocore.buffer"
 
 function M.core_mappings(mappings)
   if not mappings then mappings = require("astrocore").empty_map_table() end
@@ -43,14 +44,13 @@ function M.core_mappings(mappings)
     -- 在visual mode 里粘贴不要复制
     maps.n["x"] = { '"_x', desc = "Cut without copy" }
 
+    maps.n["<TAB>"] = { function() astrobuffer.nav(vim.v.count > 0 and vim.v.count or 1) end, desc = "Next buffer" }
+    maps.n["<S-TAB>"] = { function() astrobuffer.nav(-(vim.v.count > 0 and vim.v.count or 1)) end, desc = "Previous buffer" }
+
+
     -- close search highlight
     maps.n["<Leader>th"] = { ":nohlsearch<CR>", desc = "Close search highlight" }
     maps.n["<Leader><Leader>"] = { desc = "User" }
-
-    maps.n["n"] = { "nzz" }
-    maps.n["N"] = { "Nzz" }
-    maps.v["n"] = { "nzz" }
-    maps.v["N"] = { "Nzz" }
 
     maps.n.n = { utils.better_search "n", desc = "Next search" }
     maps.n.N = { utils.better_search "N", desc = "Previous search" }

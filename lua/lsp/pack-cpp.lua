@@ -29,15 +29,6 @@ return {
     end,
   },
   {
-    "williamboman/mason-lspconfig.nvim",
-    optional = true,
-    opts = function(_, opts)
-      if not is_linux_arm then
-        opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "clangd" })
-      end
-    end,
-  },
-  {
     "p00f/clangd_extensions.nvim",
     lazy = true,
     dependencies = {

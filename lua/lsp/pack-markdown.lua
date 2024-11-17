@@ -1,4 +1,5 @@
 local astrocore = require "astrocore"
+local utils = require "utils"
 
 local markdown_table_change = function()
   vim.ui.input({ prompt = "Separate Char: " }, function(input)
@@ -6,6 +7,26 @@ local markdown_table_change = function()
     local execute_command = ([[:'<,'>MakeTable! ]] .. input)
     vim.cmd(execute_command)
   end)
+end
+
+local function diagnostic()
+  local system_config = vim.fn.stdpath "config" .. "/.markdownlint.jsonc"
+  local project_config = vim.fn.getcwd() .. "/.markdownlint.jsonc"
+
+  local markdownlint = require("lint").linters.markdownlint
+  if not utils.contains_arg(markdownlint.args, "--config") then
+    table.insert(markdownlint.args, "--config")
+  end
+  if vim.fn.filereadable(project_config) == 1 then
+    if not utils.contains_arg(markdownlint.args, project_config) then
+      table.insert(markdownlint.args, project_config)
+    end
+  else
+    if not utils.contains_arg(markdownlint.args, system_config) then
+      table.insert(markdownlint.args, system_config)
+    end
+  end
+  return markdownlint.args
 end
 
 ---@type LazySpec
@@ -60,30 +81,12 @@ return {
     end,
   },
   {
-    "williamboman/mason-lspconfig.nvim",
+    "WhoIsSethDaniel/mason-tool-installer.nvim",
     optional = true,
-    opts = function(_, opts) opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "marksman" }) end,
-  },
-  {
-    "jay-babu/mason-null-ls.nvim",
-    optional = true,
-    opts = function(_, opts)
-      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed,{ "prettierd", "markdownlint" })
-      opts.handlers.markdownlint = function()
-        local null_ls = require "null-ls"
-        local markdownlint_diagnostics_buildins = null_ls.builtins.diagnostics.markdownlint
-        table.insert(markdownlint_diagnostics_buildins._opts.args, "--config")
-        local system_config = vim.fn.stdpath "config" .. "/.markdownlint.jsonc"
-        local project_config = vim.fn.getcwd() .. "/.markdownlint.jsonc"
-        if vim.fn.filereadable(project_config) == 1 then
-          table.insert(markdownlint_diagnostics_buildins._opts.args, project_config)
-        else
-          table.insert(markdownlint_diagnostics_buildins._opts.args, system_config)
-        end
-        null_ls.register(null_ls.builtins.diagnostics.markdownlint.with {
-          generator_opts = markdownlint_diagnostics_buildins._opts,
-        })
-      end
+    opts = function(_, opts) opts.ensure_installed = astrocore.list_insert_unique(
+      opts.ensure_installed,
+      { "marksman", "prettierd", "markdownlint" }
+    )
     end,
   },
   {
@@ -122,5 +125,28 @@ return {
     cmd = "MakeTable",
     event = "BufEnter",
     ft = "markdown",
+  },
+  {
+    "stevearc/conform.nvim",
+    optional = true,
+    opts = {
+      formatters_by_ft = {
+        markdown = { "prettierd", "prettier", stop_after_first = true },
+      },
+    },
+  },
+  {
+    "mfussenegger/nvim-lint",
+    optional = true,
+    opts = {
+      linters = {
+        markdownlint = {
+          args = diagnostic()
+        }
+      },
+      linters_by_ft = {
+        markdown = { "markdownlint" }
+      }
+    }
   }
 }

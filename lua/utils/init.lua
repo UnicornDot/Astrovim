@@ -1,8 +1,14 @@
 local M = {}
-
-local astro = require("astrocore")
+local astrocore = require("astrocore")
 local uv = vim.uv or vim.loop
 
+--- 检查是否存在 `--config` 参数
+function M.contains_arg(args, arg)
+  for _, value in pairs(args) do
+    if value == arg then return true end
+  end
+  return false
+end
 
 --- Get a path to a package in the mason registry
 --- prefer this to `get_package`, since the package might not always be
@@ -18,9 +24,12 @@ function M.get_pkg_path(pkg, path, opts)
   path = path or ""
   local ret = root .. "/packages/" .. pkg .. "/" .. path
   if opts.warn and not vim.loop.fs_stat(ret) and not require("lazy.core.config").headless() then
-    M.warn(
-      ("Mason package path not found for **%s**:\n- `%s`\nYou may need to force update the package."):format(pkg, path)
-    )
+    vim.schedule(function ()
+      vim.notify(
+        ("Mason package path not found for **%s**:\n- `%s`\nYou may need to force update the package."):format(pkg, path),
+        vim.log.levels.WARN
+      )
+    end)
   end
   return ret
 end
@@ -204,7 +213,9 @@ end
 function M.select_ui(vals, prompt, callback)
   local options = vim.tbl_filter(function(val) return vals[val] ~= "" end, vim.tbl_keys(vals))
   if vim.tbl_isempty(options) then
-    astro.notify("No values to select", vim.log.levels.WARN)
+    vim.schedule(function()
+      vim.notify("No values to select", vim.log.levels.WARN)
+    end)
     return
   end
 
@@ -218,7 +229,9 @@ function M.select_ui(vals, prompt, callback)
     if result then
       if callback then callback(result) end
     else
-      astro.notify("No item selected", vim.log.levels.WARN)
+      vim.schedule(function ()
+        vim.notify("No item selected", vim.log.levels.WARN)
+      end)
     end
   end)
 end
@@ -270,7 +283,7 @@ function M.is_vue_project(bufnr)
   end
 
   local vue_dependency = false
-  for _, root in ipairs(require("astrocore").list_insert_unique(lsp_rooter(bufnr), { vim.fn.getcwd() })) do
+  for _, root in ipairs(astrocore.list_insert_unique(lsp_rooter(bufnr), { vim.fn.getcwd() })) do
     local package_json = M.decode_json(root .. "/package.json")
     if
       package_json
@@ -303,7 +316,9 @@ function M.copy_file(source_file, target_file)
   cmd = string.format("cp %s %s", vim.fn.shellescape(source_file), vim.fn.shellescape(target_file))
   os.execute(cmd)
 
-  vim.notify("File " .. target_file .. " created success.", vim.log.levels.INFO)
+  vim.schedule(function ()
+    vim.notify("File " .. target_file .. " created success.", vim.log.levels.INFO)
+  end)
 end
 
 function M.get_filename_with_extension_from_path(path)
@@ -315,6 +330,17 @@ function M.get_launch_json_by_source_file(source_file)
   local file_exist = M.file_exists(target_file)
   if file_exist then
     local confirm = vim.fn.confirm("File `.vscode/launch.json` Exists, Overwrite it? &Yes\n&No", 1, "Question")
+    if confirm == 1 then M.copy_file(source_file, target_file) end
+  else
+    M.copy_file(source_file, target_file)
+  end
+end
+
+function M.get_tasks_json_source_file(source_file)
+  local target_file = vim.fn.getcwd() .. "/.vscode/tasks.json"
+  local file_exists = M.file_exists(target_file)
+  if file_exists then 
+    local confirm = vim.fn.confirm("File `.vscode/tasks.json` Exists, Overwrite it? &Yes\n&No", 1, "Question")
     if confirm == 1 then M.copy_file(source_file, target_file) end
   else
     M.copy_file(source_file, target_file)
@@ -338,6 +364,8 @@ function M.create_launch_json()
       elseif select == "rust" then
         local source_file = vim.fn.stdpath("config") .. "/.vscode/rust.launch.json"
         M.get_launch_json_by_source_file(source_file)
+        source_file = vim.fn.stdpath "config" .. "/.vscode/rust_tasks.json"
+        M.get_tasks_json_source_file(source_file)
       elseif select == "python" then
         local source_file = vim.fn.stdpath "config" .. "/.vscode/python_launch.json"
         M.get_launch_json_by_source_file(source_file)
@@ -387,14 +415,6 @@ function M.write_log(file_name, content)
   end
 end
 
-function M.write_log_append(filename, content)
-  local file = io.open(filename, "w")
-  if file then
-    file:write(vim.inspect(content))
-    file:close()
-  end
-end
-
 function M.save_client(client)
   if client.name then
     local file = io.open(client.name .. ".txt", "w")
@@ -437,9 +457,15 @@ end
 
 function M.better_search(key)
   return function()
-    local searched, error =
-      pcall(vim.cmd.normal, { args = { (vim.v.count > 0 and vim.v.count or "") .. key }, bang = true })
-    if not searched and type(error) == "string" then require("astrocore").notify(error, vim.log.levels.ERROR) end
+    local searched, error = pcall(
+      vim.cmd.normal, 
+      { args = { (vim.v.count > 0 and vim.v.count or "") .. key }, bang = true }
+    )
+    if not searched and type(error) == "string" then
+      vim.schedule(function ()
+        vim.notify(error, vim.log.levels.ERROR)
+      end)
+    end
   end
 end
 
@@ -452,7 +478,7 @@ end
 
 function M.toggle_lazy_docker()
   return function()
-    require("astrocore").toggle_term_cmd {
+    astrocore.toggle_term_cmd {
       cmd = "lazydocker",
       direction = "float",
       hidden = true,
@@ -478,9 +504,9 @@ end
 
 function M.toggle_lazy_git()
   return function()
-    local worktree = require("astrocore").file_worktree()
+    local worktree = astrocore.file_worktree()
     local flags = worktree and (" --work-tree=%s --git-dir=%s"):format(worktree.toplevel, worktree.gitdir) or ""
-    require("astrocore").toggle_term_cmd {
+    astrocore.toggle_term_cmd {
       cmd = "lazygit " .. flags,
       direction = "float",
       hidden = true,
@@ -506,7 +532,7 @@ end
 
 function M.toggle_btm()
   return function()
-    require("astrocore").toggle_term_cmd {
+    astrocore.toggle_term_cmd {
       cmd = "btm",
       direction = "float",
       hidden = true,
@@ -526,7 +552,7 @@ function M.toggle_yazi(path)
     os.remove(output_path)
     path = vim.fn.expand "%:p:h"
     local cmd = string.format('yazi "%s" --chooser-file "%s"', path, output_path)
-    require("astrocore").toggle_term_cmd {
+    astrocore.toggle_term_cmd {
       cmd = cmd,
       direction = "float",
       hidden = true,
@@ -584,121 +610,6 @@ function M.list_remove_unique(lst, vals)
     end
   end
   return lst
-end
-
-function M.toggle_unicmatrix()
-  return function()
-    require("astrocore").toggle_term_cmd {
-      cmd = "unimatrix -s 96 -o -b",
-      hidden = false,
-      direction = "float",
-      float_opts = {
-        -- Enable full screen
-        width = vim.o.columns,
-        height = vim.o.lines,
-        border = "none",
-      },
-    }
-  end
-end
-
-function M.tte(selection, open_callback, close_callback, flag)
-  local current_path = vim.fn.expand "%:p" -- get current file path
-  local cmd = "tte --input-file " .. current_path .. " --xterm-colors " .. selection
-  require("astrocore").toggle_term_cmd {
-    cmd = cmd,
-    hidden = false,
-    direction = "float",
-    close_on_exit = false,
-    float_opts = {
-      width = vim.o.columns,
-      height = vim.o.lines,
-      border = "none",
-    },
-    on_open = function()
-      if open_callback and type(open_callback) == "function" then open_callback() end
-    end,
-    on_close = function(t)
-      if flag then t:send "\x03" end
-    end,
-    on_exit = function(t, _, _, _)
-      if close_callback and type(close_callback) == "function" then close_callback() end
-      if vim.api.nvim_buf_is_loaded(t.bufnr) then vim.api.nvim_buf_delete(t.bufnr, { force = true }) end
-    end,
-  }
-end
-
-function M.get_all_cmds()
-  return {
-    "beams",
-    "binarypath",
-    "blackhole",
-    "bouncyballs",
-    "bubbles",
-    "burn",
-    "colorshift",
-    "crumble",
-    "decrypt",
-    "errorcorrect",
-    "expand",
-    "fireworks",
-    "middleout",
-    "orbittingvolley",
-    "overflow",
-    "pour",
-    "print",
-    "rain",
-    "randomsequence",
-    "rings",
-    "scattered",
-    "slice",
-    "slide",
-    "spotlights",
-    "spray",
-    "swarm",
-    "synthgrid",
-    "unstable",
-    "vhstape",
-    "waves",
-    "wipe",
-  }
-end
-
-function M.toggle_tte()
-  if require("astrocore").is_available "telescope.nvim" then
-    local actions = require "telescope.actions"
-    local action_state = require "telescope.actions.state"
-    local pickers = require "telescope.pickers"
-    local finders = require "telescope.finders"
-    local conf = require("telescope.config").values
-
-    return function()
-      pickers
-        .new({}, {
-          prompt_title = "Select TTE Effect",
-          finder = finders.new_table {
-            results = M.get_all_cmds(),
-            entry_maker = function(entry)
-              return {
-                value = entry,
-                display = entry,
-                ordinal = entry,
-              }
-            end,
-          },
-          sorter = conf.generic_sorter {},
-          attach_mappings = function(prompt_bufnr)
-            actions.select_default:replace(function()
-              local selection = action_state.get_selected_entry()
-              actions.close(prompt_bufnr)
-              M.tte(selection.value, nil, nil, true)
-            end)
-            return true
-          end,
-        })
-        :find()
-    end
-  end
 end
 
 return M

@@ -1,5 +1,5 @@
 local astrocore = require("astrocore")
-local is_vue_project = require("utils").is_vue_project
+local utils = require("utils")
 
 return {
   {
@@ -8,34 +8,22 @@ return {
     ---@type AstroLSPOpts
     ---@diagnostic disable-next-line: assign-type-mismatch
     opts = function(_, opts)
-      local volar_handler = opts.handlers.volar
-      local vtsls_handler = opts.handlers.vtsls
-      if not is_vue_project() then
-        volar_handler = false
-      else
-        vtsls_handler = false
-      end
+      local vtsls_ft = astrocore.list_insert_unique(vim.tbl_get(opts, "config", "vtsls", "filetypes") or {
+        "javascript",
+        "javascriptreact",
+        "javascript.jsx",
+        "typescript",
+        "typescriptreact",
+        "typescript.tsx"
+      }, { "vue" })
 
       return astrocore.extend_tbl(opts, {
         ---@diagnostic disable: missing-fields
-        handlers = {
-          volar = volar_handler,
-          vtsls = vtsls_handler,
-        },
         config = {
           volar = {
-            filetypes = {
-              "javascript",
-              "javascriptreact",
-              "javascript.jsx",
-              "typescript",
-              "typescriptreact",
-              "typescript.tsx",
-              "vue",
-            },
             init_options = {
               vue = {
-                hybridMode = false,
+                hybridMode = true,
               },
             },
             settings = {
@@ -46,6 +34,26 @@ return {
                 },
               },
             },
+          },
+          vtsls = {
+            filetypes = vtsls_ft,
+            settings = {
+              vtsls = {
+                tsserver = {
+                  globalPlugins = {}
+                },
+              },
+            },
+            before_init = function(_, config)
+              local vue_plugin_config = {
+                name = "@vue/typescript-plugin",
+                location = utils.get_pkg_path("vue-language-server", "/node_modules/@vue/language-server"),
+                languages = { "vue"},
+                configNamespace = "typescript",
+                enableForWorkspaceTypeScriptVersions = true,
+              }
+              astrocore.list_insert_unique(config.settings.vtsls.tsserver.globalPlugins, { vue_plugin_config })
+            end
           },
         },
       })
@@ -61,10 +69,13 @@ return {
     end,
   },
   {
-    "williamboman/mason-lspconfig.nvim",
+    "WhoiSethDaniel/mason-tool-installer.nvim",
     optional = true,
     opts = function(_, opts)
-      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "volar" })
+      opts.ensure_installed = astrocore.list_insert_unique(
+        opts.ensure_installed,
+        { "vue-language-server", "js-debug-adapter" }
+      )
     end,
   },
   {

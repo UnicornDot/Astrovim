@@ -3,7 +3,7 @@
 -- https://github.com/williamboman/mason.nvim/issues/1741
 local astrocore = require "astrocore"
 
-local set_mappings = require("astrocore").set_mappings
+local set_mappings = astrocore.set_mappings
 
 local function preview_stack_trace()
   local current_line = vim.api.nvim_get_current_line()
@@ -34,22 +34,29 @@ return {
     "AstroNvim/astrolsp",
     --- @type AstroLSPOpts
     opts = {
-      handlers = { rust_analyzer = false }, -- disable setup of `rust_analyzer`
+      -- handlers = { rust_analyzer = false }, -- disable setup of `rust_analyzer`
+      ---@diagnostic disable: missing-fields
       config = {
         rust_analyzer = {
-          on_attach = function(_, bufnr)
+          on_attach = function()
             vim.api.nvim_create_autocmd({ "TermOpen", "TermClose", "BufEnter" }, {
-              pattern = "*cargo*",
+              pattern = "term://*",
               desc = "Jump to error line",
               callback = function()
-                set_mappings({
-                  n = {
-                    ["gd"] = {
-                      preview_stack_trace,
-                      desc = "Jump to error line",
-                    },
-                  },
-                }, { buffer = true })
+                if vim.bo.buftype == 'terminal' then
+                  local buf_name = vim.api.nvim_buf_get_name(0)
+                  local cmd = string.match(buf_name, ":%s*(cargo build)$")
+                  if cmd then
+                    set_mappings({
+                      n = {
+                        ["gd"] = {
+                          preview_stack_trace,
+                          desc = "Jump to error line",
+                        },
+                      },
+                    }, { buffer = true })
+                  end
+                end
               end,
             })
           end,
@@ -66,10 +73,9 @@ return {
     end,
   },
   {
-    "jay-babu/mason-nvim-dap.nvim",
+    "WhoIsSethDaniel/mason-tool-installer.nvim",
     optional = true,
     opts = function(_, opts)
-      -- dap
       opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "codelldb" })
     end,
   },
@@ -110,8 +116,15 @@ return {
                 enable = true,
               },
             },
+            diagnostics = {
+              disabled = {
+                "unresolved-proc-macro",
+              },
+            },
             -- Add clippy lints for Rust.
-            checkOnSave = true,
+            checkOnSave = {
+              command = "clippy",
+            },
             procMacro = {
               enable = true,
               ignored = {
@@ -136,25 +149,7 @@ return {
   },
   {
     "Saecki/crates.nvim",
-    lazy = true,
-    dependencies = {
-      "AstroNvim/astrocore",
-      opts = {
-        autocmds = {
-          CmpSourceCargo = {
-            {
-              event = "BufRead",
-              desc = "Load crates.nvim into Cargo buffers",
-              pattern = "Cargo.toml",
-              callback = function()
-                require("cmp").setup.buffer { sources = { { name = "crates" } } }
-                require "crates"
-              end,
-            },
-          },
-        },
-      },
-    },
+    event = { "BufRead Cargo.toml" },
     opts = {
       completion = {
         cmp = { enabled = true },
@@ -162,9 +157,12 @@ return {
           enabled = true,
         },
       },
-      null_ls = {
+      lsp = {
         enabled = true,
-        name = "crates.nvim",
+        on_attach = function(...) require("astrolsp").on_attach(...) end,
+        actions = true,
+        completion = true,
+        hover = true,
       },
     },
   },

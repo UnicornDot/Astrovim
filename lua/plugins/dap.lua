@@ -109,7 +109,7 @@ return {
             require("utils").create_launch_json,
             desc = "Create Dap Launch Json"
           },
-          [prefix_dap .. "g"] = {
+          [prefix_debug .. "g"] = {
             function() vim.cmd [[DapShowLog]] end,
             desc = "Show Dap Log",
           },
@@ -121,7 +121,6 @@ return {
       },
     },
   },
-  { "jay-babu/mason-nvim-dap.nvim", optional = true },
   {
     "Weissle/persistent-breakpoints.nvim",
     event = "VeryLazy",
@@ -132,22 +131,8 @@ return {
     end,
   },
   {
-    "nvim-treesitter/nvim-treesitter",
-    dependencies = {
-      "LiadOz/nvim-dap-repl-highlights",
-      dependencies = { "mfussenegger/nvim-dap" },
-      opts = {},
-    },
-    opts = function(_, opts)
-      if opts.ensure_installed ~= "all" then
-        opts.ensure_installed = utils.list_insert_unique(opts.ensure_installed, { "dap_repl" })
-      end
-    end,
-  },
-  {
     "theHamsta/nvim-dap-virtual-text",
-    dependencies = { "mfussenegger/nvim-dap", "nvim-treesitter/nvim-treesitter" },
-    event = "User AstroFile",
+    event = "VeryLazy",
     opts = {
       commented = true,
       enabled = true,

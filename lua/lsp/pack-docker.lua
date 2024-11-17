@@ -24,19 +24,36 @@ return {
     end,
   },
   {
-    "williamboman/mason-lspconfig.nvim",
+    "WhoIsSethDaniel/mason-too-installer.nvim",
     optional = true,
     opts = function(_, opts)
       -- lsp
-      opts.ensure_installed =
-        astrocore.list_insert_unique(opts.ensure_installed, { "docker_compose_language_service", "dockerls" })
+      opts.ensure_installed = astrocore.list_insert_unique(
+      opts.ensure_installed,
+      {
+              "docker-compose-language-service",
+              "dockerfile-language-server",
+              "hadolint"
+           }
+      )
     end,
   },
   {
-    "jay-babu/mason-null-ls.nvim",
+    "stevearc/conform.nvim",
     optional = true,
-    opts = function(_, opts)
-      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "hadolint" })
-    end,
+    opts = {
+      formatters_by_ft = {
+        ["yaml.docker-compose"] = { "prettierd", "prettier", stop_after_first = true },
+      },
+    },
   },
+  {
+    "mfussenegger/nvim-lint",
+    optional = true,
+    opts = {
+      linters_by_ft = {
+        ["docker-compose"] = { "hadolint" },
+      },
+    }
+  }
 }

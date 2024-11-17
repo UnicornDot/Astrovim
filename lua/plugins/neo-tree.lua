@@ -1,17 +1,18 @@
-local get_path_type = require("utils").get_path_type
-local get_extension = require("utils").get_extension
-local get_filename_without_extension = require("utils").get_filename_without_extension
-local get_immediate_parent_directory = require("utils").get_immediate_parent_directory
-local write_to_file = require("utils").write_to_file
-local select_ui = require("utils").select_ui
-local inputs = require("neo-tree.ui.inputs")
-local insert_to_file_first_line = require("utils").insert_to_file_first_line
-local get_parent_directory = require("utils").get_parent_directory
+local utils = require("utils")
+local get_path_type = utils.get_path_type
+local get_extension = utils.get_extension
 
-local file_exists = require("utils").file_exists
--- local remove_cwd = require("utils").remove_cwd
-local remove_lsp_cwd = require("utils").remove_lsp_cwd
-local get_lsp_root_dir = require("utils").get_lsp_root_dir
+local get_filename_without_extension = utils.get_filename_without_extension
+local get_immediate_parent_directory = utils.get_immediate_parent_directory
+local write_to_file = utils.write_to_file
+local select_ui = utils.select_ui
+local insert_to_file_first_line = utils.insert_to_file_first_line
+local get_parent_directory = utils.get_parent_directory
+
+local file_exists = utils.file_exists
+-- local remove_cwd = utils").remove_cwd
+local remove_lsp_cwd = utils.remove_lsp_cwd
+local get_lsp_root_dir = utils.get_lsp_root_dir
 
 
 local file_extension_mapping = {
@@ -32,6 +33,7 @@ local file_extension_mapping = {
   rs = function(path)
     local parent_name = get_immediate_parent_directory(path)
     local relative_path = remove_lsp_cwd(path, "rust-analyzer")
+    local inputs = require("neo-tree.ui.inputs")
 
     if relative_path and string.find(relative_path, "^/src/") and parent_name == "src" then
       local root_dir = get_lsp_root_dir "rust-analyzer"
@@ -49,28 +51,23 @@ local file_extension_mapping = {
             if select == "src/lib.rs" then
               if not file_exists(lib_path) then
                 inputs.input("Create `src/lib.rs` (Y/N): ", "Y", function()
-                  filename = get_filename_without_extension(path)
                   write_to_file(lib_path, "mod " .. filename .. ";\n")
+                  vim.cmd("e " .. lib_path)
                 end)
               else
                 insert_to_file_first_line(lib_path, "mod " .. filename .. ";\n")
+                vim.cmd("e " .. lib_path)
               end
-              -- if a window for this lib_path already exists, refresh it
-              vim.schedule(function() vim.cmd("e " .. lib_path) end)
             elseif select == "src/main.rs" then
               if not file_exists(main_path) then
-                inputs.input(
-                  "Create `src/main.rs` (Y/N): ",
-                    nil,
-                  function()
-                    write_to_file(lib_path, "mod " .. filename .. ";\n")
-                  end
-                )
+                inputs.input("Create `src/main.rs` (Y/N): ","Y", function()
+                  write_to_file(lib_path, "mod " .. filename .. ";\n")
+                  vim.cmd("e " .. main_path)
+                end)
               else
                 insert_to_file_first_line(main_path, "mod " .. filename .. ";\n")
+                vim.cmd("e " .. main_path)
               end
-              -- if a window for this lib_path already exists, refresh it
-              vim.schedule(function() vim.cmd("e " .. main_path) end)
             end
           end)
         end
@@ -106,7 +103,6 @@ local file_extension_mapping = {
 return {
   {
     "nvim-neo-tree/neo-tree.nvim",
-    deactivate = function() vim.cmd [[Neotree close]] end,
     opts = function(_, opts)
       local neo_tree_events = require "neo-tree.events"
       return require("astrocore").extend_tbl(opts, {
