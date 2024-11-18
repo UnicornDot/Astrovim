@@ -1,24 +1,27 @@
-if vim.fn.has "nvim-0.10" == 0 then
-  return {}
-else
-  return {
-    {
-      "Bekaboo/dropbar.nvim",
-      event = "UIEnter",
-      opts = {
-        icons = {
-          ui = {
-            bar = {
-              separator = " > ",
-              extends = ".."
-            },
-            menu = {
-              separator = " ",
-              indicator = " > "
-            },
+return {
+  {
+    "Bekaboo/dropbar.nvim",
+    event = "UIEnter",
+    specs = {
+      {
+        "rebelot/heirline.nvim",
+        optional = true,
+        opts = function(_, opts) opts.winbar = nil end,
+      },
+    },
+    opts = {
+      icons = {
+        ui = {
+          bar = {
+            separator = " > ",
+            extends = ".."
+          },
+          menu = {
+            separator = " ",
+            indicator = " > "
           },
         },
       },
     },
-  }
-end
+  },
+}

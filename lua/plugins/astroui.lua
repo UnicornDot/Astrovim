@@ -29,11 +29,6 @@ return {
   },
 
   -- statusline and bufferline
-  {
-    "rebelot/heirline.nvim",
-    optional = true,
-    opts = function(_, opts) opts.winbar = nil end,
-  },
   -- homepage
   {
     "goolord/alpha-nvim",

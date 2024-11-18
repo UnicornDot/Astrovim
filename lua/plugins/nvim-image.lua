@@ -1,3 +1,4 @@
+if true then return { } else
 return {
   "3rd/image.nvim",
   event = "VeryLazy",
@@ -51,3 +52,4 @@ return {
     hijack_file_patterns = { "*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp" }, -- render image files as images when opened
   },
 }
+end
