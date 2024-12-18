@@ -27,31 +27,4 @@ return {
       return opts
     end,
   },
-
-  -- statusline and bufferline
-  -- homepage
-  {
-    "goolord/alpha-nvim",
-    enabled = true,
-    opts = function(_, opts)
-      local button = require("alpha.themes.dashboard").button
-      opts.section.buttons.val = {
-        button("LDR n  ", "󰯃  New File  "),
-        button("LDR f p", "󱛊  Find Project  "),
-        button("LDR f f", "  Find File  "),
-        button("LDR f o", "  Recents  "),
-        button("LDR f w", "󱘢  Find Word  "),
-        button("LDR S f", "󰢚  Find Session  "),
-        button("LDR f '", "  Bookmarks  "),
-        button("LDR S l", "  Last Session  "),
-      }
-      return opts
-    end,
-  },
-  --neoscroll
-  {
-    "karb94/neoscroll.nvim",
-    event = "VeryLazy",
-    opts = {},
-  },
 }

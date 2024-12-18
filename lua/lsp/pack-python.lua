@@ -3,6 +3,7 @@ local is_available = astrocore.is_available
 local set_mappings = astrocore.set_mappings
 local utils = require("utils")
 
+-- print(vim.fn.stdpath "data" .. "/lazy/rust-prettifier-for-lldb/rust_prettifier_for_lldb.py")
 ---@type LazySpec
 return {
   {

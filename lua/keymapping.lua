@@ -63,12 +63,12 @@ function M.core_mappings(mappings)
     end
 
 
-    if vim.fn.executable "lazygit" == 1 then
-      maps.n["<Leader>gg"] = {
-        utils.toggle_lazy_git(),
-        desc = "ToggleTerm lazygit",
-      }
-    end
+    -- if vim.fn.executable "lazygit" == 1 then
+    --   maps.n["<Leader>gg"] = {
+    --     utils.toggle_lazy_git(),
+    --     desc = "ToggleTerm lazygit",
+    --   }
+    -- end
 
     -- if vim.fn.executable "joshuto" == 1 then
     --   maps.n["<leader>tj"] = {
