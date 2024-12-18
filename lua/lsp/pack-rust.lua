@@ -34,7 +34,7 @@ return {
     "AstroNvim/astrolsp",
     --- @type AstroLSPOpts
     opts = {
-      -- handlers = { rust_analyzer = false }, -- disable setup of `rust_analyzer`
+      handlers = { rust_analyzer = false }, -- disable setup of `rust_analyzer`
       ---@diagnostic disable: missing-fields
       config = {
         rust_analyzer = {

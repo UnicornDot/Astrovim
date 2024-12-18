@@ -74,7 +74,7 @@ local file_extension_mapping = {
       end
     elseif relative_path and string.find(relative_path, "^/src/") then
       local filename = get_filename_without_extension(path)
-      local mod_path = get_parent_directory(path) .. "mod.rs"
+      local mod_path = get_parent_directory(path) .. "/mod.rs"
       if filename == "mod" then
         return
       else
@@ -96,7 +96,6 @@ local file_extension_mapping = {
       end
     end
   end,
-  unknown = function() end,
 }
 
 ---@type LazySpec
