@@ -121,6 +121,9 @@ return {
     },
     opts = function(_, opts)
       return astrocore.extend_tbl(opts, {
+        notify = {
+          enabled = false,
+        },
         lsp = {
           hover = {
             enabled = false,
