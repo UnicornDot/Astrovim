@@ -14,9 +14,11 @@ return {
       -- or leave it empty to use the default settings
       -- refer to the configuration section below
       bigfile = { enabled = true },
-      notifier = { enabled = true },
+      notifier = { enabled = true, timeout=3000 },
       dashboard = {
         enabled = true,
+        row = nil,
+        col = nil,
         width = 50,
         preset = {
           keys = {
@@ -33,23 +35,26 @@ return {
         sections = {
           {section = "header", gap = 1, padding = 1 },
           {section = "keys", gap = 1, padding = 1 },
-          {section = "startup", gap = 2, padding  = 1 },
-          {pane = 2,
+          {section = "startup", gap = 1, padding  = 1 },
+          {
               section = "terminal",
-              cmd = "uname -n",
-              height = 10,
-              icon = "🔖", indent = 3, padding = 1, 
+              cmd = "cat ~/.config/nvim/bar.txt",
+              random = 10,
+              pane = 2,
+              indent = 0,
+              height = 30,
+              -- icon = "🔖", indent = 3, padding = 1, 
           },
-          {pane = 2,
-              section = "projects",
-              title = "Projects --------------------------------",
-              icon = "📚", indent = 3, padding = 1
-          },
-          {pane = 2,
-              section = "recent_files",
-              title = "Recent Files ----------------------------",
-              icon = "💢", indent = 3, padding = 1
-          },
+          -- {pane = 2,
+          --     section = "projects",
+          --     title = "Projects --------------------------------",
+          --     icon = "📚", indent = 3, padding = 1
+          -- },
+          -- {pane = 2,
+          --     section = "recent_files",
+          --     title = "Recent Files ----------------------------",
+          --     icon = "💢", indent = 3, padding = 1
+          -- },
         }
       },
       quickfile = { enabled = true },

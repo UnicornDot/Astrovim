@@ -6,8 +6,8 @@ return {
     dependencies = { "echasnovski/mini.icons" },
     ---@type AstroUIOpts
     opts = {
-      -- colorscheme = "solarized-osaka",
-      colorscheme = "catppuccin-mocha",
+      colorscheme = "solarized-osaka",
+      -- colorscheme = "catppuccin-mocha",
       highlights = {}
     },
   },
