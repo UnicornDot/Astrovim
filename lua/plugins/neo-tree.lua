@@ -115,7 +115,7 @@ end
 --Trash the selections (visual mode)
 local function trash_visual(state, selected_nodes)
   local paths_to_trash = {}
-  for _, node in ipairs(selected_nodes) do 
+  for _, node in ipairs(selected_nodes) do
     if node.type ~= "message" then table.insert(paths_to_trash, node.path)end
   end
   local msg = "Are you sure you want to trash "..#paths_to_trash .. "items?"

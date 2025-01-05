@@ -1,5 +1,4 @@
 local astrocore = require "astrocore"
-local is_available = astrocore.is_available
 local set_mappings = astrocore.set_mappings
 local utils = require("utils")
 
@@ -14,20 +13,14 @@ return {
       config = {
         basedpyright = {
           on_attach = function()
-            if is_available "venv-selector.nvim" then
-              set_mappings({
-                n = {
-                  ["<Leader>lO"] = {
-                    "<cmd>VenvSelect<CR>",
-                    desc = "Select VirtualEnv",
-                  },
-                  ["<leader>lo"] = {
-                    "<cmd>PyrightOrganizeImports<CR>",
-                    desc = "Organize Imports",
-                  },
-                },
-              }, { buffer = true })
-            end
+            set_mappings({
+              n = {
+                ["<leader>lo"] = {
+                  "<cmd>PyrightOrganizeImports<cr>",
+                  desc = "Organize imports",
+                }
+              }
+            }, { buffer = true })
           end,
           before_init = function(_, c)
             if not c.settings then c.settings = {} end
@@ -91,21 +84,6 @@ return {
         { "basedpyright", "black", "isort", "debugpy" }
       )
     end,
-  },
-  {
-    "linux-cultist/venv-selector.nvim",
-    ft = "python",
-    branch = "regexp",
-    enabled = vim.fn.executable("fd") == 1 or vim.fn.executable("fdfind") == 1 or vim.fn.executable("fd-find") == 1,
-    dependencies = {
-      "nvim-telescope/telescope.nvim",
-      branch = "0.1.x",
-      dependencies = {
-        "nvim-lua/plenary.nvim"
-      }
-    },
-    opts = {},
-    cmd = "VenvSelect",
   },
   {
     "mfussenegger/nvim-dap-python",

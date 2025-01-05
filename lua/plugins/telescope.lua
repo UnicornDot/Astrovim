@@ -1,6 +1,7 @@
 local is_available = require("astrocore").is_available
 
 ---@type LazySpec
+if true then return {} else 
 return {
   {
     "AstroNvim/astrocore",
@@ -108,3 +109,4 @@ return {
     end,
   },
 }
+end

@@ -97,6 +97,7 @@ function M.core_mappings(mappings)
     -- 分屏快捷键
     maps.n["<leader>wc"] = { "<C-w>c", desc = "Close current screen" }
     maps.n["<leader>wo"] = { "<C-w>o", desc = "Close other screen" }
+    maps.n["<leader>we"] = { "<C-w>=", desc = "Equals all Window"}
     -- 多个窗口之间跳转
     maps.n["<leader>we"] = { "<C-w>=", desc = "Make all window equal" }
     maps.n["<M-l>"] = {

@@ -4,62 +4,57 @@ return {
   cmd = "ConformInfo",
   specs = {
     { "AstroNvim/astrolsp", optional = true, opts = { formatting = { disabled = true } } },
-  },
-  dependencies = {
-    { "williamboman/mason.nvim", optional = true },
     {
       "AstroNvim/astrocore",
-      opts = {
-        options = { opt = { formatexpr = "v:lua.require'conform'.formatexpr()" } },
-        commands = {
-          Format = {
-            function(args)
-              local range = nil
-              if args.count ~= -1 then
-                local end_line = vim.api.nvim_buf_get_lines(0, args.line2 - 1, args.line2, true)[1]
-                range = {
-                  start = { args.line1, 0 },
-                  ["end"] = { args.line2, end_line:len() },
-                }
-              end
-              require("conform").format { async = true, range = range }
-            end,
-            desc = "Format buffer",
-            range = true,
-          },
-        },
-        mappings = {
-          n = {
-            ["<Leader>lI"] = { function() vim.cmd.ConformInfo() end, desc = "show conform info" },
-            ["<Leader>lf"] = { function() vim.cmd.Format() end, desc = "Format buffer" },
-            ["<Leader>uf"] = {
-              function()
-                if vim.b.autoformat == nil then
-                  if vim.g.autoformat == nil then vim.g.autoformat = true end
-                  vim.b.autoformat = vim.g.autoformat
+      opts = function(_, opts) 
+        local maps = opts.mappings or {}
+
+        maps.n["<Leader>lI"] = { function() vim.cmd.ConformInfo() end, desc = "show conform info" }
+        maps.n["<Leader>lf"] = { function() vim.cmd.Format() end, desc = "Format buffer" }
+        maps.n["<Leader>uf"] = { function()
+            if vim.b.autoformat == nil then
+              if vim.g.autoformat == nil then vim.g.autoformat = true end
+              vim.b.autoformat = vim.g.autoformat
+            end
+            vim.b.autoformat = not vim.b.autoformat
+            vim.notify(
+              string.format("Buffer autoformatting %s", vim.b.autoformat and "on" or "off")
+            )
+          end,
+          desc = "Toggle autoformatting (buffer)",
+        }
+        maps.n["<Leader>uF"] = { function()
+            if vim.g.autoformat == nil then vim.g.autoformat = true end
+            vim.g.autoformat = not vim.g.autoformat
+            vim.b.autoformat = nil
+            vim.notify(
+              string.format("Global autoformatting %s", vim.g.autoformat and "on" or "off")
+            )
+          end,
+          desc = "Toggle autoformatting (global)",
+        }
+        return vim.tbl_deep_extend("force", opts, {
+          options = { opt = { formatexpr = "v:lua.require'conform'.formatexpr()" } },
+          commands = {
+            Format = {
+              function(args)
+                local range = nil
+                if args.count ~= -1 then
+                  local end_line = vim.api.nvim_buf_get_lines(0, args.line2 - 1, args.line2, true)[1]
+                  range = {
+                    start = { args.line1, 0 },
+                    ["end"] = { args.line2, end_line:len() },
+                  }
                 end
-                vim.b.autoformat = not vim.b.autoformat
-                require("astrocore").notify(
-                  string.format("Buffer autoformatting %s", vim.b.autoformat and "on" or "off")
-                )
+                require("conform").format { async = true, range = range }
               end,
-              desc = "Toggle autoformatting (buffer)",
-            },
-            ["<Leader>uF"] = {
-              function()
-                if vim.g.autoformat == nil then vim.g.autoformat = true end
-                vim.g.autoformat = not vim.g.autoformat
-                vim.b.autoformat = nil
-                require("astrocore").notify(
-                  string.format("Global autoformatting %s", vim.g.autoformat and "on" or "off")
-                )
-              end,
-              desc = "Toggle autoformatting (global)",
+              desc = "Format buffer",
+              range = true,
             },
           },
-        },
-      },
-    },
+        })
+      end
+    }
   },
   opts = {
     default_format_opts = { lsp_format = "fallback" },

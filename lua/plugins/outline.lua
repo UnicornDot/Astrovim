@@ -1,15 +1,15 @@
 ---@type LazySpec
 return {
-  { "stevearc/aerial.nvim", enabled = true },
   {
     "hedyhli/outline.nvim",
     specs = {
       {
         "AstroNvim/astrocore",
         opts = function(_, opts)
-          local maps = opts.mappings 
+          local maps = opts.mappings or {}
           maps.n["<Leader>lS"] = { function() vim.cmd [[Outline]] end, desc = "Toggle Outline" } end,
       },
+      { "stevearc/aerial.nvim", optional = true, enabled = true },
       "echasnovsko/mini.icons",
     },
     cmd = "Outline",

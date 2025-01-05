@@ -29,10 +29,10 @@ return {
         end,
       },
     },
-    opts = function()
+    opts = function(_, opts)
       local get_icon = require("astroui").get_icon
       local lspkind_avail, lspkind = pcall(require, "lspkind")
-      return {
+      return vim.tbl_deep_extend("force", opts, {
         keys = {
           ["<ESC>"] = "close",
           ["q"] = "close",
@@ -49,7 +49,7 @@ return {
         },
         auto_preview = true, -- automatically open preview when on an item
         auto_refresh = true, -- auto refresh when open
-      }
+      })
     end,
   },
   { "lewis6991/gitsigns.nvim", opts = { trouble = true } },

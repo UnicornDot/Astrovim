@@ -26,7 +26,6 @@ end
 return {
   {
     "AstroNvim/astrolsp",
-    optional = true,
     ---@type AstroLSPOpts
     opts = {
       ---@diagnostic disable: missing-fields
@@ -50,14 +49,6 @@ return {
                 end
               end
             })
-            set_mapppings({
-              n = {
-                ["gi"] = {
-                  [[<cmd>lua require'telescope'.extensions.goimpl.goimpl{}<CR>]],
-                  desc = "Find go interface implementation",
-                },
-              },
-            }, { buffer = true })
             if not client.server_capabilities.semanticTokensProvider then
               local semantic = client.config.capabilities.textDocument.semanticTokens
               client.server_capabilities.semanticTokensProvider = {
@@ -126,7 +117,7 @@ return {
       if opts.ensure_installed ~= "all" then
         opts.ensure_installed = astrocore.list_insert_unique(
           opts.ensure_installed,
-          { "go", "gomod", "gosum", "gowork" }
+          { "go", "gomod", "gosum", "gowork", "goctl" }
         )
       end
     end,
@@ -135,15 +126,17 @@ return {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
     optional = true,
     opts = function(_, opts)
-      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, {
-        "delve",
-        "gopls",
-        "gomodifytags",
-        "gotests",
-        "iferr",
-        "impl",
-        "goimports",
-      })
+      if vim.fn.executable "go" == 1 then
+        opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, {
+          "delve",
+          "gopls",
+          "gomodifytags",
+          "gotests",
+          "iferr",
+          "impl",
+          "goimports",
+        })
+      end
     end,
   },
   {
@@ -157,19 +150,9 @@ return {
     },
   },
   {
-    "edolphin-ydf/goimpl.nvim",
-    ft = "go",
-    requires = {
-      { "nvim-lua/plenary.nvim" },
-      { "nvim-lua/popup.nvim" },
-      { "nvim-telescope/telescope.nvim" },
-      { "nvim-treesitter/nvim-treesitter" },
-    },
-    config = function() require("telescope").load_extension "goimpl" end,
-  },
-  {
     "olexsmir/gopher.nvim",
     ft = "go",
+    enabled = vim.fn.executable "go" == 1,
     build = function()
       if not require("lazy.core.config").spec.plugins["mason.nvim"] then
         vim.print "Installing go dependencies..."

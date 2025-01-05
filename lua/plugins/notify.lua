@@ -1,11 +1,11 @@
 return {
   "rcarriga/nvim-notify",
   opts = {
-    stages = "static",
-    render = "compact",
+    stages = "slide",
+    render = "wrapped-compact",
     -- max_width = "30",
     fps = 5,
-    level = 1,
+    level = 5,
     timeout = 2000,
   },
 }

@@ -92,6 +92,7 @@ local formatting_style = {
   end,
 }
 
+if true then return {} else
 return {
   "hrsh7th/nvim-cmp",
   specs = {
@@ -230,3 +231,4 @@ return {
     })
   end,
 }
+end

@@ -1,7 +1,8 @@
 local astrocore = require("astrocore")
+local utils = require("utils")
 local set_mappings = astrocore.set_mappings
-local decode_json = require("utils").decode_json
-local check_json_key_exists = require("utils").check_json_key_exists
+local decode_json = utils.decode_json
+local check_json_key_exists = utils.check_json_key_exists
 
 local format_filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact", "vue" }
 
@@ -53,7 +54,7 @@ local has_prettier = function(bufnr)
 end
 
 local conform_formatter = function(bufnr)
-  return has_prettier(bufnr) and { "prettierd" } or {} 
+  return has_prettier(bufnr) and { "prettierd" } or {}
 end
 
 return {
@@ -62,96 +63,108 @@ return {
     "AstroNvim/astrolsp",
     ---@type AstroLSPOpts
     ---@diagnostic disable: missing-fields
-    opts = {
-      config = {
-        eslint = {
-          on_attach = function()
-            set_mappings({
-              n = {
-                ["<leader>lF"] = {
-                  function() vim.cmd.EslintFixAll() end,
-                  desc = "Format buffer",
+    optional = true,
+    opts = function(_, opts)
+      return  vim.tbl_deep_extend("force", opts, {
+        config = {
+          eslint = {
+            on_attach = function()
+              set_mappings({
+                n = {
+                  ["<leader>lF"] = {
+                    function() vim.cmd.EslintFixAll() end,
+                    desc = "Format buffer",
+                  },
                 },
-              },
-            }, { buffer = true })
-          end
-        },
-        vtsls = {
-          on_attach = function(client, _)
-            client.server_capabilities = astrocore.extend_tbl(client.server_capabilities, {
-              workspace = {
-                didchangeWatchedFiles = { dynamicRegistration = true },
-                fileOperations = {
-                  didRename = {
-                    filters = {
-                      {
-                        pattern = {
-                          glob = "**/*.{ts,cts,mts,tsx,js,cjs,mjs,jsx,vue}",
+              }, { buffer = true })
+            end
+          },
+          vtsls = {
+            on_attach = function(client, _)
+              client.server_capabilities = astrocore.extend_tbl(client.server_capabilities, {
+                workspace = {
+                  didchangeWatchedFiles = { dynamicRegistration = true },
+                  fileOperations = {
+                    didRename = {
+                      filters = {
+                        {
+                          pattern = {
+                            glob = "**/*.{ts,cts,mts,tsx,js,cjs,mjs,jsx,vue}",
+                          },
                         },
                       },
                     },
                   },
                 },
-              },
-            })
-            set_mappings({
-              n = {
-                ["<Leader>lA"] = {
-                  function() vim.lsp.buf.code_action { context = { only = { "source", "refactor", "quickfix" } } } end,
-                  desc = "Lsp All Action",
+              })
+              set_mappings({
+                n = {
+                  ["<Leader>lA"] = {
+                    function() vim.lsp.buf.code_action { context = { only = { "source", "refactor", "quickfix" } } } end,
+                    desc = "Lsp All Action",
+                  },
+                },
+              }, { buffer = true })
+            end,
+            filetypes = {
+              "javascript",
+              "javascriptreact",
+              "javascript.jsx",
+              "typescript",
+              "typescriptreact",
+              "typescript.tsx",
+            },
+            settings = {
+              complete_function_calls = true,
+              vtsls = {
+                enableMoveToFileCodeAction = true,
+                autoUseWorkspaceTsdk = true,
+                experimental = {
+                  maxInlayHintLength = 30,
+                  completion = {
+                    enableServerSideFuzzyMatch = true,
+                  },
+                },
+                tsserver = {
+                  globalPlugins = {
+                    {
+                      name = "@styled/typescript-styled-plugin",
+                      location = utils.get_global_npm_path(),
+                      enableForWorkspaceTypeScriptVersions = true,
+                    },
+                  },
                 },
               },
-            }, { buffer = true })
-          end,
-          filetypes = {
-            "javascript",
-            "javascriptreact",
-            "javascript.jsx",
-            "typescript",
-            "typescriptreact",
-            "typescript.tsx",
-          },
-          settings = {
-            complete_function_calls = true,
-            vtsls = {
-              enableMoveToFileCodeAction = true,
-              autoUseWorkspaceTsdk = true,
-              experimental = {
-                maxInlayHintLength = 30,
-                completion = {
-                  enableServerSideFuzzyMatch = true,
+              typescript = {
+                updateImportsOnFileMove = { enabled = "always" },
+                suggest = {
+                  completeFunctionCalls = true,
+                },
+                inlayHints = {
+                  parameterNames = { enabled = "literals" },
+                  parameterTypes = { enabled = true },
+                  variableTypes = { enabled = true },
+                  propertyDeclarationTypes = { enabled = true },
+                  functionLikeReturnTypes = { enabled = true },
+                  enumMemberValues = { enabled = true },
                 },
               },
-            },
-            typescript = {
-              updateImportsOnFileMove = { enabled = "always" },
-              suggest = {
-                completeFunctionCalls = true,
-              },
-              inlayHints = {
-                parameterNames = { enabled = "literals" },
-                parameterTypes = { enabled = true },
-                variableTypes = { enabled = true },
-                propertyDeclarationTypes = { enabled = true },
-                functionLikeReturnTypes = { enabled = true },
-                enumMemberValues = { enabled = true },
-              },
-            },
-            javascript = {
-              updateImportsOnFileMove = { enabled = "always" },
-              inlayHints = {
-                parameterNames = { enabled = "literals" },
-                parameterTypes = { enabled = true },
-                variableTypes = { enabled = true },
-                propertyDeclarationTypes = { enabled = true },
-                functionLikeReturnTypes = { enabled = true },
-                enumMemberValues = { enabled = true },
+              javascript = {
+                updateImportsOnFileMove = { enabled = "always" },
+                inlayHints = {
+                  parameterNames = { enabled = "literals" },
+                  parameterTypes = { enabled = true },
+                  variableTypes = { enabled = true },
+                  propertyDeclarationTypes = { enabled = true },
+                  functionLikeReturnTypes = { enabled = true },
+                  enumMemberValues = { enabled = true },
+                },
               },
             },
           },
         },
-      },
-    },
+      })
+    end,
   },
   {
     "nvim-treesitter/nvim-treesitter",
@@ -176,8 +189,7 @@ return {
   },
   {
     "vuki656/package-info.nvim",
-    dependencies = { "MunifTanjim/nui.nvim" },
-    opts = {},
+    dependencies = { "MunifTanjim/nui.nvim", lazy = true },
     event = "BufRead package.json",
   },
   {
@@ -256,7 +268,7 @@ return {
     optional = true,
     dependencies = {
       { "marilari88/neotest-vitest" },
-      { "nvim-neotest/neotest-jest", config = function() end } 
+      { "nvim-neotest/neotest-jest", config = function() end }
     },
     opts = function(_, opts)
       if not opts.adapters then opts.adapters = {} end

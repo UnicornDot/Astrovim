@@ -2,6 +2,79 @@ local M = {}
 local astrocore = require("astrocore")
 local uv = vim.uv or vim.loop
 
+---@type table<string, string[]|boolean>?
+M.kind_filter = {
+  default = {
+    "Class",
+    "Constructor",
+    "Enum",
+    "Field",
+    "Function",
+    "Interface",
+    "Method",
+    "Module",
+    "Namespace",
+    "Package",
+    "Property",
+    "Struct",
+    "Trait",
+  },
+  markdown = false,
+  help = false,
+  -- you can specify a different filter for each filetype
+  lua = {
+    "Class",
+    "Constructor",
+    "Enum",
+    "Field",
+    "Function",
+    "Interface",
+    "Method",
+    "Module",
+    "Namespace",
+    -- "Package", -- remove package since luals uses it for control flow structures
+    "Property",
+    "Struct",
+    "Trait",
+  },
+}
+---@param buf? number
+---@return string[]?
+function M.get_kind_filter(buf)
+  buf = (buf == nil or buf == 0) and vim.api.nvim_get_current_buf() or buf
+  local ft = vim.bo[buf].filetype
+  if M.kind_filter == false then return end
+  if M.kind_filter[ft] == false then return end
+  if type(M.kind_filter[ft]) == "table" then return M.kind_filter[ft] end
+  ---@diagnostic disable-next-line: return-type-mismatch
+  return type(M.kind_filter) == "table" and type(M.kind_filter.default) == "table" and M.kind_filter.default or nil
+end
+---@param fn fun()
+function M.on_very_lazy(fn)
+  vim.api.nvim_create_autocmd("User", {
+    pattern = "VeryLazy",
+    callback = function() fn() end,
+  })
+end
+
+---@param opts? lsp.Client.filter
+function M.get_clients(opts)
+  local ret = {} ---@type vim.lsp.CLient[]
+  if vim.lsp.get_clients then
+    ret = vim.lsp.get_clients(opts)
+  else
+    ---@diagnostic disable-next-line: deprecated
+    ret = vim.lsp.get_active_clients(opts)
+    if opts and opts.method then
+      ---@param client vim.lsp.Client
+      ret = vim.tbl_filter(function(client)
+        return client.supports_method(opts.method, { bufnr = opts.bufnr })
+      end, ret)
+    end
+  end
+  return opts and opts.filter and vim.tbl_filter(opts.filter, ret) or ret
+end
+
 --- 检查是否存在 `--config` 参数
 function M.contains_arg(args, arg)
   for _, value in pairs(args) do

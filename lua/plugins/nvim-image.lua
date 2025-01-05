@@ -1,29 +1,20 @@
-if true then return { } else
 return {
   "3rd/image.nvim",
-  event = "VeryLazy",
-  dependencies = {
-    {
-      "vhyrro/luarocks.nvim",
-      priority = 1000, -- this plugin needs to run before anything else
-      opts = {
-        rocks = { "magick" },
-      },
-    },
+  ft = { "markdown", "norg", "vimwiki" },
+  depencencies = {
     {
       "nvim-treesitter/nvim-treesitter",
       optional = true,
       opts = function(_, opts)
         if opts.ensure_installed ~= "all" then
-          opts.ensure_installed =
-            require("astrocore").list_insert_unique(opts.ensure_installed, { "markdown", "markdown_inline" })
+          opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, { "markdown", "markdown_inline" })
         end
       end,
     },
-    "https://github.com/leafo/magick",
   },
   opts = {
     backend = "kitty",
+    processor = "magick_rock",
     integrations = {
       markdown = {
         enabled = true,
@@ -40,16 +31,15 @@ return {
         filetypes = { "norg" },
       },
     },
-    max_width = nil,
-    max_height = nil,
-    max_width_window_percentage = 50,
-    max_height_window_percentage = 50,
+    max_width = 100,
+    max_height = 12,
+    max_height_window_percentage = math.huge,
+    max_width_window_percentage = math.huge,
+
     window_overlap_clear_enabled = true, -- toggles images when windows are overlapped
     window_overlap_clear_ft_ignore = { "cmp_menu", "cmp_docs", "" },
-    kitty_method = "normal",
-    editor_only_render_when_focused = false, -- auto show/hide images when the editor gains/looses focus
-    tmux_show_only_in_active_window = false, -- auto show/hide images in the correct Tmux window (needs visual-activity off)
+    editor_only_render_when_focused = true, -- auto show/hide images when the editor gains/looses focus
+    tmux_show_only_in_active_window = true, -- auto show/hide images in the correct Tmux window (needs visual-activity off)
     hijack_file_patterns = { "*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp" }, -- render image files as images when opened
   },
 }
-end

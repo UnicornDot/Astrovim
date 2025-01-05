@@ -94,10 +94,6 @@ return {
     cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
     ft = { "markdown", "markdown.mdx" },
     build = function() vim.fn["mkdp#util#install"]() end,
-    init = function()
-      local plugin = require("lazy.core.config").spec.plugins["markdown-preview.nvim"]
-      vim.g.mkdp_filetypes = require("lazy.core.plugin").values(plugin, "ft", true)
-    end
   },
   {
     "TobinPalmer/pastify.nvim",
@@ -118,13 +114,13 @@ return {
         right_pad = 1,
       },
     },
-    dependencies = { "nvim-treesitter/nvim-treesitter", "echasnovski/mini.nvim" },
+    dependencies = { "nvim-treesitter/nvim-treesitter", "echasnovski/mini.icons" },
   },
   {
     "mattn/vim-maketable",
     cmd = "MakeTable",
     event = "BufEnter",
-    ft = "markdown",
+    ft = { "markdown", "markdown.mdx" },
   },
   {
     "stevearc/conform.nvim",

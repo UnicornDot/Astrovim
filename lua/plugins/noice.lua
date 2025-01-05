@@ -1,5 +1,4 @@
 local astrocore = require "astrocore"
-local is_available = astrocore.is_available
 
 -- test filter
 -- string.find(
@@ -12,75 +11,9 @@ return {
     "folke/noice.nvim",
     event = "VeryLazy",
     dependencies = {
-      "MunifTanjim/nui.nvim",
-      "karb94/neoscroll.nvim",
+      {"MunifTanjim/nui.nvim", lazy = true},
     },
     specs = {
-      {
-        "AstroNvim/astrocore",
-        ---@param opts AstroLSPOpts
-        opts = function(_, opts)
-          -- WARNING: There will be a conflict between this button and the neo-scroll button, and we will determine whether to resolve it based on the situation
-          if not opts.mappings then opts.mappings = astrocore.empty_map_table() end
-          local maps = opts.mappings
-          if maps then
-            if is_available "noice.nvim" then
-              local noice_down = function()
-                if not require("noice.lsp").scroll(4) then
-                  if vim.fn.mode() ~= "i" then
-                    if is_available "neoscroll.nvim" then require("neoscroll").ctrl_d { duration = 250 } end
-                  else
-                    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-d>", true, true, true), "n", true)
-                  end
-                end
-              end
-              local noice_up = function()
-                if not require("noice.lsp").scroll(-4) then
-                  if vim.fn.mode() ~= "i" then
-                    if is_available "neoscroll.nvim" then require("neoscroll").ctrl_u { duration = 250 } end
-                  else
-                    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-u>", true, true, true), "n", true)
-                  end
-                end
-              end
-
-              maps.n["<C-d>"] = {
-                noice_down,
-                desc = "Noice Scroll down",
-              }
-              maps.i["<C-d>"] = {
-                noice_down,
-                desc = "Noice Scroll down",
-              }
-              maps.s["<C-d>"] = {
-                noice_down,
-                desc = "Noice Scroll down",
-              }
-              maps.x["<C-d>"] = {
-                noice_down,
-                desc = "Noice Scroll down",
-              }
-              maps.n["<C-u>"] = {
-                noice_up,
-                desc = "Noice Scroll up",
-              }
-              maps.i["<C-u>"] = {
-                noice_up,
-                desc = "Noice Scroll up",
-              }
-              maps.s["<C-u>"] = {
-                noice_up,
-                desc = "Noice Scroll up",
-              }
-              maps.x["<C-u>"] = {
-                noice_up,
-                desc = "Noice Scroll up",
-              }
-            end
-          end
-          opts.mappings = maps
-        end,
-      },
       {
         "AstroNvim/astrolsp",
         optional = true,
@@ -120,7 +53,7 @@ return {
       },
     },
     opts = function(_, opts)
-      return astrocore.extend_tbl(opts, {
+      return vim.tbl_deep_extend("force", opts, {
         notify = {
           enabled = false,
         },

@@ -20,6 +20,9 @@ return {
         swapfile = false,
         wrap = false, -- soft wrap lines
         scrolloff = 8, -- keep 3 lines when scrolling
+        winwidth = 10,
+        winminwidth = 10,
+        equalalways = false,
       },
       g = {
         -- resession_enabled = false,
@@ -38,7 +41,7 @@ return {
       options.opt.foldtext = "v:lua.require'ui'.foldtext()"
     end
 
-    return require("astrocore").extend_tbl(opts, {
+    return vim.tbl_deep_extend( "force", opts, {
       -- Configure project root detection, check status with `:AstroRootInfo`
       diagnostics = {
         virtual_text = {
@@ -51,13 +54,39 @@ return {
       features = {
         large_buf = { size = 1024 * 1024 * 1.5, lines = 10000 }, -- set global limits for large files for disabling features like treesitter
         autopairs = true, -- enable autopairs at start
-        cmp = true, -- enable completion at start
+        cmp = false, -- enable completion at start
         diagnostics_mode = 3, -- diagnostics_mode on start (0 = off, 1 = no sign/virtual text, 2 = no virtual text, 3 = on)
         highlighturl = true, -- highlight URLs at start
         notifications = true, -- enable notifications at start
       },
       options = options,
       mappings = mappings,
+      filetypes = {
+        extension = {
+          mdx = "markdown.mdx",
+          qmd = "markdown",
+          yml = utils.yaml_ft,
+          yaml = utils.yaml_ft,
+          json = "jsonc",
+          api = "goctl",
+          MD = "markdown",
+          tpl = "gotmpl",
+        },
+        filename = {
+          [".eslintrc.json"] = "jsonc",
+          ["vifmrc"] = "vim",
+        },
+        pattern = {
+          ["/tmp/neomutt.*"] = "markdown",
+          ["tsconfig*.json"] = "jsonc",
+          [".*/%.vscode/.*%.json"] = "jsonc",
+          [".*/waybar/.*/config"] = "jsonc",
+          [".*/make/config"] = "dosini",
+          [".*/kitty/.+%.conf"] = "ketty",
+          [".*/hypr/.+%.conf"] = "hyprlang",
+          ["%.env%.[%W_.-]+"] = "sh",
+        },
+      },
       autocmds = {
         auto_spell = {
           {

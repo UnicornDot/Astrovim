@@ -22,7 +22,7 @@ return {
         width = 50,
         preset = {
           keys = {
-            { icon = "󱛊 ", key = "p", desc = "Find Project", action = ":Telescope projects" },
+            { icon = "󱛊 ", key = "p", desc = "Find Project", action = ":FzfLua grep_project" },
             { icon = " ", key = "r", desc = "Recent Files", action = ":lua Snacks.dashboard.pick('oldfiles')" },
             { icon = " ", key = "f", desc = "Find File", action = ":lua Snacks.dashboard.pick('files')" },
             { icon = "󰯃 ", key = "n", desc = "New File", action = ":ene | startinsert" },
@@ -45,16 +45,6 @@ return {
               height = 30,
               -- icon = "🔖", indent = 3, padding = 1, 
           },
-          -- {pane = 2,
-          --     section = "projects",
-          --     title = "Projects --------------------------------",
-          --     icon = "📚", indent = 3, padding = 1
-          -- },
-          -- {pane = 2,
-          --     section = "recent_files",
-          --     title = "Recent Files ----------------------------",
-          --     icon = "💢", indent = 3, padding = 1
-          -- },
         }
       },
       quickfile = { enabled = true },
@@ -63,6 +53,7 @@ return {
       input = { enabled = true },
       scroll = { enabled = true },
       words = { enabled = true },
+      rename = { enabled = true },
     },
   }
 }
