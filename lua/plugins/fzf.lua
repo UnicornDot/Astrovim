@@ -12,36 +12,37 @@ return {
   specs = {
     { "nvim-telescope/telescope.nvim", optional = true, enabled = false },
     { "nvim-telescope/telescope-fzf-native.nvim", optional = true, enabled = false },
-    { "stevearc/dressing.nvim", optional = true, opts = { select = { backend = { "fzf_lua" } } } },
+    { "stevearc/dressing.nvim", optional = true, enabled = false },
     {
       "AstroNvim/astrolsp",
       optional = true,
       opts = function(_, opts)
         if astrocore.is_available "fzf-lua" then
           local maps = opts.mappings or {}
-          maps.n["<Leader>lD"] =
-            { function() require("fzf-lua").diagnostics_document() end, desc = "Search diagnostics" }
           if maps.n.gd then
             maps.n.gd[1] = "<cmd>FzfLua lsp_definitions jump_to_single_result=true ignore_current_line=true<cr>"
           end
           if maps.n.gI then
             maps.n.gI[1] = "<cmd>FzfLua lsp_implementations jump_to_single_result=true ignore_current_line=true<cr>"
           end
-          if maps.n["<Leader>lR"] then
-            maps.n["<Leader>lR"][1] =
-              "<cmd>FzfLua lsp_references jump_to_single_result=true ignore_current_line=true<cr>"
-          end
           if maps.n.gy then
             maps.n.gy[1] = "<cmd>FzfLua lsp_typedefs jump_to_single_result=true ignore_current_line=true<cr>"
-          end
-          if maps.n["<Leader>lG"] then
-            maps.n["<Leader>lG"][1] = function() require("fzf-lua").lsp_workspace_symbols() end
           end
           maps.n.gr = {
             "<cmd>FzfLua lsp_references jump_to_single_result=true ignore_current_line=true<cr>",
             desc = "References",
             nowait = true,
           }
+          maps.n["<Leader>lX"] = {
+            function() require("fzf-lua").diagnostics_document() end,
+            desc = "Search diagnostics"
+          }
+          if maps.n["<Leader>lR"] then
+            maps.n["<Leader>lR"][1] = "<cmd>FzfLua lsp_references jump_to_single_result=true ignore_current_line=true<cr>"
+          end
+          if maps.n["<Leader>lS"] then
+            maps.n["<Leader>lS"][1] = function() require("fzf-lua").lsp_workspace_symbols() end
+          end
         end
       end,
     },
@@ -90,9 +91,16 @@ return {
         maps.n["<Leader>fh"] = { function() require("fzf-lua").helptags() end, desc = "Find help" }
         maps.n["<Leader>fk"] = { function() require("fzf-lua").keymaps() end, desc = "Find keymaps" }
         maps.n["<Leader>fm"] = { function() require("fzf-lua").manpages() end, desc = "Find man" }
+        if require("astrocore").is_available("snacks.nvim") then
+          maps.n["<Leader>fn"] = {
+            function() require("snacks").notifier.show_history() end,
+            desc = "Find notifications",
+          }
+        end
         maps.n["<Leader>fo"] = { function() require("fzf-lua").oldfiles() end, desc = "Find history" }
         maps.n["<Leader>fr"] = { function() require("fzf-lua").registers() end, desc = "Find registers" }
         maps.n["<Leader>fT"] = { function() require("fzf-lua").colorschemes() end, desc = "Find themes" }
+        maps.n["<Leader>fg"] = { function() require("fzf-lua").git_files() end, desc = "Find Files(git-files)" }
         if vim.fn.executable "rg" == 1 or vim.fn.executable "grep" == 1 then
           maps.n["<Leader>fw"] = { function() require("fzf-lua").live_grep_native() end, desc = "Find words" }
         end
@@ -136,29 +144,23 @@ return {
     config.defaults.keymap.fzf["ctrl-x"] = "jump"
     config.defaults.keymap.fzf["ctrl-f"] = "half-page-down"
     config.defaults.keymap.fzf["ctrl-b"] = "half-page-up"
-    -- Trouble
-    if require("astrocore").is_available "trouble.nvim" then
-      config.defaults.actions.files["ctrl-t"] = require("trouble.sources.fzf").actions.open
+
+
+    if require("astrocore").is_available("diffview.nvim") then
+      config.defaults.git.commits.actions["ctrl-r"] = function(selected, opts)
+        local commit_hash = selected[1]:match("[^ ]+")
+        vim.cmd.DiffviewOpen{ commit_hash }
+      end
+      config.defaults.git.bcommits.actions["ctrl-r"] = function(selected, opts)
+        local commit_hash = selected[1]:match("[^ ]+")
+        vim.cmd.DiffviewOpen{ commit_hash }
+      end
+      config.defaults.git.branches.actions["ctrl-r"] = function(selected, opts)
+        local branch = selected[1]:match("[^%s%*]+")
+        vim.cmd.DiffviewOpen { branch }
+      end
     end
-    -- -- Toggle root dir / cwd
-    -- config.defaults.actions.files["ctrl-r"] = function(_, ctx)
-    --   local o = vim.deepcopy(ctx.__call_opts)
-    --   o.root = o.root == false
-    --   o.cwd = nil
-    --   o.buf = ctx.__CTX.bufnr
-    --
-    --   local command = ctx.__INFO.cmd
-    --   command = command ~= "auto" and command or "files"
-    --
-    --   if not o.cwd and o.root ~= false then o.cwd = require("astrocore.rooter").bufpath(o.buf) end
-    --
-    --   if o.cmd == nil and command == "git_files" and o.show_untracked then
-    --     o.cmd = "git ls-files --exclude-standard --cached --others"
-    --   end
-    --   return require("fzf-lua")[command](o)
-    -- end
-    -- config.defaults.actions.files["alt-c"] = config.defaults.actions.files["ctrl-r"]
-    -- config.set_action_helpstr(config.defaults.actions.files["ctrl-r"], "toggle-root-dir")
+
     local img_previewer ---@type string[]?
     for _, v in ipairs {
       { cmd = "ueberzug", args = {} },

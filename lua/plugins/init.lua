@@ -4,7 +4,9 @@ return {
   { "jay-babu/mason-null-ls.nvim", enabled = false },
   { "nvimtools/none-ls.nvim", enabled = false },
   { "goolord/alpha-nvim", enabled = false },
-
+  { "lukas-reineke/indent-blankline.nvim", enabled = false },
+  { "rcarriga/nvim-notify", enabled = false },
+  { "NMAC427/guess-indent.nvim", enabled = false },
   {
     "folke/snacks.nvim",
     priority = 1000,
@@ -54,6 +56,7 @@ return {
       scroll = { enabled = true },
       words = { enabled = true },
       rename = { enabled = true },
+      debug = { enabled = true }
     },
   }
 }

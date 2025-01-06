@@ -10,7 +10,6 @@ local insert_to_file_first_line = utils.insert_to_file_first_line
 local get_parent_directory = utils.get_parent_directory
 
 local file_exists = utils.file_exists
--- local remove_cwd = utils").remove_cwd
 local remove_lsp_cwd = utils.remove_lsp_cwd
 local get_lsp_root_dir = utils.get_lsp_root_dir
 

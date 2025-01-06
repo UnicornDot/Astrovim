@@ -3,7 +3,7 @@
 -- https://github.com/williamboman/mason.nvim/issues/1741
 local astrocore = require "astrocore"
 local set_mappings = astrocore.set_mappings
-vim.g.astronvim_rust_diagnostics = "bacon-ls"
+-- vim.g.astronvim_rust_diagnostics = "bacon-ls"
 local diagnostics = vim.g.astronvim_rust_diagnostics or "rust-analyzer"
 
 local function preview_stack_trace()
@@ -128,7 +128,7 @@ return {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
     optional = true,
     opts = function(_, opts)
-      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "codelldb", "bacon-ls", "bacon" })
+      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "codelldb" })
     end,
   },
   {

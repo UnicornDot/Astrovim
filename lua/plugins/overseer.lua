@@ -6,10 +6,9 @@ return {
     event = "User AstroFile",
     opts = function(_, opts)
       if astrocore.is_available("toggleterm.nvim") then opts.strategy = "toggleterm" end
-      local function size(max, value) return value > 1 and math.min(value, max) or math.floor(max * value) end
       local window_scaling_factor = 0.3
-      local height = size(vim.o.lines, window_scaling_factor)
-      local width = size(vim.o.columns, window_scaling_factor)
+      local height = require("utils").size(vim.o.lines, window_scaling_factor)
+      local width = require("utils").size(vim.o.columns, window_scaling_factor)
       return vim.tbl_deep_extend('force', opts,  {
         dap = false,
         templates = { "make", "cargo", "shell", "run_script", "npm", "run_web", "run_python" },

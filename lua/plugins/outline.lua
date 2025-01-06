@@ -7,7 +7,7 @@ return {
         "AstroNvim/astrocore",
         opts = function(_, opts)
           local maps = opts.mappings or {}
-          maps.n["<Leader>lS"] = { function() vim.cmd [[Outline]] end, desc = "Toggle Outline" } end,
+          maps.n["<Leader>lo"] = { function() vim.cmd [[Outline]] end, desc = "Toggle Outline" } end,
       },
       { "stevearc/aerial.nvim", optional = true, enabled = true },
       "echasnovsko/mini.icons",

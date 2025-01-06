@@ -2,6 +2,64 @@ local M = {}
 local astrocore = require("astrocore")
 local uv = vim.uv or vim.loop
 
+function M.size(max, value) return value > 1 and math.min(value, max) or math.floor(max * value) end
+
+--@param snippet string
+---@param fn fun(placeholder:Placeholder):string
+---@return string
+function M.snippet_replace(snippet, fn)
+  return snippet:gsub("%$%b{}", function(m)
+    local n, name = m:match "^%${(%d+):(.+)}$"
+    return n and fn { n = n, text = name } or m
+  end) or snippet
+end
+
+--- This function resolves nested placeholders in a snippet.
+---@param snippet string
+---@return string
+function M.snippet_preview(snippet)
+  local ok, parsed = pcall(function() return vim.lsp._snippet_grammar.parse(snippet) end)
+  return ok and tostring(parsed)
+    or M.snippet_replace(snippet, function(placeholder) return M.snippet_preview(placeholder.text) end):gsub("%$0", "")
+end
+
+-- This function replaces nested placeholders in a snippet with LSP placeholders.
+function M.snippet_fix(snippet)
+  local texts = {} ---@type table<number, string>
+  return M.snippet_replace(snippet, function(placeholder)
+    texts[placeholder.n] = texts[placeholder.n] or M.snippet_preview(placeholder.text)
+    return "${" .. placeholder.n .. ":" .. texts[placeholder.n] .. "}"
+  end)
+end
+
+function M.expand(snippet)
+  -- Native sessions don't support nested snippet sessions.
+  -- Always use the top-level session.
+  -- Otherwise, when on the first placeholder and selecting a new completion,
+  -- the nested session will be used instead of the top-level session.
+  -- See: https://github.com/LazyVim/LazyVim/issues/3199
+  local session = vim.snippet.active() and vim.snippet._session or nil
+  local ok, err = pcall(vim.snippet.expand, snippet)
+  if not ok then
+    local fixed = M.snippet_fix(snippet)
+    ok = pcall(vim.snippet.expand, fixed)
+    local msg = ok and "Failed to parse snippet,\nbut was able to fix it automatically."
+      or ("Failed to parse snippet.\n" .. err)
+
+    vim.notify(
+      ([[%s
+```%s
+%s
+```]]):format(msg, vim.bo.filetype, snippet),
+      ok and vim.log.levels.WARN or vim.log.levels.ERROR,
+      { title = "vim.snippet" }
+    )
+  end
+
+  -- Restore top-level session when needed
+  if session then vim.snippet._session = session end
+end
+
 ---@type table<string, string[]|boolean>?
 M.kind_filter = {
   default = {
@@ -38,6 +96,7 @@ M.kind_filter = {
     "Trait",
   },
 }
+
 ---@param buf? number
 ---@return string[]?
 function M.get_kind_filter(buf)
@@ -49,6 +108,7 @@ function M.get_kind_filter(buf)
   ---@diagnostic disable-next-line: return-type-mismatch
   return type(M.kind_filter) == "table" and type(M.kind_filter.default) == "table" and M.kind_filter.default or nil
 end
+
 ---@param fn fun()
 function M.on_very_lazy(fn)
   vim.api.nvim_create_autocmd("User", {
@@ -74,6 +134,22 @@ function M.get_clients(opts)
   end
   return opts and opts.filter and vim.tbl_filter(opts.filter, ret) or ret
 end
+
+function M.write_to_file(file_path, content)
+  uv.fs_open(file_path, "w", 438, function(err, fd)
+    if err then
+      print("Error opening file: " .. err)
+      return
+    end
+    uv.fs_write(fd, content, -1, function(err)
+      if err then print("Error writing to file" .. err) end
+      uv.fs_close(fd, function(err)
+        if err then print("Error closing file: " .. err) end
+      end)
+    end)
+  end)
+end
+
 
 --- 检查是否存在 `--config` 参数
 function M.contains_arg(args, arg)
@@ -166,20 +242,6 @@ function M.insert_to_file_first_line(path, content)
   uv.fs_close(fd)
 end
 
-function M.write_to_file(file_path, content)
-  uv.fs_open(file_path, "w", 438, function(err, fd)
-    if err then
-      print("Error opening file: " .. err)
-      return
-    end
-    uv.fs_write(fd, content, -1, function(err)
-      if err then print("Error writing to file" .. err) end
-      uv.fs_close(fd, function(err)
-        if err then print("Error closing file: " .. err) end
-      end)
-    end)
-  end)
-end
 
 -- Function to get the parent directory of a given file path
 -- @param filepath: The full path of the file
@@ -548,7 +610,9 @@ end
 function M.remove_keymap(mode, key)
   for _, map in pairs(vim.api.nvim_get_keymap(mode)) do
     ---@diagnostic disable-next-line: undefined-field
-    if map.lhs == key then vim.api.nvim_del_keymap(mode, key) end
+    if map.lhs == key then vim.api.nvim_del_keymap(mode, key)
+      return map
+    end
   end
 end
 
@@ -556,34 +620,6 @@ function M.toggle_lazy_docker()
   return function()
     astrocore.toggle_term_cmd {
       cmd = "lazydocker",
-      direction = "float",
-      hidden = true,
-      on_open = function()
-        M.remove_keymap("t", "<C-H>")
-        M.remove_keymap("t", "<C-J>")
-        M.remove_keymap("t", "<C-K>")
-        M.remove_keymap("t", "<C-L>")
-      end,
-      on_close = function()
-        vim.api.nvim_set_keymap("t", "<C-H>", "<cmd>wincmd h<cr>", { silent = true, noremap = true })
-        vim.api.nvim_set_keymap("t", "<C-J>", "<cmd>wincmd j<cr>", { silent = true, noremap = true })
-        vim.api.nvim_set_keymap("t", "<C-K>", "<cmd>wincmd k<cr>", { silent = true, noremap = true })
-        vim.api.nvim_set_keymap("t", "<C-L>", "<cmd>wincmd l<cr>", { silent = true, noremap = true })
-      end,
-      on_exit = function()
-        -- For Stop Term Mode
-        vim.cmd [[stopinsert]]
-      end,
-    }
-  end
-end
-
-function M.toggle_lazy_git()
-  return function()
-    local worktree = astrocore.file_worktree()
-    local flags = worktree and (" --work-tree=%s --git-dir=%s"):format(worktree.toplevel, worktree.gitdir) or ""
-    astrocore.toggle_term_cmd {
-      cmd = "lazygit " .. flags,
       direction = "float",
       hidden = true,
       on_open = function()
@@ -617,47 +653,6 @@ function M.toggle_btm()
       on_exit = function()
         -- For Stop Term Mode
         vim.cmd [[stopinsert]]
-      end,
-    }
-  end
-end
-
-function M.toggle_yazi(path)
-  return function()
-    local output_path = "/tmp/yazi_filechosen"
-    os.remove(output_path)
-    path = vim.fn.expand "%:p:h"
-    local cmd = string.format('yazi "%s" --chooser-file "%s"', path, output_path)
-    astrocore.toggle_term_cmd {
-      cmd = cmd,
-      direction = "float",
-      hidden = true,
-      on_open = function()
-        M.remove_keymap("t", "<C-H>")
-        M.remove_keymap("t", "<C-J>")
-        M.remove_keymap("t", "<C-K>")
-        M.remove_keymap("t", "<C-L>")
-      end,
-      on_close = function()
-        vim.api.nvim_set_keymap("t", "<C-h>", "<cmd>wincmd h<cr>", { silent = true, noremap = true })
-        vim.api.nvim_set_keymap("t", "<C-j>", "<cmd>wincmd j<cr>", { silent = true, noremap = true })
-        vim.api.nvim_set_keymap("t", "<C-k>", "<cmd>wincmd k<cr>", { silent = true, noremap = true })
-        vim.api.nvim_set_keymap("t", "<C-l>", "<cmd>wincmd l<cr>", { silent = true, noremap = true })
-      end,
-      on_exit = function(t, job, code, event)
-        if code == 0 then
-          if M.file_exists(output_path) then
-            local open_path = vim.fn.readfile(output_path)[1]
-            vim.cmd "silent! :checktime"
-            vim.loop.new_timer():start(
-              0,
-              0,
-              vim.schedule_wrap(function()
-                if open_path then vim.cmd(string.format("edit %s", open_path)) end
-              end)
-            )
-          end
-        end
       end,
     }
   end
