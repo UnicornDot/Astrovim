@@ -30,8 +30,8 @@ return {
   opts = {
     open_multiple_tabs = false,
     floating_window_scaling_factor = {
-      height = 1,
-      width = 0.9,
+      height = 0.8,
+      width = 0.8,
     },
     -- the transparency of the yazi floating window (0-100). See :h winblend
     yazi_floating_window_winblend = 0,
