@@ -61,9 +61,9 @@ return {
   ---@type LazySpec
   {
     "AstroNvim/astrolsp",
+    optional = true,
     ---@type AstroLSPOpts
     ---@diagnostic disable: missing-fields
-    optional = true,
     opts = function(_, opts)
       return  vim.tbl_deep_extend("force", opts, {
         config = {
@@ -235,11 +235,26 @@ return {
         end
       end
 
-      local js_filetypes = { "typescriptreact", "typescript", "javascript", "javascriptreact" }
+      if not dap.adapters["pwa-chrome"] then
+        dap.adapters["pwa-chrome"] = {
+          type = "server",
+          host = "localhost",
+          port = "${port}",
+          executable = {
+            command = "node",
+            args = {
+              js_debug_adapter_path,
+              "${port}",
+            },
+          },
+        }
+      end
+      local js_filetypes = { "typescriptreact", "typescript", "javascript", "javascriptreact", "vue" }
 
       local vscode = require "dap.ext.vscode"
       vscode.type_to_filetypes["node"] = js_filetypes
       vscode.type_to_filetypes["pwa-node"] = js_filetypes
+      vscode.type_to_filetypes["pwa-chrome"] = js_filetypes
 
       for _, language in ipairs(js_filetypes) do
         if not dap.configurations[language] then
@@ -258,6 +273,47 @@ return {
               processId = require("dap.utils").pick_process,
               cwd = "${workspaceFolder}",
             },
+            {
+              type = "pwa-chrome",
+              request = "launch",
+              name = "Launch Chrome with localhost",
+              url = function()
+                local co = coroutine.running()
+                return coroutine.create(function()
+                  vim.ui.input({prompt =  "Enter URL: ", default = "http://localhost:5137"}, function(url)
+                    if url == nil or url == "" then
+                      return
+                    else
+                      coroutine.resume(co, url)
+                    end
+                  end)
+                end)
+              end,
+              webRoot = "${workspaceFolder}",
+              protocol = "inspector",
+              sourceMaps = true,
+              skipFiles = {
+                "<node_internals>/**", "node_modules/**", "${workspaceFolder}/node_modules/**"
+              },
+              resolveSourceMapLocations = {
+                "${workspaceFolder}/apps/**/**",
+                "${workspaceFolder}/**",
+                "!**/node_modules/**",
+                "!**/bower_components/**"
+              },
+            },
+            {
+              type = "pwa-chrome",
+              request = "attach",
+              name = "Attach Program (pwa-chrome, select port)",
+              webRoot = "${workspaceFolder}",
+              protocol = "inspector",
+              sourceMaps = true,
+              port = function() return vim.fn.input("select port: ", 9222) end,
+              skipFiles = {
+                "<node_internals>/**", "node_modules/**", "${workspaceFolder}/node_modules/**"
+              },
+            }
           }
         end
       end

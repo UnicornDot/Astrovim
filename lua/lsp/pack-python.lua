@@ -8,63 +8,64 @@ return {
   {
     "AstroNvim/astrolsp",
     ---@type AstroLSPOpts
-    opts = {
-      ---@diagnostic disable: missing-fields
-      config = {
-        basedpyright = {
-          on_attach = function()
-            set_mappings({
-              n = {
-                ["<leader>lo"] = {
-                  "<cmd>PyrightOrganizeImports<cr>",
-                  desc = "Organize imports",
+    opts = function(_, opts) 
+      vim.tbl_deep_extend("force", opts, {
+        ---@diagnostic disable: missing-fields
+        config = {
+          basedpyright = {
+            on_attach = function()
+              set_mappings({
+                n = {
+                  ["<leader>lo"] = {
+                    "<cmd>PyrightOrganizeImports<cr>",
+                    desc = "Organize imports",
+                  }
                 }
-              }
-            }, { buffer = true })
-          end,
-          before_init = function(_, c)
-            if not c.settings then c.settings = {} end
-            if not c.settings.python then c.settings.python = {} end
-            c.settings.python.pythonPath = vim.fn.exepath("python")
-          end,
-          filetypes = { "python" },
-          single_file_support = true,
-          root_dir = function(...)
-            local util = require "lspconfig.util"
-            return util.find_git_ancestor(...)
-              or util.root_pattern(unpack {
-                "pyproject.toml",
-                "setup.py",
-                "setup.cfg",
-                "requirements.txt",
-                "Pipfile",
-                "pyrightconfig.json",
-              })(...)
-          end,
-          settings = {
-            basedpyright = {
-              analysis = {
-                typeCheckingMode = "basic",
-                autoImportCompletions = true,
-                autoSearchPaths = true,
-                diagnosticMode = "openFilesOnly",
-                useLibraryCodeForTypes = true,
-                reportMissingTypeStubs = false,
-                diagnosticSeverityOverrides = {
-                  reportUnusedImport = "information",
-                  reportUnusedFunction = "information",
-                  reportUnusedVariable = "information",
-                  reportGeneralTypeIssues = "none",
-                  reportOptionalMemberAccess = "none",
-                  reportOptionalSubscript = "none",
-                  reportPrivateImportUsage = "none",
+              }, { buffer = true })
+            end,
+            before_init = function(_, c)
+              if not c.settings then c.settings = {} end
+              if not c.settings.python then c.settings.python = {} end
+              c.settings.python.pythonPath = vim.fn.exepath("python")
+            end,
+            filetypes = { "python" },
+            single_file_support = true,
+            root_dir = function(...)
+              local util = require "lspconfig.util"
+              return util.root_pattern(unpack {
+                  "pyproject.toml",
+                  "setup.py",
+                  "setup.cfg",
+                  "requirements.txt",
+                  "Pipfile",
+                  "pyrightconfig.json",
+                })(...)
+            end,
+            settings = {
+              basedpyright = {
+                analysis = {
+                  typeCheckingMode = "basic",
+                  autoImportCompletions = true,
+                  autoSearchPaths = true,
+                  diagnosticMode = "openFilesOnly",
+                  useLibraryCodeForTypes = true,
+                  reportMissingTypeStubs = false,
+                  diagnosticSeverityOverrides = {
+                    reportUnusedImport = "information",
+                    reportUnusedFunction = "information",
+                    reportUnusedVariable = "information",
+                    reportGeneralTypeIssues = "none",
+                    reportOptionalMemberAccess = "none",
+                    reportOptionalSubscript = "none",
+                    reportPrivateImportUsage = "none",
+                  },
                 },
               },
             },
           },
         },
-      },
-    },
+      })
+    end
   },
   {
     "nvim-treesitter/nvim-treesitter",

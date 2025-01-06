@@ -17,7 +17,7 @@ return {
         "typescript.tsx"
       }, { "vue" })
 
-      return astrocore.extend_tbl(opts, {
+      return vim.tbl_deep_extend("force", opts, {
         ---@diagnostic disable: missing-fields
         config = {
           volar = {
