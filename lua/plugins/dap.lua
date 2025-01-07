@@ -36,27 +36,6 @@ return {
         ---@type AstroCoreOpts
         opts = function(_, opts)
           local maps = opts.mappings or {}
-          maps.n[prefix_dap] = { desc = "Find dap" }
-          maps.n[prefix_dap .. "c"] = {
-            function() require("telescope").extensions.dap.commands() end,
-            desc = "Telescope DAP commands",
-          }
-          maps.n[prefix_dap .. "f"] = {
-            function() require("telescope").extensions.dap.frames() end,
-            desc = "Telescope DAP frames",
-          }
-          maps.n[prefix_dap .. "g"] = {
-            function() require("telescope").extensions.dap.configurations() end,
-            desc = "Telescope DAP configurations",
-          }
-          maps.n[prefix_dap .. "l"] = {
-            function() require("telescope").extensions.dap.list_breakpoints() end,
-            desc = "Telescope DAP list breakpoints",
-          }
-          maps.n[prefix_dap .. "v"] = {
-            function() require("telescope").extensions.dap.variables() end,
-            desc = "Telescope DAP variables",
-          }
           maps.n[prefix_debug .. "q"] = {
             function() require("dap").terminate() end,
             desc = "Terminal Session(S-F5)",
@@ -104,14 +83,14 @@ return {
                 enter = true,
               }
               vim.ui.select(
-                {"console", "repl", "stacks", "breakpoints", "watches", "scopes" }, 
+                {"console", "repl", "stacks", "breakpoints", "watches", "scopes" },
                 {prompt = "Select Dap  Element", default = "console" },
                 function(select)
                   if select == "repl" then
-                    require("dapui").flaot_element("repl", window)
+                    require("dapui").float_element("repl", window)
                   elseif select == "stacks" then
-                    require("dapui").float_element("stacks").float_element("stacks", window)
-                  elseif select == "breakpoints" then 
+                    require("dapui").float_element("stacks", window)
+                  elseif select == "breakpoints" then
                     require("dapui").float_element("breakpoints", window)
                   elseif select == "watches" then
                     require("dapui").float_element("watches", window)
@@ -211,12 +190,5 @@ return {
       end
       dapui.setup(opts)
     end,
-  },
-  {
-    "nvim-telescope/telescope.nvim",
-    dependencies = {
-      "nvim-telescope/telescope-dap.nvim",
-    },
-    opts = function() require("telescope").load_extension "dap" end,
-  },
+  }
 }
