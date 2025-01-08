@@ -43,13 +43,6 @@ return {
         handlers = { rust_analyzer = false }, -- disable setup of `rust_analyzer`
         ---@diagnostic disable: missing-fields
         config = {
-          bacon_ls = {
-            init_options = {
-              updateOnSave = true,
-              updateOnSaveWaitMillis = 1000,
-              updateOnChange = false,
-            },
-          },
           rust_analyzer = {
             on_attach = function()
               vim.api.nvim_create_autocmd({ "TermOpen", "TermClose", "BufEnter" }, {
@@ -188,7 +181,7 @@ return {
           vim.log.levels.ERROR
         )
       end
-      vim.g.rustaceanvim = vim.tbl_deep_extend("force", opts, vim.g.rustaceanvim)
+      vim.g.rustaceanvim = vim.tbl_deep_extend("keep", vim.g.rustaceanvim or {}, opts or {})
     end,
   },
   {
