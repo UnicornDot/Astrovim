@@ -39,16 +39,19 @@ return {
     "AstroNvim/astrolsp",
     --- @type AstroLSPOpts
     opts = function(_, opts) 
-      vim.tbl_deep_extend("force", opts, {
+      if diagnostics ~= "rust-analyzer" then
+        astrocore.list_insert_unique(opts.servers, { "bacon_ls" })
+      end
+      return vim.tbl_deep_extend("force", opts, {
         handlers = { rust_analyzer = false }, -- disable setup of `rust_analyzer`
         ---@diagnostic disable: missing-fields
         config = {
           bacon_ls = {
             init_options = {
               updateOnSave = true,
-              updateOnSaveWaitMillis = 1000,
+              updateOnSaveMillis = 1000,
               updateOnChange = false,
-            },
+            }
           },
           rust_analyzer = {
             on_attach = function()
@@ -129,6 +132,9 @@ return {
     optional = true,
     opts = function(_, opts)
       opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "codelldb" })
+      if diagnostics ~= "rust-analyzer" then
+        astrocore.list_insert_unique(opts.ensure_installed, { "bacon" })
+      end
     end,
   },
   {
@@ -188,7 +194,7 @@ return {
           vim.log.levels.ERROR
         )
       end
-      vim.g.rustaceanvim = vim.tbl_deep_extend("force", opts, vim.g.rustaceanvim)
+      vim.g.rustaceanvim = vim.tbl_deep_extend("keep", vim.g.rustaceanvim or {}, opts or {})
     end,
   },
   {
