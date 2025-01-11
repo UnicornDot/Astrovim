@@ -40,7 +40,7 @@ return {
           {section = "startup", gap = 1, padding  = 1 },
           {
               section = "terminal",
-              cmd = "cat ~/.config/nvim/bar.txt",
+              cmd = "bat -p " .. vim.fn.stdpath("config") .. "/bar.txt",
               random = 10,
               pane = 2,
               indent = 0,
