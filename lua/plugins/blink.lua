@@ -32,6 +32,8 @@ return {
   version = "*",
   dependencies = {
     {"rafamadriz/friendly-snippets", lazy = true},
+    {"saghen/blink.compat", version = "*", opts = { impersonate_nvim_cmp = true } },
+    "moyiz/blink-emoji.nvim",
     "echasnovski/mini.icons",
   },
   opts_extend = {
@@ -45,8 +47,25 @@ return {
     },
     -- remember to enable your providers here
     sources = {
-      default = { "lsp", "path", "snippets", "cmdline", "emoji", "codeium", "buffer"  },
+      default = { "lsp", "path", "snippets", "cmdline", "buffer", "emoji", "dadbod", "codeium"  },
       providers = {
+        codeium = {
+          name = "Codeium",
+          module = "blink.compat.source",
+          async = true,
+          score_offset = 100,
+        },
+        dadbod = {
+          name = "Dadbod",
+          module = "vim_dadbod_completion.blink",
+          score_offset = 85,
+        },
+        -- https://github.com/moyiz/blink-emoji.nvim
+        emoji = {
+          name = "Emoji",
+          module = "blink-emoji",
+          score_offset = 15,
+        },
         lsp = {
           ---@type fun(ctx: blink.cmp.Context, items: blink.cmp.CompletionItem[])
           transform_items = function(ctx, items)
@@ -87,6 +106,15 @@ return {
           end,
         },
       },
+      cmdline = function()
+        local type = vim.fn.getcmdtype()
+        if type == "/" or type == "?" then
+          return { "buffer" }
+        elseif type == ":" then
+          return{"cmdline"}
+        end
+        return {}
+      end
     },
     keymap = {
       ["<Up>"] = { "select_prev", "fallback" },
@@ -146,7 +174,9 @@ return {
         draw = {
           treesitter = { "lsp" },
           columns = {
-            { "kind_icon", "label", "source_name", gap = 1 }
+            { "kind_icon" },
+            { "label", "label_description", gap = 1 },
+            { "source_name" },
           },
           components = {
             kind_icon = {
