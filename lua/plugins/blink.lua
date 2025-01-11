@@ -45,7 +45,7 @@ return {
     },
     -- remember to enable your providers here
     sources = {
-      default = { "lsp", "path", "snippets", "buffer" },
+      default = { "lsp", "path", "snippets", "cmdline", "emoji", "codeium", "buffer"  },
       providers = {
         lsp = {
           ---@type fun(ctx: blink.cmp.Context, items: blink.cmp.CompletionItem[])
@@ -98,7 +98,7 @@ return {
       ["<C-U>"] = { "scroll_documentation_up", "fallback" },
       ["<C-D>"] = { "scroll_documentation_down", "fallback" },
       ["<C-E>"] = { "hide", "fallback" },
-      ["<CR>"]  = {  "fallback" },
+      ["<CR>"]  = { "accept", "fallback" },
       ["<Tab>"] = {
         function(cmp)
           if cmp.is_visible() then
@@ -145,6 +145,9 @@ return {
         winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder,CursorLine:PmenuSel,Search:None",
         draw = {
           treesitter = { "lsp" },
+          columns = {
+            { "kind_icon", "label", "source_name", gap = 1 }
+          },
           components = {
             kind_icon = {
               ellipsis = true,
@@ -170,7 +173,7 @@ return {
       },
       documentation = {
         auto_show = true,
-        auto_show_delay_ms = 200,
+        auto_show_delay_ms = 300,
         window = {
           border = "rounded",
           scrollbar = false,
