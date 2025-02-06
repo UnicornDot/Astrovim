@@ -27,14 +27,14 @@ local function get_icon(ctx)
 end
 
 return {
-  {"saghen/blink.compat", version = "*", opts = { impersonate_nvim_cmp = true } },
+  {"saghen/blink.compat", version = "*", lazy = true, opts = { impersonate_nvim_cmp = true } },
   {
     "Saghen/blink.cmp",
     event = { "InsertEnter", "CmdlineEnter"},
     version = "*",
     dependencies = {
       {"rafamadriz/friendly-snippets", lazy = true},
-      {"saghen/blink.compat", version = "*", opts = { impersonate_nvim_cmp = true } },
+      {"saghen/blink.compat", version = "*", lazy = true, opts = { impersonate_nvim_cmp = true } },
       "moyiz/blink-emoji.nvim",
       "echasnovski/mini.icons",
     },
