@@ -139,6 +139,10 @@ return {
   },
   {
     "mrcjkb/rustaceanvim",
+    cond = require("lazy_load_util").wants {
+      ft = "rust",
+      root = { "Cargo.toml", "rust-project.json" }
+    },
     version = "^5",
     ft = "rust",
     opts = function()
@@ -199,6 +203,10 @@ return {
   },
   {
     "Saecki/crates.nvim",
+    cond = require("lazy_load_util").wants {
+      ft = "rust", 
+      root = { "Cargo.toml", "rust-project.json" }
+    },
     event = { "BufRead Cargo.toml" },
     opts = {
       completion = {

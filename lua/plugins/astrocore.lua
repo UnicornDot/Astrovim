@@ -53,7 +53,7 @@ return {
       -- modify core features of AstroNvim
       features = {
         large_buf = { size = 1024 * 1024 * 1.5, lines = 10000 }, -- set global limits for large files for disabling features like treesitter
-        autopairs = true, -- enable autopairs at start
+        autopairs = false, -- enable autopairs at start
         cmp = false, -- enable completion at start
         diagnostics_mode = 3, -- diagnostics_mode on start (0 = off, 1 = no sign/virtual text, 2 = no virtual text, 3 = on)
         highlighturl = true, -- highlight URLs at start
@@ -118,6 +118,22 @@ return {
             callback = function()
               vim.wo.spell = false
               vim.wo.conceallevel = 0
+            end,
+          },
+        },
+        auto_close_dadbod_output = {
+          {
+            event = "FileType",
+            pattern = { "dbout"},
+            callback = function(event)
+              vim.bo[event.buf].buflisted = false
+              vim.schedule(function()
+                vim.keymap.set("n", "q", function() vim.cmd "q!" end, {
+                  buffer = event.buf,
+                  silent = true,
+                  desc = "Quit buffer",
+                })
+              end)
             end,
           },
         },

@@ -81,22 +81,20 @@ return {
           },
           vtsls = {
             on_attach = function(client, _)
-              client.server_capabilities = astrocore.extend_tbl(client.server_capabilities, {
-                workspace = {
-                  didchangeWatchedFiles = { dynamicRegistration = true },
-                  fileOperations = {
-                    didRename = {
-                      filters = {
-                        {
-                          pattern = {
-                            glob = "**/*.{ts,cts,mts,tsx,js,cjs,mjs,jsx,vue}",
-                          },
-                        },
-                      },
-                    },
-                  },
-                },
-              })
+              local existing_capabilities = vim.deepcopy(client.server_capabilities)
+              if existing_capabilities == nil then return end
+              existing_capabilities.documentFormattingProvider = nil
+              local existing_filters = existing_capabilities.workspace.fileOperations.didRename.filters or {}
+              local new_glob = "**/*.{ts,cts,mts,tsx,js,cjs,mjs,jsx,vue}"
+              for _, filter in ipairs(existing_filters) do
+                if filter.pattern and filter.pattern.matches == "file" then
+                  filter.pattern.glob = new_glob
+                  break
+                end
+              end
+              existing_capabilities.workspace.fileOperations.didRename.filters = existing_filters
+
+              client.server_capabilities = existing_capabilities
               set_mappings({
                 n = {
                   ["<Leader>lA"] = {
@@ -189,15 +187,55 @@ return {
   },
   {
     "vuki656/package-info.nvim",
+    cond = require("lazy_load_util").wants {
+      ft = {
+        "javascript",
+        "javascriptreact",
+        "javascript.jsx",
+        "typescript",
+        "typescriptreact",
+        "typescript.tsx",
+        "vue"
+      },
+      root = {"tsconfig.json", "package.json", "jsconfig.json"}
+    },
     dependencies = { "MunifTanjim/nui.nvim", lazy = true },
     event = "BufRead package.json",
   },
   {
     "dmmulroy/tsc.nvim",
+    cond = require("lazy_load_util").wants {
+      ft = {
+        "javascript",
+        "javascriptreact",
+        "javascript.jsx",
+        "typescript",
+        "typescriptreact",
+        "typescript.tsx",
+        "vue"
+      },
+      root = {"tsconfig.json", "package.json", "jsconfig.json"}
+    },
     cmd = { "TSC" },
     opts = {},
   },
-  { "dmmulroy/ts-error-translator.nvim", opts = {}, ft = { "typescript", "vue" } },
+  {
+    "dmmulroy/ts-error-translator.nvim",
+    opts = {},
+    ft = { "typescript", "vue" },
+    cond = require("lazy_load_util").wants {
+      ft = {
+        "javascript",
+        "javascriptreact",
+        "javascript.jsx",
+        "typescript",
+        "typescriptreact",
+        "typescript.tsx",
+        "vue"
+      },
+      root = {"tsconfig.json", "package.json", "jsconfig.json"}
+    },
+  },
   {
     "mfussenegger/nvim-dap",
     optional = true,

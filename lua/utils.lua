@@ -495,7 +495,7 @@ function M.create_launch_json()
     {
       "go", "node", "rust", "python", "chrome"
     },
-    { prompt = "Select Language Debug Template", default = "go"},
+    { prompt = "Select Language Debug Template: ", default = "go"},
     function(select)
       if not select then return end
       if select == "go" then
@@ -604,7 +604,7 @@ end
 function M.better_search(key)
   return function()
     local searched, error = pcall(
-      vim.cmd.normal, 
+      vim.cmd.normal,
       { args = { (vim.v.count > 0 and vim.v.count or "") .. key }, bang = true }
     )
     if not searched and type(error) == "string" then

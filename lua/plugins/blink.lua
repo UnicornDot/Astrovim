@@ -34,6 +34,7 @@ return {
     version = "*",
     dependencies = {
       {"rafamadriz/friendly-snippets", lazy = true},
+      {"saghen/blink.compat", version = "*", opts = { impersonate_nvim_cmp = true } },
       "moyiz/blink-emoji.nvim",
       "echasnovski/mini.icons",
     },
@@ -48,7 +49,9 @@ return {
       },
       -- remember to enable your providers here
       sources = {
-        default = { "lsp", "path", "snippets",  "buffer", "emoji", "dadbod", "codeium" },
+        -- adding any nvim-cmp sources here will enable them
+        -- with blink.compat
+        default = { "lsp", "path", "snippets", "buffer", "emoji", "codeium" },
         providers = {
           lsp = {
             ---@type fun(ctx: blink.cmp.Context, items: blink.cmp.CompletionItem[])
@@ -95,11 +98,6 @@ return {
             async = true,
             score_offset = 100,
           },
-          dadbod = {
-            name = "Dadbod",
-            module = "vim_dadbod_completion.blink",
-            score_offset = 85,
-          },
           -- https://github.com/moyiz/blink-emoji.nvim
           emoji = {
             name = "Emoji",
@@ -112,7 +110,7 @@ return {
           if type == "/" or type == "?" then
             return { 'buffer' }
           end
-          if type == ":" then
+          if type == ":" or type == "@" then
             return { "cmdline" }
           end
           return {}
@@ -169,6 +167,7 @@ return {
         },
       },
       completion = {
+        list = { selection = { preselect = true, auto_insert = false }},
         menu = {
           scrollbar = false,
           border = "rounded",
@@ -195,7 +194,6 @@ return {
             },
           },
         },
-        -- disable auto brackets 
         -- NOTE: some LSPs may add auto brackets theselves anyway
         accept = {
           -- experimental auto-brackets support

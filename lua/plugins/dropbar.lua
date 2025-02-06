@@ -2,7 +2,7 @@
 return {
   {
     "Bekaboo/dropbar.nvim",
-    event = "UIEnter",
+    event = "User AstroFile",
     specs = {
       {
         "rebelot/heirline.nvim",

@@ -1,23 +1,36 @@
 ---@type LazySpec
 return {
-  "numToStr/Comment.nvim",
-  config = function()
-    local ft = require "Comment.ft"
-    ft.thrift = { "//%s", "/*%s*/" }
-    ft.goctl = { "//%s", "/*%s*/" }
-  end,
-  dependencies = {
-    {
-      "AstroNvim/astrocore",
-      ---@param opts AstroCoreOpts
-      opt = function(_, opts)
-        local maps = require("astrocore").empty_map_table()
-        maps.n["<C-/>"] = opts.mappings.n["<leader>/"]
-        maps.x["<C-/>"] = opts.mappings.n["<leader>/"]
-        maps.n["<leader>/"] = false
-        maps.x["<leader>/"] = false
-        opts.mappings = vim.tbl_deep_extend("force", opts.mappings, maps)
-      end
+  -- comments
+  {
+    "folke/ts-comments.nvim",
+    event = "VeryLazy",
+    opts = {
+      lang = {
+        thrift = { "//%s", "/*%s*/" },
+        goctl = { "//%s", "/*%s*/" },
+      },
     },
-  }
+    dependencies = {
+      {
+        "AstroNvim/astrocore",
+        ---@param opts AstroCoreOpts
+        opts = function(_, opts)
+          local maps = opts.mappings or {}
+          maps.n["<C-/>"] = opts.mappings.n["<Leader>/"]
+          maps.x["<C-/>"] = opts.mappings.x["<Leader>/"]
+          -- end
+          maps.n["<Leader>/"] = false
+          maps.x["<Leader>/"] = false
+        end,
+      },
+    },
+  },
+  {
+    "JoosepAlviste/nvim-ts-context-commentstring",
+    enabled = false,
+  },
+  {
+    "numToStr/Comment.nvim",
+    enabled = false,
+  },
 }
