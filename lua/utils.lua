@@ -493,7 +493,7 @@ end
 function M.create_launch_json()
   vim.ui.select(
     {
-      "go", "node", "rust", "python", "chrome"
+      "go", "node", "rust", "python", "chrome", "nextjs"
     },
     { prompt = "Select Language Debug Template: ", default = "go"},
     function(select)
@@ -513,7 +513,10 @@ function M.create_launch_json()
         local source_file = vim.fn.stdpath "config" .. "/.vscode/python_launch.json"
         M.get_launch_json_by_source_file(source_file)
       elseif select == "chrome" then
-        local source_file = vim.fn.stdpath "config" .. "./vscode/chrome_launch.json"
+        local source_file = vim.fn.stdpath "config" .. "/.vscode/chrome_launch.json"
+        M.get_launch_json_by_source_file(source_file)
+      elseif select == "nextjs" then
+        local source_file = vim.fn.stdpath "config" .. "/.vscode/nextjs_launch.json"
         M.get_launch_json_by_source_file(source_file)
       end
     end)

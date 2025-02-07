@@ -15,7 +15,8 @@ return {
     end,
     config = function(_, opts)
       local autoformat_group = vim.api.nvim_create_augroup("AutoformatToggle", { clear = true })
-      require("auto-save").setup(opts)
+
+      -- Disable autoforamt before saving
       vim.api.nvim_create_autocmd("User", {
         pattern = "AutoSaveWritePre",
         group = autoformat_group,
@@ -24,6 +25,7 @@ return {
           -- Save global autoformat status
           vim.g.OLD_AUTOFORMAT = vim.g.autoformat
           vim.g.autoformat = false
+
           local old_autoformat_buffers = {}
           --Disable all menually enabled buffers
           for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
@@ -51,6 +53,7 @@ return {
           end
         end,
       })
+      require("auto-save").setup(opts)
     end,
   },
 }

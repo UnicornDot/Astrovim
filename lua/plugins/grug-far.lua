@@ -18,15 +18,15 @@ return {
         local maps = opts.mappings or {}
         local prefix = "<Leader>s"
 
-        maps.n[prefix] = {
+        maps.n[prefix .. "r"] = {
           function()
             local file_path = vim.fn.expand "%:p"
             local file_name = vim.fn.fnamemodify(file_path, ":t")
             require("grug-far").open { prefills = { search = vim.fn.expand "<cword>", filesFilter = file_name } }
           end,
-          desc = require("astroui").get_icon("GrugFar", 1, true) .. "Search and Replace",
+          desc = "Search and Replace",
         }
-        maps.v[prefix] = {
+        maps.v[prefix .. "r"] = {
           function()
             local is_visual = vim.fn.mode():lower():find "v"
             if is_visual then -- needed to make visual selection work
@@ -40,7 +40,7 @@ return {
               prefills = { filesFilter = file_name },
             }
           end,
-          desc = require("astroui").get_icon("GrugFar", 1, true) .. "Search and Replace (current word)",
+          desc = "Search and Replace (selected)",
         }
       end,
     },
