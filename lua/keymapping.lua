@@ -62,20 +62,12 @@ function M.core_mappings(mappings)
       }
     end
 
-
-    -- if vim.fn.executable "lazygit" == 1 then
-    --   maps.n["<Leader>gg"] = {
-    --     utils.toggle_lazy_git(),
-    --     desc = "ToggleTerm lazygit",
-    --   }
-    -- end
-
-    -- if vim.fn.executable "joshuto" == 1 then
-    --   maps.n["<leader>tj"] = {
-    --     utils.toggle_joshuto(),
-    --     desc = "ToggleTerm joshuto",
-    --   }
-    -- end
+    if vim.fn.executable "lazygit" == 1 then
+      maps.n["<Leader>gg"] = {
+        require("snacks.lazygit").open,
+        desc = "ToggleTerm lazygit",
+      }
+    end
 
     if vim.fn.executable "lazydocker" == 1 then
       maps.n["<Leader>td"] = {
@@ -98,8 +90,6 @@ function M.core_mappings(mappings)
     maps.n["<leader>wc"] = { "<C-w>c", desc = "Close current screen" }
     maps.n["<leader>wo"] = { "<C-w>o", desc = "Close other screen" }
     maps.n["<leader>we"] = { "<C-w>=", desc = "Equals all Window"}
-    -- 多个窗口之间跳转
-    maps.n["<leader>we"] = { "<C-w>=", desc = "Make all window equal" }
     maps.n["<M-l>"] = {
       function() require("astrocore.buffer").nav(vim.v.count > 0 and vim.v.count or 1) end,
       desc = "Next buffer"

@@ -5,7 +5,6 @@ return {
     ---@param opts overseer.Config
     event = "User AstroFile",
     opts = function(_, opts)
-      if astrocore.is_available("toggleterm.nvim") then opts.strategy = "toggleterm" end
       local window_scaling_factor = 0.3
       local height = require("utils").size(vim.o.lines, window_scaling_factor)
       local width = require("utils").size(vim.o.columns, window_scaling_factor)
@@ -56,6 +55,15 @@ return {
         "mfussenegger/nvim-dap",
         optional = true,
         opts = function() require("overseer").enable_dap() end,
+      },
+      {
+        "nvim-neotest/neotest",
+        optional = true,
+        opts = function(_, opts)
+          opts = opts or {}
+          opts.consumers = opts.consumers or {}
+          opts.consumers.overseer = require("neotest.consumers.overseer")
+        end
       },
       {
         "AstroNvim/astrocore",

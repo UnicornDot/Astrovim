@@ -2,6 +2,29 @@ local M = {}
 local astrocore = require("astrocore")
 local uv = vim.uv or vim.loop
 
+function M.starts_with(str, start)
+  return str:sub(1, #start) == start
+end
+
+function M.ends_with(str, ending)
+  return ending == "" or str:sub(-#ending) == ending
+end
+
+function M.realpath(path)
+  if path == "" or path == nil then return nil end
+  path = vim.uv.fs_realpath(path) or path
+  return require("astrocore.rooter").normpath(path)
+end
+
+function M.get_rooter()
+  local roots = require("astrocore.rooter").detect(0, false)
+  return roots[1] and roots[1].paths[1] or vim.uv.cwd()
+end
+
+function M.cwd()
+  return M.realpath(vim.uv.cwd()) or ""
+end
+
 function M.size(max, value) return value > 1 and math.min(value, max) or math.floor(max * value) end
 
 function M.update_bacon_prefs()
@@ -482,7 +505,7 @@ end
 function M.get_tasks_json_source_file(source_file)
   local target_file = vim.fn.getcwd() .. "/.vscode/tasks.json"
   local file_exists = M.file_exists(target_file)
-  if file_exists then 
+  if file_exists then
     local confirm = vim.fn.confirm("File `.vscode/tasks.json` Exists, Overwrite it? &Yes\n&No", 1, "Question")
     if confirm == 1 then M.copy_file(source_file, target_file) end
   else
