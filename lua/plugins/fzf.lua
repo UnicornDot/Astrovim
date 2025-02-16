@@ -28,7 +28,7 @@ return {
         if astrocore.is_available "fzf-lua" then
           local maps = opts.mappings or {}
           maps.n.gd = {
-            "<cmd>FzfLua lsp_definitions jump_to_single_result=true ignore_current_line=true<cr>", 
+            "<cmd>FzfLua lsp_definitions jump_to_single_result=true ignore_current_line=true<cr>",
             desc = "Goto Definition"
           }
           maps.n.gy = {

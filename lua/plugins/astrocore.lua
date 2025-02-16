@@ -11,14 +11,6 @@ return {
     local mappings = require("keymapping").core_mappings(opts.mappings)
     local options = {
       opt = {
-        fillchars = {
-          foldopen = "",
-          foldclose = "",
-          fold = " ",
-          foldsep = " ",
-          diff = "╱",
-          eob = " ",
-        },
         conceallevel = 2, -- enable conceal
         concealcursor = "",
         list = false, -- show whitespace characters
@@ -31,7 +23,6 @@ return {
         winwidth = 10,
         winminwidth = 10,
         equalalways = false,
-        statuscolumn = [[%!v:lua.require('snacks.statuscolumn').get()]]
       },
       g = {
         -- resession_enabled = false,
