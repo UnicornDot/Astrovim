@@ -9,7 +9,7 @@ return {
     "AstroNvim/astrolsp",
     ---@type AstroLSPOpts
     opts = function(_, opts) 
-      vim.tbl_deep_extend("force", opts, {
+      return vim.tbl_deep_extend("force", opts, {
         ---@diagnostic disable: missing-fields
         config = {
           basedpyright = {
