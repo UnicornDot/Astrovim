@@ -28,19 +28,19 @@ return {
         if astrocore.is_available "fzf-lua" then
           local maps = opts.mappings or {}
           maps.n.gd = {
-            "<cmd>FzfLua lsp_definitions jump_to_single_result=true ignore_current_line=true<cr>",
+            "<cmd>FzfLua lsp_definitions jump1=true slient=true ignore_current_line=true<cr>",
             desc = "Goto Definition"
           }
           maps.n.gy = {
-            "<cmd>FzfLua lsp_typedefs jump_to_single_result=true ignore_current_line=true<cr>",
+            "<cmd>FzfLua lsp_typedefs jump1=true slient=true ignore_current_line=true<cr>",
             desc = "Goto Type Definition"
           }
           maps.n.gI = {
-            "<cmd>FzfLua lsp_implementations jump_to_single_result=true ignore_current_line=true<cr>",
+            "<cmd>FzfLua lsp_implementations jump1=true slient=true ignore_current_line=true<cr>",
             desc = "Goto Implementation"
           }
           maps.n.gr = {
-            "<cmd>FzfLua lsp_references jump_to_single_result=true ignore_current_line=true<cr>",
+            "<cmd>FzfLua lsp_references jump1=true slient=true ignore_current_line=true<cr>",
             desc = "References",
             nowait = true,
           }
