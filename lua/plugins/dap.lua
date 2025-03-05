@@ -18,8 +18,8 @@ end
 
 local choose_dap_element = function(callback)
   vim.ui.select({
-    "repl | console",
-    "console | scopes",
+    "repl&console",
+    "console&scopes",
     "console",
     "repl",
     "stacks",
@@ -27,11 +27,11 @@ local choose_dap_element = function(callback)
     "watches",
     "scopes",
     "all elements",
-  },{prompt = "Select  Dap Layout: ", default = "repl | console"},
+  },{prompt = "Select  Dap Layout: ", default = "repl&console"},
     function(select)
       if not select then return end
       if is_dap_window_open() then close_all_window() end
-      if select == "console | scopes" then
+      if select == "console&scopes" then
         require("dapui").open { layout = 1, reset = true }
       elseif select == "console" then
         require("dapui").open { layout = 2, reset = true }
@@ -45,7 +45,7 @@ local choose_dap_element = function(callback)
         require("dapui").open { layout = 6, reset = true }
       elseif select == "scopes" then
         require("dapui").open { layout = 7, reset = true }
-      elseif select == "repl | console" then
+      elseif select == "repl&console" then
         require("dapui").open { layout = 9, reset = true }
       else
         require("dapui").open { layout = 8, reset = true }
@@ -259,7 +259,7 @@ return {
       },
     },
     opts = {
-      layout = {
+      layouts = {
         {
           elements = {
             { id = "console", size = 0.4 },
