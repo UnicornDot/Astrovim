@@ -3,7 +3,7 @@ return {
   "mikavilpas/yazi.nvim",
   enabled = vim.fn.executable "yazi" == 1,
   specs = {
-    { "nvim-neo-tree/neo-tree.nvim", enabled = false },
+    { "nvim-neo-tree/neo-tree.nvim", enabled = true },
   },
   event = "VeryLazy",
   keys = {
@@ -22,7 +22,7 @@ return {
     {
       -- NOTE: this requires a version of yazi that includes
       -- https://github.com/sxyazi/yazi/pull/1305 from 2024-07-18
-      "<Leader>e",
+      "<Leader>y",
       "<cmd>Yazi toggle<cr>",
       desc = "Resume the last yazi session",
     },
