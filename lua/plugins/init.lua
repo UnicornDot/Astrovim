@@ -49,6 +49,7 @@ return {
           },
         }
       },
+      image = {},
       quickfile = { enabled = true },
       indent = { enabled = true },
       input = { enabled = true },
