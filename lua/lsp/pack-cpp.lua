@@ -80,6 +80,22 @@ return {
     opts = {},
   },
   {
+    "Mythos-404/xmake.nvim",
+    optional = true,
+    lazy = true,
+    ft = "lua",
+    event = "BufReadPost",
+    opt = {
+      on_save = {
+        lsp_compile_commands = {
+          enable = true,
+          output_dir = "build",
+        }
+      }
+    },
+    config = true,
+  },
+  {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
     optional = true,
     opts = function(_, opts)

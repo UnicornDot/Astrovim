@@ -3,7 +3,7 @@
 -- Add any additional options here
 
 if string.match(vim.loop.os_uname().sysname,"Windows") == "Windows" then
-  vim.opt.shell = "pwsh.exe -NoLogo"
+  vim.opt.shell = "powershell.exe -NoLogo"
   vim.opt.shellcmdflag =
 	  "-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;"
   vim.cmd([[

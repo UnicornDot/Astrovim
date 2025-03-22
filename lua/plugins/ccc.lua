@@ -7,17 +7,12 @@ return {
     dependencies = {
       {
         "AstroNvim/astrocore",
-        opts = {
-          mappings = {
-            n = {
-              ["<M-c>"] = { "<Cmd>CccHighlighterToggle<CR>", desc = "Toggle colorizer" },
-              ["<M-m>"] = { "<Cmd>CccConvert<CR>", desc = "Convert color" },
-            },
-            i = {
-              ["<M-p>"] = { "<Cmd>CccPick<CR>", desc = "Pick Color" },
-            }
-          },
-        },
+        opts = function(_, opts)
+          local maps = opts.mappings or {}
+          maps.n["<M-c>"] = { "<Cmd>CccHighlighterToggle<CR>", desc = "Toggle colorizer" }
+          maps.n["<M-m>"] = { "<Cmd>CccConvert<CR>", desc = "Convert color" }
+          maps.i["<M-p>"] = { "<Cmd>CccPick<CR>", desc = "Pick Color" }
+        end,
       },
     },
     opts = {
