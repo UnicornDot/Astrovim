@@ -12,6 +12,7 @@ return {
           capabilities = {
             offsetEncoding = "utf-8",
           },
+          fallbackFlags = { "-std=c++20" },
         },
       })
       if is_linux_arm then

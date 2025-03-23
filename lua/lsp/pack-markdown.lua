@@ -133,6 +133,7 @@ return {
       bullet = {
         right_pad = 1,
       },
+      heading = {position = "inline"}
     },
     dependencies = { "nvim-treesitter/nvim-treesitter", "echasnovski/mini.icons" },
   },
