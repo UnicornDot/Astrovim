@@ -8,3 +8,5 @@ globals:
     any: true
   astronvim:
     any: true
+  Snacks:
+    any: true

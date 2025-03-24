@@ -24,7 +24,7 @@ return {
         width = 50,
         preset = {
           keys = {
-            { icon = "󱛊 ", key = "p", desc = "Find Project", action = ":FzfLua grep_project" },
+            { icon = "󱛊 ", key = "p", desc = "Find Project", action = ":lua Snacks.dashboard.pick('projects')" },
             { icon = " ", key = "r", desc = "Recent Files", action = ":lua Snacks.dashboard.pick('oldfiles')" },
             { icon = " ", key = "f", desc = "Find File", action = ":lua Snacks.dashboard.pick('files')" },
             { icon = "󰯃 ", key = "n", desc = "New File", action = ":ene | startinsert" },
@@ -61,5 +61,8 @@ return {
       terminal = {},
       profiler = { enabled = true }
     },
+    keys = {
+      { "<leader>;", function() Snacks.dashboard() end, desc = "Dashboard"}
+    }
   }
 }
