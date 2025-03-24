@@ -113,6 +113,7 @@ return {
               return true
             end, items)
           end,
+          score_offset = 200
         },
         codeium = {
           name = "Codeium",
@@ -124,7 +125,7 @@ return {
         emoji = {
           name = "Emoji",
           module = "blink-emoji",
-          score_offset = 15,
+          score_offset = 1,
         },
       },
     },
