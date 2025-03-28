@@ -369,7 +369,7 @@ function M.get_uri(file_path)
 end
 
 function M.on_confirm(prompt, callback)
-  vim.ui.input({ prompt = prompt .. " (Yes/No): " }, function(input)
+  Snacks.input({ prompt = prompt .. " (Yes/No): " }, function(input)
     if string.lower(input) == "yes" or string.lower(input) == "y" then
       if callback then callback() end
     end

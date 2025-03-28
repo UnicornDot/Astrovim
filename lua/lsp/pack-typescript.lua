@@ -354,7 +354,7 @@ return {
               url = function()
                 local co = coroutine.running()
                 return coroutine.create(function()
-                  vim.ui.input({prompt =  "Enter URL: ", default = "http://localhost:5137"}, function(url)
+                  Snacks.input({prompt =  "Enter URL: ", default = "http://localhost:5137"}, function(url)
                     if url == nil or url == "" then
                       return
                     else

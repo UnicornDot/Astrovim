@@ -2,7 +2,7 @@ local astrocore = require "astrocore"
 local utils = require "utils"
 
 local markdown_table_change = function()
-  vim.ui.input({ prompt = "Separate Char: " }, function(input)
+  Snacks.input({ prompt = "Separate Char: " }, function(input)
     if not input or #input == 0 then return end
     local execute_command = ([[:'<,'>MakeTable! ]] .. input)
     vim.cmd(execute_command)
