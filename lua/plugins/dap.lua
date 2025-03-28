@@ -17,7 +17,7 @@ local close_all_window = function()
 end
 
 local choose_dap_element = function(callback)
-  vim.ui.select({
+  Snacks.picker.select({
     "repl&console",
     "console&scopes",
     "console",
@@ -27,8 +27,8 @@ local choose_dap_element = function(callback)
     "watches",
     "scopes",
     "all elements",
-  },{prompt = "Select  Dap Layout: ", default = "repl&console"},
-    function(select)
+  },{prompt = "Select  Dap Layout: "},
+    function(select, _)
       if not select then return end
       if is_dap_window_open() then close_all_window() end
       if select == "console&scopes" then
@@ -184,10 +184,10 @@ return {
                 position = "center",
                 enter = true,
               }
-              vim.ui.select(
+              Snacks.picker.select(
                 {"console", "repl", "stacks", "breakpoints", "watches", "scopes" },
-                {prompt = "Select Dap Element: ", default = "console" },
-                function(select)
+                {prompt = "Select Dap Element: "},
+                function(select, _)
                   if select == "repl" then
                     require("dapui").float_element("repl", window)
                   elseif select == "stacks" then

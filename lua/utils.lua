@@ -387,7 +387,7 @@ function M.select_ui(vals, prompt, callback)
 
   table.sort(options)
 
-  vim.ui.select(options, {
+  Snacks.picker.select(options, {
     prompt = prompt,
     format_item = function(item) return ("%s: %s"):format(item, vals[item]) end,
   }, function(choice)
@@ -514,12 +514,12 @@ function M.get_tasks_json_source_file(source_file)
 end
 
 function M.create_launch_json()
-  vim.ui.select(
+  Snacks.picker.select(
     {
       "go", "node", "rust", "python", "chrome", "nextjs"
     },
     { prompt = "Select Language Debug Template: ", default = "go"},
-    function(select)
+    function(select, _)
       if not select then return end
       if select == "go" then
         local source_file = vim.fn.stdpath("config") .. "/.vscode/go_launch.json"
