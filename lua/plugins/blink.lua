@@ -33,8 +33,8 @@ return {
   dependencies = {
     {"rafamadriz/friendly-snippets", lazy = true},
     {"saghen/blink.compat", version = "*", lazy = true, opts = { impersonate_nvim_cmp = true } },
-    "moyiz/blink-emoji.nvim",
-    "echasnovski/mini.icons",
+    { "moyiz/blink-emoji.nvim", lazy = true },
+    { "echasnovski/mini.icons", lazy = true },
   },
   opts_extend = {
     "sources.completion.enabled_providers",
