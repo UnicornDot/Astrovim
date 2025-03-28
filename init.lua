@@ -18,5 +18,3 @@ end
 require "lazy_setup"
 require "polish"
 require "options"
-vim.cmd("colorscheme solarized-osaka")
--- vim.cmd("colorscheme deus")

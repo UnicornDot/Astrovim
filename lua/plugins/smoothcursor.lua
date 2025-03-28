@@ -1,6 +1,5 @@
 return { 'gen740/SmoothCursor.nvim',
-  opts = {
-  },
+  opts = {},
   config = function()
     require('smoothcursor').setup({
       cursor = "󰁕",

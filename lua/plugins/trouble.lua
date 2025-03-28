@@ -3,7 +3,6 @@ return {
     "folke/trouble.nvim",
     cmd = "Trouble",
     specs = {
-      { "stevearc/aerial.nvim", optional = true, enabled = false },
       { "AstroNvim/astroui", opts = { icons = { Trouble = "󱍼" } } },
       {
         "AstroNvim/astrocore",

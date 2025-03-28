@@ -326,10 +326,5 @@ return {
         },
       },
     },
-    -- disable built in completion plugins
-    { "hrsh7th/nvim-cmp", enabled = false },
-    { "petertriho/cmp-git", enabled = false },
-    { "L3MON4D3/LuaSnip", enabled = false },
-    { "onsails/lspkind.nvim", enabled = false },
   },
 }

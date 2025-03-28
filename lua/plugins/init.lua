@@ -3,9 +3,6 @@ return {
   { "kevinhwang91/nvim-ufo", enabled = false},
   { "jay-babu/mason-null-ls.nvim", enabled = false },
   { "nvimtools/none-ls.nvim", enabled = false },
-  { "goolord/alpha-nvim", enabled = false },
-  { "lukas-reineke/indent-blankline.nvim", enabled = false },
-  { "rcarriga/nvim-notify", enabled = false },
   { "NMAC427/guess-indent.nvim", enabled = false },
   {
     "folke/snacks.nvim",

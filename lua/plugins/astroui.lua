@@ -6,8 +6,8 @@ return {
     branch = "v3",
     ---@type AstroUIOpts
     opts = {
-      colorscheme = "solarized-osaka",
-      -- colorscheme = "catppuccin-mocha",
+      -- colorscheme = "solarized-osaka",
+      colorscheme = "catppuccin-mocha",
       highlights = {}
     },
   },

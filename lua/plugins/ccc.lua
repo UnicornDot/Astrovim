@@ -1,5 +1,4 @@
 return {
-  { "NvChad/nvim-colorizer.lua", enabled = false },
   {
     "uga-rosa/ccc.nvim",
     event = { "User AstroFile", "InsertEnter" },

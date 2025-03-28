@@ -18,9 +18,6 @@ return {
   "ibhagwan/fzf-lua",
   cmd = "FzfLua",
   specs = {
-    { "nvim-telescope/telescope.nvim", optional = true, enabled = false },
-    { "nvim-telescope/telescope-fzf-native.nvim", optional = true, enabled = false },
-    { "stevearc/dressing.nvim", optional = true, enabled = false },
     {
       "AstroNvim/astrolsp",
       optional = true,
