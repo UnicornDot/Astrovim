@@ -71,12 +71,12 @@ return {
         opts = function(_, opts)
           local maps = opts.mappings or {}
           if maps then
-            maps.n['<leader>rt'] = { "<cmd>OverseerToggle<cr>", desc = "Toggle overseer task list" }
-            maps.n['<leader>rr'] = { "<cmd>OverseerRun<cr>", desc = "List overseer run templates" }
-            maps.n['<leader>rc'] = { "<Cmd>OverseerRunCmd<CR>", desc = "Run Command" }
-            maps.n['<leader>rq'] = { "<Cmd>OverseerQuickAction<CR>", desc = "Quick Action" }
-            maps.n['<leader>ra'] = { "<Cmd>OverseerTaskAction<CR>", desc = "Task Action" }
-            maps.n['<leader>ri'] = { "<Cmd>OverseerInfo<CR>", desc = "Overseer Info" }
+            maps.n['<Leader>rt'] = { "<cmd>OverseerToggle<cr>", desc = "Toggle overseer task list" }
+            maps.n['<Leader>rr'] = { "<cmd>OverseerRun<cr>", desc = "List overseer run templates" }
+            maps.n['<Leader>rc'] = { "<Cmd>OverseerRunCmd<CR>", desc = "Run Command" }
+            maps.n['<Leader>rq'] = { "<Cmd>OverseerQuickAction<CR>", desc = "Quick Action" }
+            maps.n['<Leader>ra'] = { "<Cmd>OverseerTaskAction<CR>", desc = "Task Action" }
+            maps.n['<Leader>ri'] = { "<Cmd>OverseerInfo<CR>", desc = "Overseer Info" }
           end
           opts.mappings = maps
         end

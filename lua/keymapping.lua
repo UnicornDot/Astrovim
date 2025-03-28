@@ -7,21 +7,21 @@ function M.core_mappings(mappings)
   local maps = mappings
   if maps then
 
-    maps.n["<leader>n"] = false
-    maps.n["<leader>g"] = { desc = " Git" }
-    maps.n["<leader>w"] = { desc = "󰀽 window" }
-    maps.n["<leader>t"] = { desc = " Terminal" }
-    maps.n["<leader>T"] = { desc = " Test" }
-    maps.n["<leader>f"] = { desc = " Find" }
-    maps.n["<leader>b"] = { desc = " Buffer" }
-    maps.n["<leader>s"] = { desc = " Replace" }
-    maps.n["<leader>d"] = { desc = " Debuger" }
-    maps.n["<leader>u"] = { desc = "󰙀 UI" }
-    maps.n["<leader>p"] = { desc = " Package" }
-    maps.n["<leader>l"] = { desc = " Lsp" }
-    maps.n["<leader>x"] = { desc = " QickFix" }
-    maps.n["<leader>r"] = { desc = " Run" }
-    maps.n["<leader>m"] = { desc = "󱋼 Marks" }
+    maps.n["<Leader>n"] = false
+    maps.n["<Leader>g"] = { desc = " Git" }
+    maps.n["<Leader>w"] = { desc = "󰀽 window" }
+    maps.n["<Leader>t"] = { desc = " Terminal" }
+    maps.n["<Leader>T"] = { desc = " Test" }
+    maps.n["<Leader>f"] = { desc = " Find" }
+    maps.n["<Leader>b"] = { desc = " Buffer" }
+    maps.n["<Leader>s"] = { desc = " Replace" }
+    maps.n["<Leader>d"] = { desc = " Debuger" }
+    maps.n["<Leader>u"] = { desc = "󰙀 UI" }
+    maps.n["<Leader>p"] = { desc = " Package" }
+    maps.n["<Leader>l"] = { desc = " Lsp" }
+    maps.n["<Leader>x"] = { desc = " QickFix" }
+    maps.n["<Leader>r"] = { desc = " Run" }
+    maps.n["<Leader>m"] = { desc = "󱋼 Marks" }
     maps.x["<Leader>l"] = { desc = " Lsp" }
     maps.v["<Leader>l"] = { desc = " Lsp" }
 
@@ -34,7 +34,6 @@ function M.core_mappings(mappings)
     maps.i["jk"] = { "<ESC>", desc = "escape", silent = true }
     maps.i["<C-o>"] = { "<ESC>o", desc = "quick nextline", silent = true }
     maps.i["<C-a>"] = { "<ESC>A", desc = "quick tailline", silent = true }
-    maps.i["<C-s>"] = { "<esc>:w<cr>a", desc = "Save file", silent = true }
 
     maps.n["K"] = { "5k", desc = "move fast", silent = true }
     maps.n["J"] = { "5j", desc = "move fast", silent = true }
@@ -87,9 +86,9 @@ function M.core_mappings(mappings)
     maps.t["<C-\\>"] = maps.n["<C-\\>"]
 
     -- 分屏快捷键
-    maps.n["<leader>wc"] = { "<C-w>c", desc = "Close current screen" }
-    maps.n["<leader>wo"] = { "<C-w>o", desc = "Close other screen" }
-    maps.n["<leader>we"] = { "<C-w>=", desc = "Equals all Window"}
+    maps.n["<Leader>wc"] = { "<C-w>c", desc = "Close current screen" }
+    maps.n["<Leader>wo"] = { "<C-w>o", desc = "Close other screen" }
+    maps.n["<Leader>we"] = { "<C-w>=", desc = "Equals all Window"}
     maps.n["<M-l>"] = {
       function() require("astrocore.buffer").nav(vim.v.count > 0 and vim.v.count or 1) end,
       desc = "Next buffer"
@@ -98,11 +97,11 @@ function M.core_mappings(mappings)
       function() require("astrocore.buffer").nav(-(vim.v.count > 0 and vim.v.count or 1)) end,
       desc = "Previous buffer",
     }
-    maps.n["<leader>bo"] = { function() require("astrocore.buffer").close_all(true) end, desc = "Close all buffers except current" }
-    maps.n["<leader>ba"] = { function() require("astrocore.buffer").close_all() end, desc = "Close all buffers" }
-    maps.n["<leader>bc"] = { function() require("astrocore.buffer").close() end, desc = "Close buffer" }
-    maps.n["<leader>bC"] = { function() require("astrocore.buffer").close(0, true) end, desc = "Force close buffer" }
-    maps.n["<leader>bn"] = { "<cmd>tabnew<cr>", desc = "New tab" }
+    maps.n["<Leader>bo"] = { function() require("astrocore.buffer").close_all(true) end, desc = "Close all buffers except current" }
+    maps.n["<Leader>ba"] = { function() require("astrocore.buffer").close_all() end, desc = "Close all buffers" }
+    maps.n["<Leader>bc"] = { function() require("astrocore.buffer").close() end, desc = "Close buffer" }
+    maps.n["<Leader>bC"] = { function() require("astrocore.buffer").close(0, true) end, desc = "Force close buffer" }
+    maps.n["<Leader>bn"] = { "<cmd>tabnew<cr>", desc = "New tab" }
   end
   return maps
 end

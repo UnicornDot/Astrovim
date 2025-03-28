@@ -16,7 +16,7 @@ return {
             on_attach = function()
               set_mappings({
                 n = {
-                  ["<leader>lo"] = {
+                  ["<Leader>lo"] = {
                     "<cmd>PyrightOrganizeImports<cr>",
                     desc = "Organize imports",
                   }

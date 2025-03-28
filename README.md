@@ -91,7 +91,7 @@ nvim
 
 ## Tips
 ### Use Lazygit
-`<leader>tl`
+`<Leader>tl`
 
 ### Install unimatrix
 `<Leader>tm`
@@ -142,7 +142,7 @@ neovide .
 ```
 
 ### Support Lazydocker
-tigger command: `<leader>td`
+tigger command: `<Leader>td`
 ```shell
 brew install lazydocker
 ```

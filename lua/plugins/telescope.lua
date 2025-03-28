@@ -12,7 +12,7 @@ return {
       if maps then
         -- telescope plugin mappings
         if is_available "telescope.nvim" then
-          maps.n["<leader>fT"] = { "<cmd>TodoTelescope<cr>", desc = "Find TODOs" }
+          maps.n["<Leader>fT"] = { "<cmd>TodoTelescope<cr>", desc = "Find TODOs" }
           maps.n["<Leader>fp"] = { "<cmd>Telescope projects<CR>", desc = "Switch Buffers In Telescope" }
           maps.n["<Leader>bt"] = {
             function()

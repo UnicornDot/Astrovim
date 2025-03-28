@@ -139,7 +139,7 @@ return {
             on_attach = function()
               set_mappings({
                 n = {
-                  ["<leader>lF"] = {
+                  ["<Leader>lF"] = {
                     function() vim.cmd.EslintFixAll() end,
                     desc = "Format buffer",
                   },

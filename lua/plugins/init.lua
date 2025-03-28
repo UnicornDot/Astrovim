@@ -45,10 +45,13 @@ return {
           },
         }
       },
+      picker = {},
       image = {},
       quickfile = { enabled = true },
       indent = { enabled = true },
-      input = { enabled = true },
+      input = {
+        enabled = true
+      },
       scroll = { enabled = true },
       words = { enabled = true },
       rename = { enabled = true },
@@ -58,7 +61,7 @@ return {
       profiler = { enabled = true }
     },
     keys = {
-      { "<leader>;", function() Snacks.dashboard() end, desc = "Dashboard"}
-    }
+      { "<Leader>;", function() Snacks.dashboard() end, desc = "Dashboard"}
+    },
   }
 }

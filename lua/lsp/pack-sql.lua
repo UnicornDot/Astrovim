@@ -71,7 +71,7 @@ return {
       end
     },
     keys = {
-      { "<leader>D", "<cmd>DBUIToggle<CR>", desc = "Toggle DBUI" },
+      { "<Leader>D", "<cmd>DBUIToggle<CR>", desc = "Toggle DBUI" },
     },
     init = function()
       local data_path = vim.fn.stdpath "data"
@@ -95,7 +95,7 @@ return {
       -- NOTE: The default behavior of auto-execution of queries on save is disabled
       -- this is useful when you have a big query that you don't want to run every time
       -- you save the file running those queries can crash neovim to run use the
-      -- default keymap: <leader>S
+      -- default keymap: <Leader>S
       vim.g.db_ui_execute_on_save = false
     end,
   },
