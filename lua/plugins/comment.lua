@@ -25,12 +25,4 @@ return {
       },
     },
   },
-  {
-    "JoosepAlviste/nvim-ts-context-commentstring",
-    enabled = false,
-  },
-  {
-    "numToStr/Comment.nvim",
-    enabled = false,
-  },
 }
