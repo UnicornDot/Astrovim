@@ -159,7 +159,7 @@ return {
                 local file_extension = get_extension(file_path)
                 if file_extension ~= "" then
                   local language_mapping = file_extension_mapping[file_extension]
-                  if language_mapping() then pcall(language_mapping, file_path) end
+                  if language_mapping then pcall(language_mapping, file_path) end
                 end
               end
             end,
