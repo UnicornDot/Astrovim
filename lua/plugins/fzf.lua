@@ -172,6 +172,7 @@ return {
       fzf_colors = true,
       fzf_opts = {
         ["--no-scrollbar"] = true,
+        ["--layout"] = "default",
       },
       defaults = {
         -- formatter = "path.filename_first",
