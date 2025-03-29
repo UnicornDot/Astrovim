@@ -383,7 +383,7 @@ return {
               webRoot = "${workspaceFolder}",
               protocol = "inspector",
               sourceMaps = true,
-              port = function() return vim.fn.input("select port: ", 9222) end,
+              port = function() return vim.fn.input("select port: ", "9222") end,
               skipFiles = {
                 "<node_internals>/**", "node_modules/**", "${workspaceFolder}/node_modules/**"
               },

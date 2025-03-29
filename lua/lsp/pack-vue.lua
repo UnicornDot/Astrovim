@@ -97,37 +97,4 @@ return {
       opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "js" })
     end,
   },
-  {
-    "hrsh7th/nvim-cmp",
-    optional = true,
-    opts = function(_, opts)
-      opts.sources = opts.sources or {}
-      for i, source in ipairs(opts.sources) do
-        if source.naem == "nvim_lsp" then
-          opts.sources[i] = {
-            name = "nvim_lsp",
-            ---@param entry cmp.Entry
-            ---@param ctx cmp.Context
-            entry_filter = function(entry, ctx)
-              if ctx.filetype ~= "vue" then return true end
-              local cursor_before_line = ctx.cursor_before_line
-              -- for events
-              if cursor_before_line:sub(-1) == "@" then
-                return entry.completion_item.label:match("^@")
-              elseif cursor_before_line:sub(-1) == ":" then
-                return entry.completion_item.label:match("^:") and not entry.completion_item.label:match("^:on%-")
-                -- For slot
-              elseif cursor_before_line:sub(-1) == "#" then
-                return entry.completetion_item.kind == require("cmp.types").lsp.CompletionItemKind.Method
-              else
-                return true
-              end
-            end,
-            priority = 1000,
-          }
-          break
-        end
-      end
-    end,
-  },
 }
