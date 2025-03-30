@@ -43,7 +43,7 @@ return {
     optional = true,
     opts = {
       formatters_by_ft = {
-        ["yaml.docker-compose"] = { "prettierd", "prettier", stop_after_first = true },
+        ["yaml.docker-compose"] = { "prettierd", stop_after_first = true },
       },
     },
   },

@@ -151,7 +151,10 @@ return  {
             name = "sql",
             async = true,
             module = "blink.compat.source",
-            score_offset = 15,
+            score_offset = 1,
+            should_show_items = function()
+              return vim.tbl_contains({"sql"}, vim.o.filetype)
+            end,
             opts = {}
           }
         },
