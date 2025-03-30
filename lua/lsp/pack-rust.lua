@@ -43,7 +43,7 @@ return {
         astrocore.list_insert_unique(opts.servers, { "bacon_ls" })
       end
       return vim.tbl_deep_extend("force", opts, {
-        handlers = { rust_analyzer = false }, -- disable setup of `rust_analyzer`
+        -- handlers = { rust_analyzer = function() return false end }, -- disable setup of `rust_analyzer`
         ---@diagnostic disable: missing-fields
         config = {
           bacon_ls = {
@@ -137,66 +137,66 @@ return {
       end
     end,
   },
-  {
-    "mrcjkb/rustaceanvim",
-    version = "^5",
-    ft = "rust",
-    opts = function()
-      local adapter
-      local success, package = pcall(function() return require("mason-registry").get_package("codelldb") end)
-      local cfg = require("rustaceanvim.config")
-      if success then
-        local package_path = package:get_install_path()
-        local codelldb_path = package_path .. "/codelldb"
-        local liblldb_path = package_path .. "/extension/lldb/lib/liblldb"
-        local this_os = vim.loop.os_uname().sysname
-
-        -- The path in window is different
-        if this_os:find "Windows" then
-          codelldb_path = package_path .. "\\extension\\adapter\\codelldb.exe"
-          liblldb_path = package_path .. "\\extension\\lldb\\bin\\liblldb.dll"
-        else
-          -- The liblldb extension is '.so' for linux and '.dylib' for macos
-          liblldb_path = liblldb_path .. (this_os == "Linux" and ".so" or ".dylib")
-        end
-        adapter = cfg.get_codelldb_adapter(codelldb_path, liblldb_path)
-      else
-        adapter = cfg.get_codelldb_adapter()
-      end
-
-      local astrolsp_avail, astrolsp = pcall(require, "astrolsp")
-      local astrolsp_opts = (astrolsp_avail and astrolsp.lsp_opts "rust_analyzer") or {}
-      local server = {
-        ---@type table | (fun(project_root:string|nil, default_settings: table|nil):table) -- The rust-analyzer settings or a function that creates them.
-        settings = function(project_root, default_settings)
-          local astrolsp_settings = astrolsp_opts.settings or {}
-
-          local merge_table = vim.tbl_deep_extend("force", default_settings or {}, astrolsp_settings)
-          local ra = require "rustaceanvim.config.server"
-          -- load_rust_analyzer_settings merges any found settings with the passed in default settings table and then returns that table
-          return ra.load_rust_analyzer_settings(project_root, {
-            settings_file_pattern = "rust-analyzer.json",
-            default_settings = merge_table,
-          })
-        end,
-      }
-      local final_server = vim.tbl_deep_extend("force", astrolsp_opts, server)
-      return {
-        server = final_server,
-        dap = { adapter = adapter, configuration = false },
-        tools = {enable_clippy = false },
-      }
-    end,
-    config = function(_, opts)
-      if vim.fn.executable "rust-analyzer" == 0 then
-        vim.notify(
-          "**rust-analyzer** not found in PATH, please install it.\nhttps://rust-analyzer.github.io/",
-          vim.log.levels.ERROR
-        )
-      end
-      vim.g.rustaceanvim = vim.tbl_deep_extend("keep", vim.g.rustaceanvim or {}, opts or {})
-    end,
-  },
+  -- {
+  --   "mrcjkb/rustaceanvim",
+  --   version = "^5",
+  --   ft = "rust",
+  --   opts = function()
+  --     local adapter
+  --     local success, package = pcall(function() return require("mason-registry").get_package("codelldb") end)
+  --     local cfg = require("rustaceanvim.config")
+  --     if success then
+  --       local package_path = package:get_install_path()
+  --       local codelldb_path = package_path .. "/codelldb"
+  --       local liblldb_path = package_path .. "/extension/lldb/lib/liblldb"
+  --       local this_os = vim.loop.os_uname().sysname
+  --
+  --       -- The path in window is different
+  --       if this_os:find "Windows" then
+  --         codelldb_path = package_path .. "\\extension\\adapter\\codelldb.exe"
+  --         liblldb_path = package_path .. "\\extension\\lldb\\bin\\liblldb.dll"
+  --       else
+  --         -- The liblldb extension is '.so' for linux and '.dylib' for macos
+  --         liblldb_path = liblldb_path .. (this_os == "Linux" and ".so" or ".dylib")
+  --       end
+  --       adapter = cfg.get_codelldb_adapter(codelldb_path, liblldb_path)
+  --     else
+  --       adapter = cfg.get_codelldb_adapter()
+  --     end
+  --
+  --     local astrolsp_avail, astrolsp = pcall(require, "astrolsp")
+  --     local astrolsp_opts = (astrolsp_avail and astrolsp.lsp_opts "rust_analyzer") or {}
+  --     local server = {
+  --       ---@type table | (fun(project_root:string|nil, default_settings: table|nil):table) -- The rust-analyzer settings or a function that creates them.
+  --       settings = function(project_root, default_settings)
+  --         local astrolsp_settings = astrolsp_opts.settings or {}
+  --
+  --         local merge_table = vim.tbl_deep_extend("force", default_settings or {}, astrolsp_settings)
+  --         local ra = require "rustaceanvim.config.server"
+  --         -- load_rust_analyzer_settings merges any found settings with the passed in default settings table and then returns that table
+  --         return ra.load_rust_analyzer_settings(project_root, {
+  --           settings_file_pattern = "rust-analyzer.json",
+  --           default_settings = merge_table,
+  --         })
+  --       end,
+  --     }
+  --     local final_server = vim.tbl_deep_extend("force", astrolsp_opts, server)
+  --     return {
+  --       server = final_server,
+  --       dap = { adapter = adapter, load_rust_types = true },
+  --       tools = {enable_clippy = false },
+  --     }
+  --   end,
+  --   config = function(_, opts)
+  --     if vim.fn.executable "rust-analyzer" == 0 then
+  --       vim.notify(
+  --         "**rust-analyzer** not found in PATH, please install it.\nhttps://rust-analyzer.github.io/",
+  --         vim.log.levels.ERROR
+  --       )
+  --     end
+  --     vim.g.rustaceanvim = vim.tbl_deep_extend("keep", vim.g.rustaceanvim or {}, opts or {})
+  --   end,
+  -- },
   {
     "Saecki/crates.nvim",
     event = { "BufRead Cargo.toml" },
