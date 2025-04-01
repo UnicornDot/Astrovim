@@ -33,7 +33,7 @@ return {
     opts = function(_, opts) opts.ensure_installed = astrocore.list_insert_unique(
       opts.ensure_installed, 
       { "lua-language-server", "stylua", "selene" }
-    ) 
+    )
     end,
   },
   {
