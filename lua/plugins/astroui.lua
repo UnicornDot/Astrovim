@@ -2,13 +2,11 @@
 return {
   {
     "AstroNvim/astroui",
-    version = false,
-    branch = "v3",
     ---@type AstroUIOpts
     opts = {
       -- colorscheme = "solarized-osaka",
       colorscheme = "catppuccin-mocha",
-      highlights = {}
+      highlights = {},
     },
   },
   -- icon

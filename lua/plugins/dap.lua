@@ -84,7 +84,7 @@ return {
     },
   },
   {
-    "saghen/blink.cmp",
+    "Saghen/blink.cmp",
     optional = true,
     dependencies = {
       -- NOTE: remove when commit merge https://github.com/rcarriga/cmp-dap/pull/13

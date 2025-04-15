@@ -28,7 +28,7 @@ end
 
 return  {
   {
-    "saghen/blink.compat",
+    "Saghen/blink.compat",
     version = "*",
     lazy = true,
     opts = { impersonate_nvim_cmp = true }

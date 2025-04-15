@@ -84,7 +84,7 @@ return {
       end,
     },
     {
-      "saghen/blink.cmp",
+      "Saghen/blink.cmp",
       optional = true,
       opts = function(_, opts)
         if not opts.sources then opts.sources = {} end

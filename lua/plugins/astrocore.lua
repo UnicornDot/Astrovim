@@ -3,8 +3,6 @@ local utils = require "utils"
 -- @type LazySpec
 return {
   "AstroNvim/astrocore",
-  version = false,
-  branch = "v2",
   ---@type AstroCoreOpts
   ---@diagnostic disable-next-line: assign-type-mismatch
   opts = function(_, opts)
@@ -30,17 +28,6 @@ return {
         autoformat = false,
       }
     }
-
-    if vim.fn.has "nvim-0.10" == 1 then
-      options.opt.smoothscroll = true
-      options.opt.foldexpr = "v:lua.require'ui'.foldexpr()"
-      options.opt.foldmethod = "expr"
-      options.opt.foldtext = ""
-    else
-      options.opt.foldmethod = "indent"
-      options.opt.foldtext = "v:lua.require'ui'.foldtext()"
-    end
-
     return vim.tbl_deep_extend( "force", opts, {
       -- Configure project root detection, check status with `:AstroRootInfo`
       diagnostics = {
@@ -54,7 +41,7 @@ return {
       features = {
         large_buf = { size = 1024 * 1024 * 1.5, lines = 10000 }, -- set global limits for large files for disabling features like treesitter
         autopairs = false, -- enable autopairs at start
-        cmp = false, -- enable completion at start
+        cmp = true, -- enable completion at start
         diagnostics_mode = 3, -- diagnostics_mode on start (0 = off, 1 = no sign/virtual text, 2 = no virtual text, 3 = on)
         highlighturl = true, -- highlight URLs at start
         notifications = true, -- enable notifications at start

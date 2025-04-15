@@ -57,7 +57,7 @@ return {
       {"kristijanhusak/vim-dadbod-completion", ft = "sql_ft", lazy = true },
     },
     specs = {
-      "saghen/blink.cmp",
+      "Saghen/blink.cmp",
       optional = true,
       opts = function(_, opts)
         return require("astrocore").extend_tbl(opts, {

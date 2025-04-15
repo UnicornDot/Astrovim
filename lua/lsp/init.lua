@@ -1,9 +1,6 @@
 ---@type LazySpec
 return {
   "AstroNvim/astrolsp",
-  version = false,
-  branch = "v3",
-
   ---@type AstroLSPOpts
   ---@diagnostic disable-next-line: assign-type-mismatch
   opts = function(_, opts)
@@ -27,7 +24,7 @@ return {
         -- disable formatting capabilities for specific language servers
         disabled = {},
         -- default format timeout
-        timeout_ms = 20000,
+        timeout_ms = 2000,
       },
       -- mappings to be set up on attaching of a language server
       mappings = mappings,

@@ -22,14 +22,28 @@ local function preview_stack_trace()
   end
 end
 
+-- NOTE: gopls commands
+-- GoTagAdd add tags
+-- GOTagRm remove tags
+-- GoCmt add cmt
+-- GoFillStruct	auto fill struct
+-- GoFillSwitch	fill switch
+-- GoIfErr	Add if err
+-- GoFixPlurals	change func foo(b int, a int, r int) -> func foo(b, a, r int)
+
 ---@type LazySpec
 return {
   {
+    "AstroNvim/astrocore",
+    ---@type AstroCoreOpts
+    opts = { filetypes = { extension = { api = "goctl" }}},
+  },
+  {
     "AstroNvim/astrolsp",
+    optional = true,
     ---@type AstroLSPOpts
     opts = function(_, opts)
       return vim.tbl_deep_extend("force", opts, {
-        ---@diagnostic disable: missing-fields
         config = {
           gopls = {
             on_attach = function(client, _)
@@ -96,6 +110,7 @@ return {
                   parameterNames = true,
                   rangeVariableTypes = true,
                 },
+                buildFlags = {"-tags", "integration"},
                 completeUnimported = true,
                 diagnosticsDelay = "500ms",
                 gofumpt = true,
@@ -147,7 +162,7 @@ return {
     opts = {}
   },
   {
-    "saghen/blink.cmp",
+    "Saghen/blink.cmp",
     optional = true,
     dependencies = {
       {
@@ -157,17 +172,14 @@ return {
       }
     },
     opts = function(_, opts)
-      return require("astrocore").extend_tbl(opts, {
+      return astrocore.extend_tbl(opts, {
         sources = {
-          compat = require("astrocore").list_insert_unique(opts.sources.compat or {}, { "go_pkgs" }),
+          compat = astrocore.list_insert_unique(opts.sources.compat or {}, { "go_pkgs" }),
           providers = {
             go_pkgs = {
-              name = "Gopkgs",
+              name = "go_pkgs",
               score_offset = 100,
               async = true,
-              enabled = function()
-                return vim.fn.executable("go") == 1 and require("cmp_go_pkgs")._check_if_inside_imports()
-              end,
             },
           },
         },
@@ -230,11 +242,11 @@ return {
   {
     "strevearc/conform.nvim",
     optional = true,
-    opts = function(_, opts)
-      opts.formatters_by_ft = {
+    opts = {
+      formatters_by_ft = {
         go = { "goimports", lsp_format = "last" },
       }
-    end,
+    }
   },
   {
     "echasnovski/mini.icons",
