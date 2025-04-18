@@ -13,7 +13,7 @@ return {
         init = {
           Normal = { bg = "NONE" },
           NormalFloat = { bg = "NONE" },
-          FloatBorder = { fg =  '#8ec07c', bg = "NONE" },
+          FloatBorder = { fg = '#7a8f98', bg = "NONE" },
           Float = { bg = "NONE" },
           WinBar = { bg = "NONE" },
         },
