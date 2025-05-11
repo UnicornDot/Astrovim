@@ -4,10 +4,10 @@ return {
     "AstroNvim/astroui",
     ---@type AstroUIOpts
     opts = {
-      -- colorscheme = "solarized-osaka",
+      colorscheme = "solarized-osaka",
       -- colorscheme = "catppuccin-mocha",
       -- colorscheme = "astrodark",
-      colorscheme = "deus",
+      -- colorscheme = "deus",
       -- colorscheme = "kanagawa",
       highlights = {
         init = {

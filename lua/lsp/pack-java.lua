@@ -15,7 +15,7 @@ return {
           servers = { "jdtls" },
           handlers = {
             jdtls = function(server, opts)
-              require("lazy").load { plugins = { "nvim-java" } }
+              -- require("lazy").load { plugins = { "nvim-java" } }
               require("lspconfig")[server].setup(opts)
             end,
           },
