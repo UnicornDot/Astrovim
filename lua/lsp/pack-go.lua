@@ -199,7 +199,7 @@ return {
     dependencies = {
       "nvim-lua/plenary.nvim",
       "nvim-treesitter/nvim-treesitter",
-      { "williamboman/mason.nvim", optional = true }, -- by default use Mason for go dependencies
+      { "mason-org/mason.nvim", optional = true }, -- by default use Mason for go dependencies
     },
     opts = {},
   },
