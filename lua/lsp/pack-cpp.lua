@@ -82,18 +82,10 @@ return {
   },
   {
     "Mythos-404/xmake.nvim",
-    optional = true,
-    lazy = true,
+    version = "^3",
     ft = "lua",
+    lazy = true,
     event = "BufReadPost",
-    opt = {
-      on_save = {
-        lsp_compile_commands = {
-          enable = true,
-          output_dir = "build",
-        }
-      }
-    },
     config = true,
   },
   {
