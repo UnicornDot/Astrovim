@@ -28,7 +28,14 @@ return {
             { icon = " ", key = "c", desc = "Config", action = ":lua Snacks.dashboard.pick('files', {cwd = vim.fn.stdpath('config')})" },
             { icon = "󰢚 ", key = "s", desc = "Restore Session", section = "session" },
             { icon = " ", key = "q", desc = "Quit", action = ":qa" },
-          }
+          },
+          header = [[
+███╗   ██╗███████╗ ██████╗ ██╗   ██╗██╗███╗   ███╗
+████╗  ██║██╔════╝██╔═══██╗██║   ██║██║████╗ ████║
+██╔██╗ ██║█████╗  ██║   ██║██║   ██║██║██╔████╔██║
+██║╚██╗██║██╔══╝  ██║   ██║╚██╗ ██╔╝██║██║╚██╔╝██║
+██║ ╚████║███████╗╚██████╔╝ ╚████╔╝ ██║██║ ╚═╝ ██║
+╚═╝  ╚═══╝╚══════╝ ╚═════╝   ╚═══╝  ╚═╝╚═╝     ╚═╝]],
         },
         sections = {
           {section = "header", gap = 1, padding = 1 },
@@ -36,7 +43,7 @@ return {
           {section = "startup", gap = 1, padding  = 1 },
           {
               section = "terminal",
-              cmd = "bat -p " .. vim.fn.stdpath("config") .. "/bar.txt",
+              cmd = "bat -pp " .. vim.fn.stdpath("config") .. "/bar.txt",
               random = 10,
               pane = 2,
               indent = 0,
