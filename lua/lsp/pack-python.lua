@@ -19,6 +19,10 @@ return {
                   ["<Leader>lo"] = {
                     "<cmd>PyrightOrganizeImports<cr>",
                     desc = "Organize imports",
+                  },
+                  ["<Leader>lE"] = {
+                    "<cmd>VenvSelect<cr>",
+                    desc = "Select virtualenv",
                   }
                 }
               }, { buffer = true })
@@ -114,5 +118,14 @@ return {
         python = { "black", "isort" },
       },
     },
+  },
+  {
+    "linux-cultist/venv-selector.nvim",
+    branch = "regexp",
+    enabled = vim.fn.executable("fd") == 1 or vim.fn.executable("fdfind") == 1 or vim.fn.executable("fd-find") == 1,
+    opts = {
+      venvs = { "venv", ".venv", "env", ".env" },
+    },
+    cmd = "VenvSelect",
   }
 }

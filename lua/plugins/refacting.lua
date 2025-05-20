@@ -11,9 +11,13 @@ return {
       ---@diagnostic disable: missing-parameter
       opts = function(_, opts)
         local maps = opts.mappings or {}
-        maps.n["<Leader>le"] = {
+        maps.n["<Leader>lb"] = {
           function() require("refactoring").refactor "Extract Block" end,
           desc = "Extract Block",
+        }
+        maps.n["<Leader>lB"] = {
+          function() require("refactoring").refactor "Extract Block To File" end,
+          desc = "Extract Block To File",
         }
         maps.n["<Leader>lv"] = {
           function() require("refactoring").refactor "Inline Variable" end,
@@ -31,15 +35,11 @@ return {
           function() require("refactoring").debug.print_var { below = false } end,
           desc = "Debug: Print Variable",
         }
-        maps.n["<Leader>lb"] = {
-          function() require("refactoring").refactor "Extract Block To File" end,
-          desc = "Extract Block To File",
-        }
-        maps.x["<Leader>le"] = {
+        maps.x["<Leader>lm"] = {
           function() require("refactoring").refactor "Extract Function" end,
           desc = "Extract Function",
         }
-        maps.x["<Leader>lm"] = {
+        maps.x["<Leader>lM"] = {
           function() require("refactoring").refactor "Extract Function To File" end,
           desc = "Extract Function To File",
         }
@@ -51,11 +51,11 @@ return {
           function() require("refactoring").refactor "Inline Variable" end,
           desc = "Inline Variable",
         }
-        maps.v["<Leader>le"] = {
+        maps.v["<Leader>lm"] = {
           function() require("refactoring").refactor "Extract Function" end,
           desc = "Extract Function",
         }
-        maps.v["<Leader>lm"] = {
+        maps.v["<Leader>lM"] = {
           function() require("refactoring").refactor "Extract Function To File" end,
           desc = "Extract Function To File",
         }

@@ -16,6 +16,12 @@ return {
       if opts.ensure_installed ~= "all" then
         opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "dart" })
       end
+
+      -- HACK: Disables the select treesitter textobject because the Dart treesitter parser is very inefficient
+      -- Hopefully this gets fixed and this block can be removed in the future
+      -- Reference: https:// github.com/AstroNvim/issues/2707
+      local select = vim.tbl_get(opts, "textobjects", "select")
+      if select then select.disable = astrocore.list_insert_unique(select.disable, { "dart" }) end
     end,
   },
   {
@@ -43,4 +49,11 @@ return {
       opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "dart-debug-adapter", "dcm" })
     end,
   },
+  {
+    "jay-babu/mason-nvim-dap.nvim",
+    optional = true,
+    opts = function(_, opts)
+      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "dart" })
+    end
+  }
 }
