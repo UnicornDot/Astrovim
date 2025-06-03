@@ -21,8 +21,7 @@ return {
     { "MunifTanjim/nui.nvim", lazy = true },
   },
   opts = {
-    provider = "deepseek",
-    vendors = {
+    providers = {
       deepseek = {
         __inherited_from = "openai",
         api_key_name = "DEEPSEEK_API_KEY",
