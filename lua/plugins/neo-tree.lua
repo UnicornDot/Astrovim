@@ -150,6 +150,7 @@ return {
         open_files_do_not_replace_types = {
           "terminal", "Trouble", "trouble", "qf", "Outline"
         },
+        
         event_handlers = {
           {
             event = neo_tree_events.FILE_ADDED,
@@ -188,6 +189,8 @@ return {
               "thumbs.db",
             },
           },
+          group_empty_dirs = true,
+          use_libuv_file_watcher = true,
         },
       })
     end,
