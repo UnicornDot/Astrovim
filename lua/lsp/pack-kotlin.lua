@@ -10,22 +10,6 @@ return {
     end,
   },
   {
-    "williamboman/mason-lspconfig.nvim",
-    optional = true,
-    opts = function(_, opts)
-      opts.ensure_installed =
-        require("astrocore").list_insert_unique(opts.ensure_installed, { "kotlin_language_server" })
-    end,
-  },
- {
-    "jay-babu/mason-null-ls.nvim",
-    optional = true,
-    opts = function(_, opts)
-      opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, { "ktlint" })
-    end,
-  },
-
-  {
     "jay-babu/mason-nvim-dap.nvim",
     optional = true,
     opts = function(_, opts)
@@ -38,17 +22,37 @@ return {
     opts = function(_, opts)
       opts.ensure_installed = astrocore.list_insert_unique(
         opts.ensure_installed,
-        { "kotlin-language-server", "ktlint", "kotlin-debug-adapter" }
+        { "kotlin-language-server", "ktlint", "ktfmt", "kotlin-debug-adapter" }
       )
     end,
   },
   {
     "mfussenegger/nvim-lint",
-    optional = true,
-    opts = {
-      linters_by_ft = {
-        kotlin = { "ktlint" },
-      },
-    },
+    event = "VeryLazy",
+    ft = "kotlin",
+    opts = function(_, opts)
+      opts.linters_by_ft = opts.linters_by_ft or {}
+      opts.linters_by_ft.kotlin = { "ktlint" }
+    end,
   },
+  {
+    "nvim-neotest/neotest",
+    dependencies = {
+      "codymikol/neotest-kotlin",
+    },
+    config = function(_, opts)
+      if not opts.adapters then opts.adapters = {} end
+      table.insert(opts.adapters, require("neotest-kotlin")(astrocore.plugin_opts "neotest-kotlin"))
+    end
+  },
+  {
+    "stevearc/conform.nvim",
+    event = "VeryLazy",
+    ft = "kotlin",
+    opts = function(_, opts)
+      opts.formatters_by_ft = opts.formatters_by_ft or {}
+      local package = "ktfmt"
+      opts.formatters_by_ft.kotlin = { package }
+    end
+  }
 }
