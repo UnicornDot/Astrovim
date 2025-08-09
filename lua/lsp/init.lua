@@ -8,12 +8,12 @@ return {
     return vim.tbl_deep_extend("force", opts, {
       features = {
         -- Configuration table of features provided by AstroLSP
-        autoformat = false, -- enable or disable auto formatting on start
+        -- autoformat = false, -- enable or disable auto formatting on start
         codelens = true, -- enable/disable codelens refresh on start
-        lsp_handlers = true, -- enable/disable setting of lsp_handlers
+        -- lsp_handlers = true, -- enable/disable setting of lsp_handlers
         semantic_tokens = true, -- enable/disable semantic token highlighting
         inlay_hints = true,
-        signature_help = true,
+        -- signature_help = true,
       },
       -- Configuration options for controlling formatting with language servers
       formatting = {
@@ -28,7 +28,7 @@ return {
       },
       -- mappings to be set up on attaching of a language server
       mappings = mappings,
-      on_attach = function()
+      on_attach = function(client, bufnr)
         require("lspconfig.ui.windows").default_options.border = "rounded"
       end,
     })

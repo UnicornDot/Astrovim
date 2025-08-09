@@ -1,5 +1,25 @@
-local astrocore = require("astrocore")
+local astrocore = require "astrocore"
 return {
+  {
+    "AstroNvim/astrolsp",
+    ---@type AstroLSPOpts
+    ---@diagnostic disable-next-line: assign-type-mismatch
+    opts = function(_, opts)
+      astrocore.extend_tbl(opts, {
+        ---@diagnostic disable: missing-fields
+        config = {
+          qmlls = {
+            root_dir = require("lspconfig.util").root_pattern(
+              "shell.qml",
+              ".qmlls.ini",
+              ".git"
+            ),
+          }
+        },
+      })
+      require("lspconfig").qmlls.setup {}
+    end,
+  },
   {
     "nvim-treesitter/nvim-treesitter",
     optional = true,
@@ -12,19 +32,6 @@ return {
   {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
     optional = true,
-    opts = function(_, opts)
-      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "qmlls" })
-    end,
-  }, 
-  {
-    "mason-org/mason-lspconfig.nvim",
-    optional = true,
-    opts = function(_, opts)
-      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "qmlls" })
-    end,
-    config = function(_, opts)
-      require("lspconfig").qmlls.setup{ }
-    end
-  },
-
+    opts = function(_, opts) opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "qmlls" }) end,
+  }
 }
