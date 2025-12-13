@@ -9,6 +9,11 @@ return {
     dependencies = { "luarocks.nvim" },
     lazy = false,
     version = "*",
+    opts = {
+      rocks = {
+        hererocks = true
+      }
+    },
     config = function()
       require("neorg").setup{
         load = {
