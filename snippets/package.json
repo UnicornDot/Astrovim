@@ -66,6 +66,10 @@
       {
         "language": "rust",
         "path": "./init/rust.json"
+      },
+      {
+        "language": "zig",
+        "path": "./init/zig.json"
       }
     ]
   }
