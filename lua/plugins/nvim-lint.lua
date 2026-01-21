@@ -5,6 +5,12 @@ return {
     -- Event to trigger linters
     events = { "BufWritePost", "BufReadPost", "InsertLeave" },
     linters_by_ft = {
+      javascript = { "biome" },
+      typescript = { "biome" },
+      javascriptreact = { "biome" },
+      typescriptreact = { "biome" },
+      json = { "biome" },
+      jsonc = { "biome" },
       -- Use the "*" filetype to run linters on all filetypes.
       -- ['*'] = { 'global linter' },
       -- Use the "_" filetype to run linters on filetypes that don't have other linters configured.
@@ -15,6 +21,11 @@ return {
     -- or add custom linters.
     ---@type table<string,table>
     linters = {
+      biome = {
+        condition = function(ctx)
+          return vim.fs.find({ "biome.json", "biome.jsonc", ".biomerc", ".biomerc.json", ".biomerc.jsonc" }, { path = ctx.filename, upward = true })[1]
+        end,
+      },
       -- -- Example of using selene only when a selene.toml file is present
       -- selene = {
       --   -- `condition` is another LazyVim extension that allows you to

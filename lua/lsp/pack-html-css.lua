@@ -96,11 +96,11 @@ return {
     optional = true,
     opts = {
       formatters_by_ft = {
-        html = { "prettierd", stop_after_first = true },
-        css = { "prettierd", stop_after_first = true },
-        scss = { "prettierd", stop_after_first = true },
-        less = { "prettierd", stop_after_first = true },
-        postcss = { "prettierd", stop_after_first = true },
+        html = { "biome", stop_after_first = true },
+        css = { "biome", stop_after_first = true },
+        scss = { "biome", stop_after_first = true },
+        less = { "biome", stop_after_first = true },
+        postcss = { "biome", stop_after_first = true },
       },
     },
   },

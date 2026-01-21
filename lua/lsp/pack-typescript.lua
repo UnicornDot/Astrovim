@@ -6,7 +6,7 @@ local check_json_key_exists = utils.check_json_key_exists
 
 local format_filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact", "vue" }
 
-local lsp_rooter, prettierrc_rooter
+local lsp_rooter, biomerc_rooter
 
 local nx_attach = function(client)
   -- This is an adaptation of the following, in order to support auto-completion of imports from
@@ -76,53 +76,46 @@ local nx_attach = function(client)
 end
 
 
-local has_prettier = function(bufnr)
+local has_biome = function(bufnr)
   if type(bufnr) ~= "number" then bufnr = vim.api.nvim_get_current_buf() end
   local rooter = require "astrocore.rooter"
   if not lsp_rooter then
     lsp_rooter = rooter.resolve("lsp", {
       ignore = {
         servers = function(client)
-          return not vim.tbl_contains({ "vtsls", "typescript-tools", "volar", "eslint", "tsserver" }, client.name)
+          return not vim.tbl_contains({ "vtsls", "typescript-tools", "volar", "biome", "tsserver" }, client.name)
         end,
       },
     })
   end
-  if not prettierrc_rooter then
-    prettierrc_rooter = rooter.resolve {
-      ".prettierrc",
-      ".prettierrc.json",
-      ".prettierrc.yml",
-      ".prettierrc.yaml",
-      ".prettierrc.json5",
-      ".prettierrc.js",
-      ".prettierrc.cjs",
-      "prettier.config.js",
-      ".prettierrc.mjs",
-      "prettier.config.mjs",
-      "prettier.config.cjs",
-      ".prettierrc.toml",
+  if not biomerc_rooter then
+    biomerc_rooter = rooter.resolve {
+      "biome.json",
+      "biome.jsonc",
+      ".biomerc",
+      ".biomerc.json",
+      ".biomerc.jsonc",
     }
   end
-  local prettier_dependency = false
+  local biome_dependency = false
   for _, root in ipairs(astrocore.list_insert_unique(lsp_rooter(bufnr), { vim.fn.getcwd() })) do
     local package_json = decode_json(root .. "/package.json")
     if
       package_json
       and (
-        check_json_key_exists(package_json, "dependencies", "prettier")
-        or check_json_key_exists(package_json, "devDependencies", "prettier")
+        check_json_key_exists(package_json, "dependencies", "@biomejs/biome")
+        or check_json_key_exists(package_json, "devDependencies", "@biomejs/biome")
       )
     then
-      prettier_dependency = true
+      biome_dependency = true
       break
     end
   end
-  return prettier_dependency or next(prettierrc_rooter(bufnr))
+  return biome_dependency or next(biomerc_rooter(bufnr))
 end
 
 local conform_formatter = function(bufnr)
-  return has_prettier(bufnr) and { "prettierd" } or {}
+  return { "biome" }
 end
 
 return {
@@ -135,13 +128,14 @@ return {
     opts = function(_, opts)
       return  require("astrocore").extend_tbl(opts, {
         config = {
-          eslint = {
-            on_attach = function()
+            biome = {
+            on_attach = function(client, _)
+              client.server_capabilities.documentFormattingProvider = true
               set_mappings({
                 n = {
                   ["<Leader>lF"] = {
-                    function() vim.cmd.EslintFixAll() end,
-                    desc = "Format buffer",
+                    function() vim.lsp.buf.format { async = true } end,
+                    desc = "Format buffer with biome",
                   },
                 },
               }, { buffer = true })
@@ -253,7 +247,7 @@ return {
     opts = function(_, opts)
       opts.ensure_installed = astrocore.list_insert_unique(
         opts.ensure_installed,
-        { "eslint-lsp", "vtsls", "prettierd", "js-debug-adapter" }
+        { "biome", "vtsls", "js-debug-adapter" }
       )
     end,
   },
