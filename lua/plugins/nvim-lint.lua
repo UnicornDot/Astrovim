@@ -25,6 +25,9 @@ return {
         condition = function(ctx)
           return vim.fs.find({ "biome.json", "biome.jsonc", ".biomerc", ".biomerc.json", ".biomerc.jsonc" }, { path = ctx.filename, upward = true })[1]
         end,
+        cmd = "biome",
+        args = { "check", "$FILENAME" },
+        stdin = true,
       },
       -- -- Example of using selene only when a selene.toml file is present
       -- selene = {

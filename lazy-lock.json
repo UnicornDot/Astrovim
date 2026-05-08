@@ -96,7 +96,7 @@
   "rust-prettifier-for-lldb": { "branch": "main", "commit": "c97ed7a6305725655fe3b636509cc639dce31890" },
   "smart-splits.nvim": { "branch": "master", "commit": "ddb23c1a1cf1507bda487cda7f6e4690965ef9f5" },
   "snacks.nvim": { "branch": "main", "commit": "e6fd58c82f2f3fcddd3fe81703d47d6d48fc7b9f" },
-  "solarized-osaka.nvim": { "branch": "main", "commit": "f675d9a5c58f3b0d6158d665a623f81a62e7bdaf" },
+  "solarized-osaka.nvim": { "branch": "main", "commit": "a261ee90fb3e5e82660567e4874d384e996afa4f" },
   "spring-boot.nvim": { "branch": "main", "commit": "218c0c26c14d99feca778e4d13f5ec3e8b1b60f0" },
   "tint.nvim": { "branch": "master", "commit": "586e87f00c8b0f5e857cefe10839e41f3e8c6d01" },
   "todo-comments.nvim": { "branch": "main", "commit": "31e3c38ce9b29781e4422fc0322eb0a21f4e8668" },

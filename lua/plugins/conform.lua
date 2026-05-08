@@ -64,5 +64,12 @@ return {
       if autoformat == nil then autoformat = vim.g.autoformat end
       if autoformat then return { timeout_ms = 20000 } end
     end,
+    formatters = {
+      biome = {
+        command = "biome",
+        args = { "format", "--stdin-file-path", "$FILENAME" },
+        stdin = true,
+      },
+    },
   },
 }
