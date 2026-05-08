@@ -115,7 +115,7 @@ local has_biome = function(bufnr)
 end
 
 local conform_formatter = function(bufnr)
-  return { "biome" }
+  return has_biome(bufnr) and { "biome" } or {}
 end
 
 return {

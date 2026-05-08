@@ -21,6 +21,7 @@ return {
         winwidth = 10,
         winminwidth = 10,
         equalalways = false,
+        autoread = true -- Required for `opts.events.reload`
       },
       g = {
         -- resession_enabled = false,
@@ -131,11 +132,31 @@ return {
             pattern = "*",
             callback = function()
               local venv = vim.fn.findfile("pyproject.toml", vim.fn.getcwd() .. ";")
-              if venv ~= "" then require("venv-selector").retrieve_from_cache() end
+              if venv ~= "" then require("venv-selector").activate_from_path(vim.fn.getcwd()) end
             end,
             once = true,
           },
         },
+        auto_opencode_event = {
+          {
+            event = "User",
+            desc = "forwards opencode's SSE as an OpencodeEvent",
+            pattern = "OpencodeEvent:*", -- Optionally filter event types
+            callback = function(args)
+              ---@type opencode.server.Event
+              local event = args.data.event
+              ---@type number
+              local port = args.data.port
+
+              -- See the available event types and their properties
+              vim.notify(vim.inspect(event))
+              -- Do something useful
+              if event.type == "session.idle" then
+                vim.notify("`opencode` finished responding")
+              end
+            end,
+          }
+        }
       },
     })
   end,

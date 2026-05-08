@@ -64,8 +64,19 @@ return {
       rename = { enabled = true },
       debug = { enabled = true },
       lazygit =  {},
-      terminal = {},
-      profiler = { enabled = true }
+      terminal = {
+        win = {
+          style = "terminal",
+        },
+      },
+      profiler = { enabled = true },
+      styles = {
+        terminal = {
+          wo = {
+            winbar = ""
+          }
+        }
+      }
     },
     keys = {
       { "<Leader>;", function() Snacks.dashboard() end, desc = "Dashboard"}

@@ -78,7 +78,7 @@ return {
     optional = true,
     opts = function(_, opts)
       if opts.ensure_installed ~= "all" then
-        opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "markdown", "markdown_inline", "html", "latex" })
+        opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "html", "latex" })
       end
     end,
   },

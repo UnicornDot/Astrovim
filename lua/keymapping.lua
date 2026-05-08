@@ -25,6 +25,8 @@ function M.core_mappings(mappings)
     maps.x["<Leader>l"] = { desc = " Lsp" }
     maps.v["<Leader>l"] = { desc = " Lsp" }
 
+    maps.n["+"] = { "<C-a>", desc = "Increment under cursor", noremap = true }
+    maps.n["-"] = { "<C-x>", desc = "Decrement under cursor", noremap = true }
     maps.v["<"] = { "<gv", desc = "Unindent line" }
     maps.v[">"] = { ">gv", desc = "Indent line" }
     maps.v["K"] = { ":move '<-2<CR>gv-gv", desc = "Move line up", silent = true }
@@ -76,13 +78,13 @@ function M.core_mappings(mappings)
     end
 
     -- multi style open terminal
-    maps.n["<M-3>"] = { "<cmd>ToggleTerm direction=float<cr>", desc = "ToggleTerm float" }
-    maps.t["<M-3>"] = { "<cmd>ToggleTerm direction=float<cr>", desc = "ToggleTerm float" }
-    maps.n["<M-1>"] = { "<cmd>ToggleTerm size=10 direction=horizontal<cr>", desc = "ToggleTerm horizontal split" }
-    maps.t["<M-1>"] = { "<cmd>ToggleTerm size=10 direction=horizontal<cr>", desc = "ToggleTerm horizontal split" }
-    maps.n["<M-2>"] = { "<cmd>ToggleTerm size=80 direction=vertical<cr>", desc = "ToggleTerm vertical split" }
-    maps.t["<M-2>"] = { "<cmd>ToggleTerm size=80 direction=vertical<cr>", desc = "ToggleTerm vertical split" }
-    maps.n["<C-\\>"] = { "<cmd>ToggleTerm size=90 direction=float<cr>", desc = "Toggle float terminal" }
+    maps.n["<M-1>"] = { function() require("snacks.terminal").toggle(nil, {win={position="bottom", height=0.15 }}) end, desc = "Snacks terminal horizontal" }
+    maps.t["<M-1>"] = maps.n["<M-1>"]
+    maps.n["<M-2>"] = { function() require("snacks.terminal").toggle(nil, {win={position="right", width=0.4 }}) end, desc = "Snacks terminal vertical" }
+    maps.t["<M-2>"] = maps.n["<M-2>"]
+    maps.n["<M-3>"] = { function() require("snacks.terminal").toggle(nil, {win={position="float", border = "rounded" }}) end, desc = "Snacks terminal float" }
+    maps.t["<M-3>"] = maps.n["<M-3>"]
+    maps.n["<C-\\>"] = { function() require("snacks.terminal").toggle(nil, {win={position="float", border = "rounded" }}) end, desc = "Snacks terminal float large" }
     maps.t["<C-\\>"] = maps.n["<C-\\>"]
 
     -- 分屏快捷键
