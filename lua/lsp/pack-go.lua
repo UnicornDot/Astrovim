@@ -36,19 +36,19 @@ return {
   {
     "AstroNvim/astrocore",
     ---@type AstroCoreOpts
-    opts = { filetypes = { extension = { api = "goctl" }}},
+    opts = { filetypes = { extension = { api = "goctl" } } },
   },
   {
     "AstroNvim/astrolsp",
     optional = true,
-    ---@type AstroLSPOpts
+    ---@type function
     opts = function(_, opts)
       return vim.tbl_deep_extend("force", opts, {
         config = {
           gopls = {
             on_attach = function(client, _)
-              vim.api.nvim_create_autocmd({ "TermOpen", "TermClose", "BufEnter" },{
-                pattern =  "*",
+              vim.api.nvim_create_autocmd({ "TermOpen", "TermClose", "BufEnter" }, {
+                pattern = "*",
                 desc = "Jump to error line",
                 callback = function()
                   local buf_name = vim.api.nvim_buf_get_name(0)
@@ -94,7 +94,7 @@ return {
                 },
                 codelenses = {
                   gc_details = false, -- Show a code lens toggling the display of gc's choices.
-                  generate = true, -- show the `go generate` lens.
+                  generate = true,    -- show the `go generate` lens.
                   regenerate_cgo = true,
                   test = true,
                   tidy = true,
@@ -110,7 +110,7 @@ return {
                   parameterNames = true,
                   rangeVariableTypes = true,
                 },
-                buildFlags = {"-tags", "integration"},
+                buildFlags = { "-tags", "integration" },
                 completeUnimported = true,
                 diagnosticsDelay = "500ms",
                 gofumpt = true,
@@ -124,19 +124,6 @@ return {
           },
         },
       })
-    end,
-  },
-  -- Golang support
-  {
-    "nvim-treesitter/nvim-treesitter",
-    optional = true,
-    opts = function(_, opts)
-      if opts.ensure_installed ~= "all" then
-        opts.ensure_installed = astrocore.list_insert_unique(
-          opts.ensure_installed,
-          { "go", "gomod", "gosum", "gowork", "goctl" }
-        )
-      end
     end,
   },
   {
@@ -162,7 +149,7 @@ return {
     opts = {}
   },
   {
-    "Saghen/blink.cmp",
+    "saghen/blink.cmp",
     optional = true,
     dependencies = {
       {
@@ -199,7 +186,6 @@ return {
     dependencies = {
       "nvim-lua/plenary.nvim",
       "nvim-treesitter/nvim-treesitter",
-      { "mason-org/mason.nvim", optional = true }, -- by default use Mason for go dependencies
     },
     opts = {},
   },
@@ -215,7 +201,7 @@ return {
     },
     opts = function(_, opts)
       if not opts.adapters then opts.adapters = {} end
-      table.insert(opts.adapters, require "neotest-go"(astrocore.plugin_opts "neotest-go"))
+      table.insert(opts.adapters, require "neotest-go" (astrocore.plugin_opts "neotest-go"))
     end,
   },
   {
@@ -249,7 +235,7 @@ return {
     }
   },
   {
-    "echasnovski/mini.icons",
+    "nvim-mini/mini.icons",
     optional = true,
     opts = {
       file = {

@@ -21,9 +21,7 @@ function M.core_mappings(mappings)
     maps.n["<Leader>l"] = { desc = " Lsp" }
     maps.n["<Leader>x"] = { desc = " QickFix" }
     maps.n["<Leader>r"] = { desc = " Run" }
-    maps.n["<Leader>m"] = { desc = "󱋼 Marks" }
-    maps.x["<Leader>l"] = { desc = " Lsp" }
-    maps.v["<Leader>l"] = { desc = " Lsp" }
+    -- maps.n["<Leader>m"] = { desc = " Man" }
 
     maps.n["+"] = { "<C-a>", desc = "Increment under cursor", noremap = true }
     maps.n["-"] = { "<C-x>", desc = "Decrement under cursor", noremap = true }
@@ -113,21 +111,40 @@ function M.lsp_mappings(mappings)
   local maps = mappings
   if maps then
       maps.n["M"] = { function() vim.lsp.buf.hover() end, desc = "Hover symbol details", cond = "textDocument/hover" }
-      maps.n["K"] = { "5k", desc = "fast move", silent = true }
-      maps.n["<Leader>lA"] = {
-        function()
-          vim.lsp.buf.code_action( {
-            content = { only = { "source", "refactor", "quickfix" }}
-          })
-        end,
-        desc = "code action with more",
-      }
-      maps.n['gK'] = false
       maps.i["<C-h>"] = {
         function() vim.lsp.buf.signature_help() end,
         desc = "Signature help",
         cond = "textDocument/signatureHelp",
       }
+      maps.n["grr"] = {
+        function() require("snacks").picker.lsp_references() end,
+        desc = "vim.lsp.buf.reference"
+      }
+      maps.n["grd"] = {
+        function() require("snacks").picker.lsp_definitions() end,
+        desc = "vim.lsp.buf.definitions"
+      }
+      maps.n["gri"] = {
+        function() require("snacks").picker.lsp_implementations() end,
+        desc = "vim.lsp.buf.implementations"
+      }
+      maps.n["grt"] = {
+        function() require("snacks").picker.lsp_type_definitions() end,
+        desc = "vim.lsp.buf.implementations"
+      }
+      maps.n["gra"] = {
+        function() require("snacks").picker.lsp_config() end,
+        desc = "vim.lsp.buf.code_action"
+      }
+      maps.n['grx'] = {
+        function() vim.lsp.codelens.run() end,
+        desc = "vim.lsp.codelens_run"
+      }
+      maps.n['grn'] = {
+        function() require('snacks').rename() end,
+        desc = "vim.lsp.rename"
+      }
+
   end
 end
 

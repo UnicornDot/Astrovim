@@ -1,11 +1,3 @@
-local open = function(command, opts)
-  opts = opts or {}
-  if opts.cmd == nil and command == "git_files" and opts.show_untracked then
-    opts.cmd = "git ls-files --exclude-standard --cached --others"
-  end
-  return require("fzf-lua")[command](opts)
-end
-
 local function symbols_filter(entry, ctx)
   if ctx.symbols_filter == nil then ctx.symbols_filter = require("utils").get_kind_filter(ctx.bufnr) or false end
   if ctx.symbols_filter == false then return true end
@@ -24,37 +16,14 @@ return {
       opts = function(_, opts)
         if astrocore.is_available "fzf-lua" then
           local maps = opts.mappings or {}
-          maps.n.gd = {
-            "<cmd>FzfLua lsp_definitions jump1=true slient=true ignore_current_line=true<cr>",
-            desc = "Goto Definition"
-          }
-          maps.n.gy = {
-            "<cmd>FzfLua lsp_typedefs jump1=true slient=true ignore_current_line=true<cr>",
-            desc = "Goto Type Definition"
-          }
-          maps.n.gI = {
-            "<cmd>FzfLua lsp_implementations jump1=true slient=true ignore_current_line=true<cr>",
-            desc = "Goto Implementation"
-          }
-          maps.n.gr = {
-            "<cmd>FzfLua lsp_references jump1=true slient=true ignore_current_line=true<cr>",
-            desc = "References",
-            nowait = true,
-          }
           maps.n["<Leader>lX"] = {
             function() require("fzf-lua").diagnostics_document() end,
             desc = "Search diagnostics"
           }
-          maps.n["<Leader>ls"] = { function()
-              require("fzf-lua").lsp_document_symbols {
-                regex_filter = symbols_filter,
-              }
-            end,
-            desc = "Goto Symbol"
-          }
-          maps.n["<Leader>lS"] = { function()
+          maps.n["<Leader>lS"] = {
+            function()
               require("fzf-lua").lsp_live_workspace_symbols {
-                  regex_filter = symbols_filter,
+                regex_filter = symbols_filter,
               }
             end,
             desc = "Goto Symbol (Workspace)"
@@ -63,64 +32,20 @@ return {
       end,
     },
     {
-      "folke/todo-comments.nvim",
-      optional = true,
-      -- stylua: ignore
-      keys = {
-        { "<Leader>ft", function() require("todo-comments.fzf").todo() end, desc = "Todo"},
-        { "<Leader>fT", function() require("todo-comments.fzf").todo({keywords = {"TODO", "FIX", "FIXME"}})end, desc = "Todo/Fix/Fixme" }
-      },
-    },
-    {
       "AstroNvim/astrocore",
       opts = function(_, opts)
         local maps = opts.mappings or {}
         maps.n["<Leader>f"] = vim.tbl_get(opts, "_map_sections", "f")
 
-        -- common
-        maps.n["<Leader>:"] = { function() require("fzf-lua").command_history() end, desc = "Find command history" }
-
-        if vim.fn.executable "git" == 1 then
-          maps.n["<Leader>g"] = vim.tbl_get(opts, "_map_sections", "g")
-          maps.n["<Leader>gb"] = { "<cmd>FzfLua git_branches<cr>", desc = "Git branches" }
-          maps.n["<Leader>gc"] = { "<cmd>FzfLua git_commits<cr>", desc = "Git commits (repository)" }
-          maps.n["<Leader>gC"] = { "<cmd>FzfLua git_bcommits<cr>", desc = "Git commits (current file)" }
-          maps.n["<Leader>gt"] = { "<cmd>FzfLua git_status<cr>", desc = "Git status" }
-        end
-        maps.n["<Leader>f<CR>"] = { "<cmd>FzfLua resume<cr>", desc = "Resume previous search" }
-        maps.n["<Leader>f'"] = { "<cmd>FzfLua marks<cr>", desc = "Find marks" }
-        maps.n["<Leader>f/"] = { "<cmd>FzfLua grep_curbuf<cr>", desc = "Find words in current buffer" }
         maps.n["<Leader>fx"] = { "<cmd>FzfLua diagnostics_document<cr>", desc = "Find Document Diagnostics" }
         maps.n["<Leader>fX"] = { "<cmd>FzfLua diagnostics_workspace<cr>", desc = "Find Workspace Diagnostics" }
         maps.n["<Leader>fa"] = { "<cmd>FzfLua autocmds<cr>", desc = "Find autocmds" }
-        maps.n["<Leader>fb"] = { "<cmd>FzfLua buffers sort_mru=true sort_lastused=true<cr>", desc = "Find buffers" }
-        maps.n["<Leader>fc"] = { function() open "grep_cword" end, desc = "Find word under cursor" }
-        maps.n["<Leader>fC"] = { "<cmd>FzfLua commands<cr>", desc = "Find commands" }
-        maps.n["<Leader>ff"] = { "<cmd>FzfLua files<cr>", desc = "Find files" }
-        maps.n["<Leader>fh"] = { "<cmd>FzfLua help_tags<cr>", desc = "Find help" }
-        maps.n["<Leader>fk"] = { "<cmd>FzfLua keymaps<cr>", desc = "Find keymaps" }
-        maps.n["<Leader>fm"] = { "<cmd>FzfLua man_pages<cr>", desc = "Find man pages" }
-        maps.n["<Leader>fl"] = { "<cmd>FzfLua loclist<cr>", desc = "Find location list" }
-        maps.n["<Leader>fq"] = { "<cmd>FzfLua quickfix<cr>",  desc = "Find Quickfix"}
-        if require("astrocore").is_available("snacks.nvim") then
-          maps.n["<Leader>fn"] = {
-            function() require("snacks").notifier.show_history() end,
-            desc = "Find notifications",
-          }
-        end
-        maps.n["<Leader>fo"] = { "<cmd>FzfLua oldfiles<cr>", desc = "Recent Files" }
-        maps.n["<Leader>fr"] = { "<cmd>FzfLua registers<cr>", desc = "Find registers" }
-        maps.n["<Leader>fs"] = { "<cmd>FzfLua colorschemes<cr>", desc = "Find themes" }
-        maps.n["<Leader>fg"] = { "<cmd>FzfLua git_files<cr>", desc = "Find Files(git-files)" }
-        if vim.fn.executable "rg" == 1 or vim.fn.executable "grep" == 1 then
-          maps.n["<Leader>fw"] = { function() open "live_grep" end, desc = "Find words" }
-          maps.v["<Leader>fw"] = { function() open "grep_visual" end, desc = "Selection(Root Dir)" }
-        end
+        maps.n["<Leader>fq"] = { "<cmd>FzfLua quickfix<cr>", desc = "Find Quickfix" }
       end,
     },
   },
   dependencies = {
-    "echasnovski/mini.icons"
+    "nvim-mini/mini.icons"
   },
   opts = function()
     local config = require "fzf-lua.config"
@@ -142,15 +67,15 @@ return {
 
     -- diffview
     if require("astrocore").is_available("diffview.nvim") then
-      config.defaults.git.commits.actions["ctrl-r"] = function(selected, opts)
+      config.defaults.git.commits.actions["ctrl-r"] = function(selected, _)
         local commit_hash = selected[1]:match("[^ ]+")
-        vim.cmd.DiffviewOpen{ commit_hash }
+        vim.cmd.DiffviewOpen { commit_hash }
       end
-      config.defaults.git.bcommits.actions["ctrl-r"] = function(selected, opts)
+      config.defaults.git.bcommits.actions["ctrl-r"] = function(selected, _)
         local commit_hash = selected[1]:match("[^ ]+")
-        vim.cmd.DiffviewOpen{ commit_hash }
+        vim.cmd.DiffviewOpen { commit_hash }
       end
-      config.defaults.git.branches.actions["ctrl-r"] = function(selected, opts)
+      config.defaults.git.branches.actions["ctrl-r"] = function(selected, _)
         local branch = selected[1]:match("[^%s%*]+")
         vim.cmd.DiffviewOpen { branch }
       end
@@ -159,8 +84,8 @@ return {
     local img_previewer ---@type string[]?
     for _, v in ipairs {
       { cmd = "ueberzug", args = {} },
-      { cmd = "chafa", args = { "{file}", "--format=symbols" } },
-      { cmd = "viu", args = { "-b" } },
+      { cmd = "chafa",    args = { "{file}", "--format=symbols" } },
+      { cmd = "viu",      args = { "-b" } },
     } do
       if vim.fn.executable(v.cmd) == 1 then
         img_previewer = vim.list_extend({ v.cmd }, v.args)

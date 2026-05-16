@@ -37,8 +37,8 @@ return {
             local file_name = vim.fn.fnamemodify(file_path, ":t");
 
             (is_visual and grug.with_visual_selection or grug.grug_far) {
-              prefills = { filesFilter = file_name },
-            }
+                  prefills = { filesFilter = file_name },
+                }
           end,
           desc = "Search and Replace (selected)",
         }
@@ -56,7 +56,7 @@ return {
     },
   },
   dependencies = {
-    "echasnovski/mini.icons",
+    "nvim-mini/mini.icons",
   },
   ---@param opts GrugFarOptionsOverride
   -- NOTE: Wrapping opts into a function, because `astrocore` can set vim options

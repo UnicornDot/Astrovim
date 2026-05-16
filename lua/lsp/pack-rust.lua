@@ -1,6 +1,3 @@
---WARNING: now rust-analyzer is can't use in neovim, because this issue
--- https://github.com/rust-lang/rust-analyzer/issues/17289
--- https://github.com/williamboman/mason.nvim/issues/1741
 local astrocore = require "astrocore"
 local set_mappings = astrocore.set_mappings
 -- vim.g.astronvim_rust_diagnostics = "bacon-ls"
@@ -37,13 +34,13 @@ return {
   },
   {
     "AstroNvim/astrolsp",
-    --- @type AstroLSPOpts
-    opts = function(_, opts) 
+    --- @type function
+    opts = function(_, opts)
       if diagnostics ~= "rust-analyzer" then
         astrocore.list_insert_unique(opts.servers, { "bacon_ls" })
       end
       return vim.tbl_deep_extend("force", opts, {
-        -- handlers = { rust_analyzer = function() return false end }, -- disable setup of `rust_analyzer`
+        handlers = { rust_analyzer = function() return false end }, -- disable setup of `rust_analyzer`
         ---@diagnostic disable: missing-fields
         config = {
           bacon_ls = {
@@ -111,21 +108,18 @@ return {
                     ".venv"
                   },
                 },
+                check = {
+                  command = "clippy",
+                  extraArgs = {
+                    "--no-deps",
+                  },
+                },
               },
             },
           },
         },
       })
     end
-  },
-  {
-    "nvim-treesitter/nvim-treesitter",
-    optional = true,
-    opts = function(_, opts)
-      if opts.ensure_installed ~= "all" then
-        opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "rust", "toml", "ron" })
-      end
-    end,
   },
   {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
@@ -137,66 +131,80 @@ return {
       end
     end,
   },
-  -- {
-  --   "mrcjkb/rustaceanvim",
-  --   version = "^5",
-  --   ft = "rust",
-  --   opts = function()
-  --     local adapter
-  --     local success, package = pcall(function() return require("mason-registry").get_package("codelldb") end)
-  --     local cfg = require("rustaceanvim.config")
-  --     if success then
-  --       local package_path = vim.fn.stdpath "data" .. "/mason/packages/codelldb"
-  --       local codelldb_path = package_path .. "/codelldb"
-  --       local liblldb_path = package_path .. "/extension/lldb/lib/liblldb"
-  --       local this_os = vim.loop.os_uname().sysname
-  --
-  --       -- The path in window is different
-  --       if this_os:find "Windows" then
-  --         codelldb_path = package_path .. "\\extension\\adapter\\codelldb.exe"
-  --         liblldb_path = package_path .. "\\extension\\lldb\\bin\\liblldb.dll"
-  --       else
-  --         -- The liblldb extension is '.so' for linux and '.dylib' for macos
-  --         liblldb_path = liblldb_path .. (this_os == "Linux" and ".so" or ".dylib")
-  --       end
-  --       adapter = cfg.get_codelldb_adapter(codelldb_path, liblldb_path)
-  --     else
-  --       adapter = cfg.get_codelldb_adapter()
-  --     end
-  --
-  --     local astrolsp_avail, astrolsp = pcall(require, "astrolsp")
-  --     local astrolsp_opts = (astrolsp_avail and astrolsp.lsp_opts "rust_analyzer") or {}
-  --     local server = {
-  --       ---@type table | (fun(project_root:string|nil, default_settings: table|nil):table) -- The rust-analyzer settings or a function that creates them.
-  --       settings = function(project_root, default_settings)
-  --         local astrolsp_settings = astrolsp_opts.settings or {}
-  --
-  --         local merge_table = vim.tbl_deep_extend("force", default_settings or {}, astrolsp_settings)
-  --         local ra = require "rustaceanvim.config.server"
-  --         -- load_rust_analyzer_settings merges any found settings with the passed in default settings table and then returns that table
-  --         return ra.load_rust_analyzer_settings(project_root, {
-  --           settings_file_pattern = "rust-analyzer.json",
-  --           default_settings = merge_table,
-  --         })
-  --       end,
-  --     }
-  --     local final_server = vim.tbl_deep_extend("force", astrolsp_opts, server)
-  --     return {
-  --       server = final_server,
-  --       dap = { adapter = adapter, load_rust_types = true },
-  --       tools = {enable_clippy = false },
-  --     }
-  --   end,
-  --   config = function(_, opts)
-  --     if vim.fn.executable "rust-analyzer" == 0 then
-  --       vim.notify(
-  --         "**rust-analyzer** not found in PATH, please install it.\nhttps://rust-analyzer.github.io/",
-  --         vim.log.levels.ERROR
-  --       )
-  --     end
-  --     vim.g.rustaceanvim = vim.tbl_deep_extend("keep", vim.g.rustaceanvim or {}, opts or {})
-  --   end,
-  -- },
+    {
+    "mrcjkb/rustaceanvim",
+    version = vim.fn.has "nvim-0.12" == 1 and "^9" or "^8",
+    ft = "rust",
+    specs = {
+      {
+        "AstroNvim/astrolsp",
+        optional = true,
+        ---@type AstroLSPOpts
+        opts = {
+          handlers = { rust_analyzer = false }, -- disable setup of `rust_analyzer`
+        },
+      },
+    },
+    opts = function()
+      local adapter
+      local codelldb_installed = pcall(function() return require("mason-registry").get_package "codelldb" end)
+      local cfg = require "rustaceanvim.config"
+      if codelldb_installed then
+        local codelldb_path = vim.fn.exepath "codelldb"
+        local this_os = vim.uv.os_uname().sysname
+
+        local liblldb_path = vim.fn.expand "$MASON/share/lldb"
+        -- The path in windows is different
+        if this_os:find "Windows" then
+          liblldb_path = liblldb_path .. "\\bin\\lldb.dll"
+        else
+          -- The liblldb extension is .so for linux and .dylib for macOS
+          liblldb_path = liblldb_path .. "/lib/liblldb" .. (this_os == "Linux" and ".so" or ".dylib")
+        end
+        adapter = cfg.get_codelldb_adapter(codelldb_path, liblldb_path)
+      else
+        adapter = cfg.get_codelldb_adapter()
+      end
+
+      local astrolsp_opts = vim.lsp.config["rust_analyzer"] or {}
+      -- Starting from AstroNvim v6, lsp_opts returns nvim-lspconfig's
+      -- root_dir(bufnr, on_dir) which is incompatible with rustaceanvim's
+      -- root_dir(file_name, default_fn) signature. Drop it so rustaceanvim
+      -- uses its own cargo-aware root detection.
+      astrolsp_opts.root_dir = nil
+      local server = {
+        ---@type table | (fun(project_root:string|nil, default_settings: table|nil):table) -- The rust-analyzer settings or a function that creates them.
+        settings = function(project_root, default_settings)
+          local astrolsp_settings = astrolsp_opts.settings or {}
+
+          local merge_table = require("astrocore").extend_tbl(default_settings or {}, astrolsp_settings)
+
+          -- Merge the settings from `rustaceanvim` first.
+          local ra = require "rustaceanvim.config.server"
+          local settings = ra.load_rust_analyzer_settings(project_root, {
+            settings_file_pattern = "rust-analyzer.json",
+            default_settings = merge_table,
+          })
+
+          -- Merge the settings again from `codesettings` if available. This is
+          -- the recommended way of sharing project-local settings with VSCode
+          -- in newer versions of `rustaceanvim`.
+          local codesettings_avail, codesettings = pcall(require, "codesettings")
+          if codesettings_avail then
+            settings = codesettings.with_local_settings("rust-analyzer", { settings = settings }).settings
+          end
+          return settings
+        end,
+      }
+      local final_server = require("astrocore").extend_tbl(astrolsp_opts, server)
+      return {
+        server = final_server,
+        dap = { adapter = adapter, load_rust_types = true },
+        tools = { enable_clippy = false },
+      }
+    end,
+    config = function(_, opts) vim.g.rustaceanvim = require("astrocore").extend_tbl(opts, vim.g.rustaceanvim) end,
+  },
   {
     "Saecki/crates.nvim",
     event = { "BufRead Cargo.toml" },

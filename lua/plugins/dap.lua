@@ -1,4 +1,4 @@
-local utils = require "astrocore"
+local utils = require("utils")
 
 local is_dap_window_open = function()
   local windows = require("dapui.windows")
@@ -179,8 +179,8 @@ return {
             ---@diagnostic disable-next-line: missing-parameter
             function()
               local window = {
-                width = require("utils").size(vim.o.columns, 0.8),
-                height = require("utils").size(vim.o.lines, 0.8),
+                width = utils.size(vim.o.columns, 0.8),
+                height = utils.size(vim.o.lines, 0.8),
                 position = "center",
                 enter = true,
               }
@@ -244,7 +244,7 @@ return {
             desc = "Switch Debug Session",
           }
           maps.n[prefix_debug .. "G"] = {
-            require("utils").create_launch_json,
+            utils.create_launch_json,
             desc = "Create Dap Launch Json"
           }
           maps.n[prefix_debug .. "g"] = {
@@ -265,49 +265,49 @@ return {
             { id = "console", size = 0.4 },
             { id = "scopes", size = 0.6 },
           },
-          size = require("utils").size(vim.o.lines, 0.3),
+          size = utils.size(vim.o.lines, 0.3),
           position = "bottom", -- Can be "top" or "bottom"
         },
         {
           elements = {
             { id = "console", size = 1 },
           },
-          size = require("utils").size(vim.o.lines, 0.3),
+          size = utils.size(vim.o.lines, 0.3),
           position = "bottom", -- Can be "bottom" or "top"
         },
         {
           elements = {
             { id = "repl", size = 1 },
           },
-          size = require("utils").size(vim.o.lines, 0.3),
+          size = utils.size(vim.o.lines, 0.3),
           position = "bottom", -- Can be "bottom" or "top"
         },
         {
           elements = {
             { id = "stacks", size = 1 },
           },
-          size = require("utils").size(vim.o.lines, 0.3),
+          size = utils.size(vim.o.lines, 0.3),
           position = "bottom", -- Can be "bottom" or "top"
         },
         {
           elements = {
             { id = "breakpoints", size = 1 },
           },
-          size = require("utils").size(vim.o.lines, 0.3),
+          size = utils.size(vim.o.lines, 0.3),
           position = "bottom", -- Can be "bottom" or "top"
         },
         {
           elements = {
             { id = "watches", size = 1 },
           },
-          size = require("utils").size(vim.o.lines, 0.3),
+          size = utils.size(vim.o.lines, 0.3),
           position = "bottom", -- Can be "bottom" or "top"
         },
         {
           elements = {
             { id = "scopes", size = 1 }
           },
-          size = require("utils").size(vim.o.lines, 0.3),
+          size = utils.size(vim.o.lines, 0.3),
           position = "bottom", -- Can be "bottom" or "top"
         },
         {
@@ -321,7 +321,7 @@ return {
             { id = "stacks", size = 0.25 },
             { id = "watches", size = 0.25 },
           },
-          size = require("utils").size(vim.o.columns, 0.2),
+          size = utils.size(vim.o.columns, 0.2),
           position = "right",  -- can be "left" or right
         },
         {
@@ -329,7 +329,7 @@ return {
             { id = "repl", size = 0.4 },
             { id = "console", size = 0.6 }
           },
-          size = require("utils").size(vim.o.lines, 0.25),
+          size = utils.size(vim.o.lines, 0.25),
           position = "bottom", --- can be "bottom" or "top"
         },
       },

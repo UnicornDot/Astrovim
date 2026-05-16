@@ -32,20 +32,14 @@ return {
           ---@diagnostic disable: missing-fields
           config = {
             jsonls = {
-              on_attach = function(client, _)
-                client.server_capabilities.document_formatting = false
-                client.server_capabilities.document_range_formatting = false
-              end,
               -- lazy-load schemastore when needed
-              on_new_config = function(new_config)
-                new_config.settings.json.schemas = new_config.settings.json.schemas or {}
-                vim.list_extend(new_config.settings.json.schemas, require("schemastore").json.schemas())
+              on_new_config = function(config)
+                if not config.settings.json.schemas then config.settings.json.schemas = {} end
+                vim.list_extend(config.settings.json.schemas, require("schemastore").json.schemas())
               end,
               settings = {
                 json = {
-                  format = {
-                    enable = true,
-                  },
+                  format = { enable = true },
                   validate = { enable = true },
                 },
               },
@@ -56,21 +50,11 @@ return {
     },
   },
   {
-    "nvim-treesitter/nvim-treesitter",
-    optional = true,
-    opts = function(_, opts)
-      if opts.ensure_installed ~= "all" then
-        opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "json", "jsonc", "json5" })
-      end
-    end,
-  },
-  {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
     optional = true,
     opts = function(_, opts)
       opts.ensure_installed = astrocore.list_insert_unique(
-        opts.ensure_installed,
-        { "json-lsp" }
+        opts.ensure_installed, { "json-lsp" }
       )
     end,
   },

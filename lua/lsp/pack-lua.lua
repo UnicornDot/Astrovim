@@ -8,9 +8,9 @@ end
 return {
   {
     "AstroNvim/astrolsp",
-    ---@type AstroLSPOpts
+    ---@type function
     opts = function(_, opts)
-      vim.tbl_deep_extend("force", opts, {
+      return vim.tbl_deep_extend("force", opts, {
         ---@diagnostic disable: missing-fields
         config = {
           lua_ls = { settings = { Lua = { hint = { enable = true, arrayIndex = "Disable" } } } },
@@ -19,20 +19,10 @@ return {
     end
   },
   {
-    "nvim-treesitter/nvim-treesitter",
-    optional = true,
-    opts = function(_, opts)
-      if opts.ensure_installed ~= "all" then
-        opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "lua", "luap" })
-      end
-    end,
-  },
-  {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
     optional = true,
     opts = function(_, opts) opts.ensure_installed = astrocore.list_insert_unique(
-      opts.ensure_installed, 
-      { "lua-language-server", "stylua", "selene" }
+      opts.ensure_installed, { "lua-language-server", "stylua", "selene" }
     )
     end,
   },
@@ -53,7 +43,7 @@ return {
         lua = { "selene" },
       },
       linters = {
-        selene = { condition = function(ctx) return selene_configured(ctx.filenmae) end },
+        selene = { condition = function(ctx) return selene_configured(ctx.filename) end },
       },
     },
   }

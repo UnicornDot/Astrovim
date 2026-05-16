@@ -214,9 +214,15 @@ function M.get_pkg_path(pkg, path, opts)
   return ret
 end
 
+-- local is_windows = vim.uv.os_uname().sysname == "Windows_NT"
+-- local is_windows = vim.loop.os_uname().sysname == "Windows_NT"
+function M.is_windows()
+  return vim.uv.os_uname().version:find("Windows")
+end
+
 
 function M.get_global_npm_path()
-  if uv.os_uname().version:find("Windows") then
+  if M.is_windows() then
     return vim.fn.system "cmd.exe /c npm root -g"
   end
   return vim.fn.system "npm root -g"

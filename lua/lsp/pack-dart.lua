@@ -13,40 +13,28 @@ return {
     "nvim-treesitter/nvim-treesitter",
     optional = true,
     opts = function(_, opts)
-      if opts.ensure_installed ~= "all" then
-        opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "dart" })
-      end
-
-      -- HACK: Disables the select treesitter textobject because the Dart treesitter parser is very inefficient
-      -- Hopefully this gets fixed and this block can be removed in the future
-      -- Reference: https:// github.com/AstroNvim/issues/2707
+      -- HACK: Disables the select treesitter textobjects because the Dart treesitter parser is very inefficient. Hopefully this gets fixed and this block can be removed in the future.
+      -- Reference: https://github.com/AstroNvim/AstroNvim/issues/2707
       local select = vim.tbl_get(opts, "textobjects", "select")
-      if select then select.disable = astrocore.list_insert_unique(select.disable, { "dart" }) end
+      if select then select.disable = require("astrocore").list_insert_unique(select.disable, { "dart" }) end
     end,
   },
   {
-    "akinsho/flutter-tools.nvim",
+    "nvim-flutter/flutter-tools.nvim",
     ft = "dart",
     opts = function(_, opts)
-      local astrolsp_avail, astrolsp = pcall(require, "astrolsp")
-      if astrolsp_avail then opts.lsp = astrolsp.lsp_opts "dartls" end
+      opts.lsp = vim.lsp.config["dartls"] or {}
       opts.debugger = { enabled = true }
     end,
-    dependencies = { "nvim-lua/plenary.nvim" },
-    specs = {
-      -- Add "flutter" extension to "telescope"
-      {
-        "nvim-telescope/telescope.nvim",
-        optional = true,
-        opts = function() require("telescope").load_extension "flutter" end,
-      },
+    dependencies = { 
+      "nvim-lua/plenary.nvim" 
     },
   },
   {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
     optional = true,
     opts = function(_, opts)
-      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "dart-debug-adapter", "dcm" })
+      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "dcm" })
     end,
   },
   {

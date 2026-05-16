@@ -26,10 +26,16 @@ return {
         -- default format timeout
         timeout_ms = 2000,
       },
+      autocmds = {},
+
       -- mappings to be set up on attaching of a language server
       mappings = mappings,
-      on_attach = function(client, bufnr)
-        require("lspconfig.ui.windows").default_options.border = "rounded"
+
+      -- A custom `on_attach` function to be run after the default `on_attach` function
+      -- takes two parameters `client` and `bufnr`  (`:h lsp-attach`)
+      on_attach = function()
+        -- this would disable semanticTokensProvider for all clients
+        -- client.server_capabilities.semanticTokensProvider = nil
       end,
     })
   end,

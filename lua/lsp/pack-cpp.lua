@@ -7,7 +7,7 @@ return {
     "AstroNvim/astrolsp",
     optional = true,
     opts = function(_, opts)
-      opts.config = vim.tbl_deep_extend("keep", opts, {
+      opts.config = vim.tbl_deep_extend("keep", opts.config or {}, {
         clangd = {
           capabilities = {
             offsetEncoding = "utf-8",
@@ -19,15 +19,6 @@ return {
         opts.servers = astrocore.list_insert_unique(opts.servers, { "clangd"})
       end
     end
-  },
-  {
-    "nvim-treesitter/nvim-treesitter",
-    optional = true,
-    opts = function(_, opts)
-      if opts.ensure_installed ~= "all" then
-        opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "c", "cpp", "objc", "cuda", "proto" })
-      end
-    end,
   },
   {
     "p00f/clangd_extensions.nvim",
@@ -70,15 +61,14 @@ return {
   {
     "Civitasv/cmake-tools.nvim",
     ft = { "c", "cpp", "objc", "objcpp", "cuda", "proto" },
-    dependencies = {
-      {
-        "jay-babu/mason-nvim-dap.nvim",
-        opts = function(_, opts)
-          opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "codelldb" })
-        end,
-      },
-    },
+    dependencies = {},
     opts = {},
+  },
+  {
+    "jay-babu/mason-nvim-dap.nvim",
+    opts = function(_, opts)
+      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "codelldb" })
+    end,
   },
   {
     "Mythos-404/xmake.nvim",
@@ -92,9 +82,7 @@ return {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
     optional = true,
     opts = function(_, opts)
-      local tools = { "codelldb" }
-      if not is_linux_arm then table.insert(tools, "clangd") end
-      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, tools)
+      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "clangd" })
     end,
   }
 }

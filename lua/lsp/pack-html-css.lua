@@ -16,7 +16,7 @@ local filetypes = {
 return {
   {
     "AstroNvim/astrolsp",
-    ---@type AstroLSPOpts
+    ---@type function
     opts = function(_, opts)
       vim.tbl_deep_extend("force", opts, {
         ---@diagnostic disable: missing-fields
@@ -59,17 +59,6 @@ return {
     end
   },
   {
-    "nvim-treesitter/nvim-treesitter",
-    optional = true,
-    opts = function(_, opts)
-      if opts.ensure_installed ~= "all" then
-        opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "html", "css", "scss" })
-      end
-      vim.treesitter.language.register("scss", "less")
-      vim.treesitter.language.register("scss", "postcss")
-    end,
-  },
-  {
     "AstroNvim/astrocore",
     ---type AstroCoreOpts
     opts = {
@@ -87,7 +76,7 @@ return {
     opts = function(_, opts)
       opts.ensure_installed = astrocore.list_insert_unique(
         opts.ensure_installed,
-        { "html-lsp", "css-lsp", "cssmodules-language-server", "emmet-language-server", "prettierd" }
+        { "html-lsp", "css-lsp", "cssmodules-language-server", "emmet-language-server" }
       )
     end,
   },
@@ -105,11 +94,11 @@ return {
     },
   },
   {
-    "echasnovski/mini.icons",
+    "nvim-mini/mini.icons",
     optional = true,
     opts = {
       filetype = {
-        postcss = { glyph = "󰌜", hl = "MiniIconsOrange"}
+        postcss = { glyph = "󰌜", hl = "MiniIconsOrange" }
       }
     }
   }

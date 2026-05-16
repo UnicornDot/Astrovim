@@ -17,16 +17,14 @@ return {
           }
         },
       })
-      require("lspconfig").qmlls.setup {}
+      vim.lsp.enable("qmlls")
     end,
   },
   {
-    "nvim-treesitter/nvim-treesitter",
+    "mason-org/mason-lspconfig.nvim",
     optional = true,
     opts = function(_, opts)
-      if opts.ensure_installed ~= "all" then
-        opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "qmljs" })
-      end
+      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "qmlls" })
     end,
   },
   {

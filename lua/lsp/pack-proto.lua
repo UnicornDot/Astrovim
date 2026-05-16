@@ -4,8 +4,7 @@ local utils = require("utils")
 local function create_buf_config_file()
   local source_file = vim.fn.stdpath "config" .. "/buf.yaml"
   local target_file = vim.fn.getcwd() .. "/buf.yaml"
-  local is_windows = vim.loop.os_uname().sysname == "Windows_NT"
-  local cmd = is_windows
+  local cmd = utils.is_windows()
       and string.format("copy %s %s", vim.fn.shellescape(source_file, true), vim.fn.shellescape(target_file, true))
     or string.format("cp %s %s", vim.fn.shellescape(source_file), vim.fn.shellescape(target_file))
   os.execute(cmd)
@@ -14,8 +13,7 @@ end
 local function create_buf_gen_config_file()
   local source_file = vim.fn.stdpath("config") .. "/buf.gen.yaml"
   local target_file = vim.fn.getcwd() .. "/buf.gen.yaml"
-  local is_windows = vim.uv.os_uname().sysname == "Windows_NT"
-  local cmd = is_windows
+  local cmd = utils.is_windows()
       and string.format("copy %s %s", vim.fn.shellescape(source_file, true), vim.fn.shellescape(target_file, true))
       or string.format("cp %s %s", vim.fn.shellescape(source_file), vim.fn.shellescape(target_file))
   os.execute(cmd)
@@ -99,22 +97,11 @@ return {
     },
   },
   {
-    "nvim-treesitter/nvim-treesitter",
-    optional = true,
-    opts = function(_, opts)
-      -- Ensure that opts.ensure_installed exists and is a table or string "all".
-      if opts.ensure_installed ~= "all" then
-        opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "proto" })
-      end
-    end,
-  },
-  {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
     optional = true,
     opts = function(_, opts)
       opts.ensure_installed = astrocore.list_insert_unique(
-        opts.ensure_installed,
-        { "buf" }
+        opts.ensure_installed, { "buf" }
       )
     end,
   },

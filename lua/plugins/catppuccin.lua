@@ -5,7 +5,7 @@ return {
     transparent_background = true,
     show_end_of_buffer = true,
     flavour = "mocha", -- latte, frappe, macchiato, mocha
-    background = { -- :h background
+    background = {     -- :h background
       light = "latte",
       dark = "mocha",
     },
@@ -79,8 +79,7 @@ return {
       lsp_trouble = true,
       which_key = true,
       headlines = true,
-      sandwich = true,
-      illuminate = true,
+      sandwich = true
     },
   },
 }

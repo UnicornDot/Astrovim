@@ -4,77 +4,7 @@ local set_mappings = astrocore.set_mappings
 local decode_json = utils.decode_json
 local check_json_key_exists = utils.check_json_key_exists
 
-local format_filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact", "vue" }
-
 local lsp_rooter, biomerc_rooter
-
-local nx_attach = function(client)
-  -- This is an adaptation of the following, in order to support auto-completion of imports from
-  -- other nx libraries in the same workspace:
-  -- https://github.com/nrwl/nx-console/blob/master/libs/vscode/typescript-plugin/src/lib/typescript-plugin.ts
-  -- TODO re-configure the plugin when ${workspaceRoot} changes
-  local TSCONFIG_BASE = "tsconfig.base.json"
-  local TSCONFIG_LIB = "tsconfig.lib.json"
-  local Path = require "plenary.path"
-  local root_dir = client.root_dir
-  ---@type Path
-  local workspaceRoot = Path:new(root_dir)
-  ---@type Path
-  local workspaceConfig = workspaceRoot:joinpath(TSCONFIG_BASE)
-  if not workspaceConfig:exists() then return end
-  local tsconfig = vim.json.decode(workspaceConfig:read() or "")
-  -- TODO take tsconfig.json if tsconfig.compilerOptions == nil
-  if tsconfig.compilerOptions == nil then return end
-  local externalFiles = {}
-  local paths = tsconfig.compilerOptions.paths or {}
-  for _, ps in pairs(paths) do
-    for _, p in ipairs(ps) do
-      local mainFile = workspaceRoot:joinpath(p).filename
-      local directory = vim.fs.root(workspaceRoot:joinpath(p).filename, { TSCONFIG_LIB })
-      if directory ~= nil then
-        if utils.ends_with(mainFile, "/*") or utils.ends_with(mainFile, "\\*") then
-          local files = vim.fs.find(
-            function(name, path) return name:match ".*%.tsx?$" and not path:match ".*node_modules.*" end,
-            { limit = math.huge, type = "file", path = vim.fs.dirname(mainFile) }
-          )
-          for _, file in ipairs(files) do
-            table.insert(externalFiles, { mainFile = file, directory = directory })
-          end
-        else
-          table.insert(externalFiles, { mainFile = mainFile, directory = directory })
-        end
-      end
-    end
-  end
-  vim.api.nvim_create_autocmd("BufWritePost", {
-    pattern = "tsconfig.base.json",
-    callback = function()
-      vim.schedule(
-        function()
-          vim.lsp.buf.execute_command {
-            command = "_typescript.configurePlugin",
-            arguments = {
-              "@monodon/typescript-nx-imports-plugin",
-              {
-                externalFiles = externalFiles,
-              },
-            },
-          }
-        end
-      )
-    end,
-  })
-  vim.lsp.buf.execute_command {
-    command = "_typescript.configurePlugin",
-    arguments = {
-      "@monodon/typescript-nx-imports-plugin",
-      {
-        externalFiles = externalFiles,
-      },
-    },
-  }
-end
-
 
 local has_biome = function(bufnr)
   if type(bufnr) ~= "number" then bufnr = vim.api.nvim_get_current_buf() end
@@ -123,24 +53,11 @@ return {
   {
     "AstroNvim/astrolsp",
     optional = true,
-    ---@type AstroLSPOpts
+    ---@type function
     ---@diagnostic disable: missing-fields
     opts = function(_, opts)
       return  require("astrocore").extend_tbl(opts, {
         config = {
-            biome = {
-            on_attach = function(client, _)
-              client.server_capabilities.documentFormattingProvider = true
-              set_mappings({
-                n = {
-                  ["<Leader>lF"] = {
-                    function() vim.lsp.buf.format { async = true } end,
-                    desc = "Format buffer with biome",
-                  },
-                },
-              }, { buffer = true })
-            end
-          },
           vtsls = {
             root_dir = require("lspconfig.util").root_pattern(
               "nx.json",
@@ -164,13 +81,15 @@ return {
 
               client.server_capabilities = existing_capabilities
 
-              nx_attach(client)
-
               set_mappings({
                 n = {
                   ["<Leader>lA"] = {
                     function() vim.lsp.buf.code_action { context = { only = { "source", "refactor", "quickfix" } } } end,
                     desc = "Lsp All Action",
+                  },
+                  gs = {
+                    function() require("vtsls").commands.goto_source_definition() end,
+                    desc = "Goto Source Definition (vtsls)",
                   },
                 },
               }, { buffer = true })
@@ -231,48 +150,27 @@ return {
     end,
   },
   {
-    "nvim-treesitter/nvim-treesitter",
+    "WhoIsSethDaniel/mason-tool-installer.nvim",
     optional = true,
     opts = function(_, opts)
-      if opts.ensure_installed ~= "all" then
-        opts.ensure_installed = astrocore.list_insert_unique(
-          opts.ensure_installed,
-          { "javascript", "typescript", "tsx", "jsdoc", "vue" }
-        )
-      end
-    end,
-  },
-  {
-    "WhoIsSethDaniel/mason-tool-installer.nvim",
-    opts = function(_, opts)
       opts.ensure_installed = astrocore.list_insert_unique(
-        opts.ensure_installed,
-        { "biome", "vtsls", "js-debug-adapter" }
+        opts.ensure_installed, { "vtsls", "biome"  }
       )
     end,
   },
   {
-    "vuki656/package-info.nvim",
-    dependencies = { "MunifTanjim/nui.nvim", lazy = true },
-    event = "BufRead package.json",
-  },
-  {
-    "dmmulroy/tsc.nvim",
-    cmd = { "TSC" },
-    opts = {},
-  },
-  {
-    "dmmulroy/ts-error-translator.nvim",
-    opts = {},
-    ft = { "typescript", "vue" },
+    "jay-babu/mason-nvim-dap.nvim",
+    optional = true,
+    opts = function(_, opts)
+      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "js" })
+    end,
   },
   {
     "mfussenegger/nvim-dap",
     optional = true,
     config = function()
       local success, js_debug_adapter_path = pcall(function ()
-        return require("mason-registry").get_package("js-debug-adapter"):get_install_path()
-          .."/js-debug/src/dapDebugServer.js"
+        return utils.get_pkg_path("js-debug-adapter", "/js-debug/src/dapDebugServer.js")
       end)
       if not success then return end
 
@@ -388,6 +286,45 @@ return {
     end,
   },
   {
+    "vuki656/package-info.nvim",
+    dependencies = { "MunifTanjim/nui.nvim", lazy = true },
+    event = "BufRead package.json",
+  },
+  {
+    "yioneko/nvim-vtsls",
+    lazy = true,
+    dependencies = {
+      "AstroNvim/astrocore",
+      opts = {
+        autocmds = {
+          nvim_vtsls = {
+            {
+              event = "LspAttach",
+              desc = "Load nvim-vtsls with vtsls",
+              callback = function(args)
+                if assert(vim.lsp.get_client_by_id(args.data.client_id)).name == "vtsls" then
+                  require("vtsls")._on_attach(args.data.client_id, args.buf)
+                  vim.api.nvim_del_augroup_by_name "nvim_vtsls"
+                end
+              end,
+            },
+          },
+        },
+      },
+    },
+    config = function(_, opts) require("vtsls").config(opts) end,
+  },
+  {
+    "dmmulroy/tsc.nvim",
+    cmd = { "TSC" },
+    opts = {},
+  },
+  {
+    "dmmulroy/ts-error-translator.nvim",
+    opts = {},
+    ft = { "typescript", "vue" },
+  },
+  {
     "nvim-neotest/neotest",
     optional = true,
     dependencies = {
@@ -405,7 +342,23 @@ return {
     optional = true,
     opts = function(_, opts)
       if not opts.formatters_by_ft then opts.formatters_by_ft = {} end
-      for _, filetype in ipairs(format_filetypes) do
+      local supported_ft = {
+        "astro",
+        "css",
+        "graphql",
+        -- "html",
+        "javascript",
+        "javascriptreact",
+        "json",
+        "jsonc",
+        -- "markdown",
+        "svelte",
+        "typescript",
+        "typescriptreact",
+        "vue",
+        -- "yaml",
+      }
+      for _, filetype in ipairs(supported_ft) do
         opts.formatters_by_ft[filetype] = conform_formatter
       end
     end

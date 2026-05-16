@@ -1,5 +1,3 @@
-local prefix = "<Leader>P"
-
 ---@type LazySpec
 return {
   'Exafunction/windsurf.vim',

@@ -15,26 +15,18 @@ return {
     },
   },
   {
-    "nvim-treesitter/nvim-treesitter",
-    optional = true,
-    opts = function(_, opts)
-      if opts.ensure_installed ~= "all" then
-        opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "dockerfile" })
-      end
-    end,
-  },
-  {
-    "WhoIsSethDaniel/mason-too-installer.nvim",
+    "WhoIsSethDaniel/mason-tool-installer.nvim",
     optional = true,
     opts = function(_, opts)
       -- lsp
       opts.ensure_installed = astrocore.list_insert_unique(
       opts.ensure_installed,
-      {
-              "docker-compose-language-service",
-              "dockerfile-language-server",
-              "hadolint"
-           }
+        {
+          "docker-compose-language-service",
+          "dockerfile-language-server",
+          "hadolint",
+          "prettierd"
+        }
       )
     end,
   },

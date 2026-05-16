@@ -47,10 +47,10 @@ return {
   },
   {
     "AstroNvim/astrolsp",
-    ---@type AstroLSPOpts
+    ---@type function
     opts = function(_, opts)
       vim.tbl_deep_extend("force", opts, {
-      ---@diagnostic disable: missing-fields
+        ---@diagnostic disable: missing-fields
         config = {
           marksman = {
             on_attach = function()
@@ -74,33 +74,25 @@ return {
     end
   },
   {
-    "nvim-treesitter/nvim-treesitter",
-    optional = true,
-    opts = function(_, opts)
-      if opts.ensure_installed ~= "all" then
-        opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "html", "latex" })
-      end
-    end,
-  },
-  {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
     optional = true,
-    opts = function(_, opts) opts.ensure_installed = astrocore.list_insert_unique(
-      opts.ensure_installed,
-      { "marksman", "prettierd", "markdownlint" }
-    )
+    opts = function(_, opts)
+      opts.ensure_installed = astrocore.list_insert_unique(
+        opts.ensure_installed, { "marksman", "prettierd", "markdownlint" }
+      )
     end,
   },
   {
     "iamcco/markdown-preview.nvim",
-    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" }, ft = { "markdown", "markdown.mdx" },
+    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+    ft = { "markdown", "markdown.mdx" },
     build = function() vim.fn["mkdp#util#install"]() end,
     init = function()
-        vim.g.mkdp_filetypes = { "markdown" }
-        vim.g.mkdp_open_to_the_world = 1
-        vim.g.mkdp_port = "8873"
-        vim.g.mkdp_theme = "light"
-        vim.g.mkdp_combine_preview = 1
+      vim.g.mkdp_filetypes = { "markdown" }
+      vim.g.mkdp_open_to_the_world = 1
+      vim.g.mkdp_port = "8873"
+      vim.g.mkdp_theme = "light"
+      vim.g.mkdp_combine_preview = 1
     end,
   },
   {
@@ -111,7 +103,7 @@ return {
         prompt_for_file_name = false,
         embed_image_as_base64 = false,
         drag_and_drop = {
-          enabled = true, 
+          enabled = true,
           insert_mode = true,
         },
         use_absolute_path = vim.fn.has "win32" == 1,
@@ -132,16 +124,20 @@ return {
     },
   },
   {
-     "MeanderingProgrammer/render-markdown.nvim",
+    "MeanderingProgrammer/render-markdown.nvim",
     ft = { "markdown", "markdown.mdx" },
     event = "VeryLazy",
     opts = {
       bullet = {
         right_pad = 1,
       },
-      heading = {position = "inline"}
+      heading = { position = "inline" }
     },
-    dependencies = { "nvim-treesitter/nvim-treesitter", "echasnovski/mini.icons" },
+    dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-mini/mini.icons" },
+  },
+  {
+    "OXY2DEV/helpview.nvim",
+    ft = "help",
   },
   {
     "mattn/vim-maketable",

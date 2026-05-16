@@ -2,29 +2,24 @@ local astrocore = require "astrocore"
 local set_mappings = astrocore.set_mappings
 local utils = require("utils")
 
--- print(vim.fn.stdpath "data" .. "/lazy/rust-prettifier-for-lldb/rust_prettifier_for_lldb.py")
 ---@type LazySpec
 return {
   {
     "AstroNvim/astrolsp",
-    ---@type AstroLSPOpts
-    opts = function(_, opts) 
+    ---@type function
+    opts = function(_, opts)
       return vim.tbl_deep_extend("force", opts, {
         ---@diagnostic disable: missing-fields
         config = {
-          basedpyright = {
+          pyrefly = {
             on_attach = function()
               set_mappings({
                 n = {
-                  ["<Leader>lo"] = {
-                    "<cmd>PyrightOrganizeImports<cr>",
-                    desc = "Organize imports",
-                  },
                   ["<Leader>lE"] = {
                     "<cmd>VenvSelect<cr>",
                     desc = "Select virtualenv",
-                  }
-                }
+                  },
+                },
               }, { buffer = true })
             end,
             before_init = function(_, c)
@@ -37,48 +32,17 @@ return {
             root_dir = function(...)
               local util = require "lspconfig.util"
               return util.root_pattern(unpack {
-                  "pyproject.toml",
-                  "setup.py",
-                  "setup.cfg",
-                  "requirements.txt",
-                  "Pipfile",
-                  "pyrightconfig.json",
-                })(...)
+                "pyproject.toml",
+                "setup.py",
+                "setup.cfg",
+                "requirements.txt",
+                "Pipfile",
+              })(...)
             end,
-            settings = {
-              basedpyright = {
-                analysis = {
-                  typeCheckingMode = "basic",
-                  autoImportCompletions = true,
-                  autoSearchPaths = true,
-                  diagnosticMode = "openFilesOnly",
-                  useLibraryCodeForTypes = true,
-                  reportMissingTypeStubs = false,
-                  diagnosticSeverityOverrides = {
-                    reportUnusedImport = "information",
-                    reportUnusedFunction = "information",
-                    reportUnusedVariable = "information",
-                    reportGeneralTypeIssues = "none",
-                    reportOptionalMemberAccess = "none",
-                    reportOptionalSubscript = "none",
-                    reportPrivateImportUsage = "none",
-                  },
-                },
-              },
-            },
           },
         },
       })
     end
-  },
-  {
-    "nvim-treesitter/nvim-treesitter",
-    optional = true,
-    opts = function(_, opts)
-      if opts.ensure_installed ~= "all" then
-        opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "python", "toml", "ninja", "rst" })
-      end
-    end,
   },
   {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
@@ -86,7 +50,7 @@ return {
     opts = function(_, opts)
       opts.ensure_installed = astrocore.list_insert_unique(
         opts.ensure_installed,
-        { "basedpyright", "black", "isort", "debugpy" }
+        { "pyrefly", "ruff", "debugpy" }
       )
     end,
   },
@@ -115,7 +79,7 @@ return {
     optional = true,
     opts = {
       formatters_by_ft = {
-        python = { "black", "isort" },
+        python = { "ruff" },
       },
     },
   },

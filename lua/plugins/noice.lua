@@ -11,7 +11,7 @@ return {
     "folke/noice.nvim",
     event = "VeryLazy",
     dependencies = {
-      {"MunifTanjim/nui.nvim", lazy = true},
+      { "MunifTanjim/nui.nvim", lazy = true },
     },
     specs = {
       {
@@ -27,17 +27,6 @@ return {
           end
           if vim.tbl_get(noice_opts, "lsp", "signature", "enabled") ~= false then
             opts.lsp_handlers["textDocument/signatureHelp"] = false
-          end
-        end,
-      },
-      {
-        "nvim-treesitter/nvim-treesitter",
-        opts = function(_, opts)
-          if opts.ensure_installed ~= "all" then
-            opts.ensure_installed = astrocore.list_insert_unique(
-              opts.ensure_installed,
-              { "bash", "markdown", "markdown_inline", "regex", "vim" }
-            )
           end
         end,
       },
@@ -72,12 +61,12 @@ return {
             enabled = false,
             auto_open = {
               enabled = true,
-              trigger = true, -- Automatically show signature help when typing a trigger character from the LSP
+              trigger = true,  -- Automatically show signature help when typing a trigger character from the LSP
               luasnip = false, -- Will open signature help when jumping to Luasnip insert nodes
-              throttle = 50, -- Debounce lsp signature help request by 50ms
+              throttle = 50,   -- Debounce lsp signature help request by 50ms
             },
-            view = nil, -- when nil, use defaults from documentation
-            opts = {}, -- merged with defaults from documentation
+            view = nil,        -- when nil, use defaults from documentation
+            opts = {},         -- merged with defaults from documentation
           },
           message = {
             enabled = true,
@@ -86,11 +75,11 @@ return {
           },
         },
         presets = {
-          bottom_search = false, -- use a classic bottom cmdline for search
-          command_palette = true, -- position the cmdline and popupmenu together
+          bottom_search = false,        -- use a classic bottom cmdline for search
+          command_palette = true,       -- position the cmdline and popupmenu together
           long_message_to_split = true, -- long messages will be sent to a split
-          inc_rename = false, -- enables an input dialog for inc-rename.nvim
-          lsp_doc_border = true, -- add a border to hover docs and signature help
+          inc_rename = false,           -- enables an input dialog for inc-rename.nvim
+          lsp_doc_border = true,        -- add a border to hover docs and signature help
         },
         routes = {
           { filter = { event = "msg_show", find = "DB: Query%s" }, opts = { skip = true } },
@@ -100,8 +89,8 @@ return {
           { filter = { event = "msg_show", find = ".*行发生改变.*" }, opts = { skip = true } },
           { filter = { event = "msg_show", find = ".*fewer lines" }, opts = { skip = true } },
           { filter = { event = "msg_show", find = ".*vim.tbl_islist is deprecated.*" }, opts = { skip = true } },
-          { filter = { event = 'msg_show', find = '.*Run ":checkhealth vim.deprecated".*' }, opts = { skip = true} },
-          { filter = { event = 'msg_show', find = "%-32603: Invalid offset%" }, opts = { skip = true} },
+          { filter = { event = 'msg_show', find = '.*Run ":checkhealth vim.deprecated".*' }, opts = { skip = true } },
+          { filter = { event = 'msg_show', find = "%-32603: Invalid offset%" }, opts = { skip = true } },
         },
       })
     end,

@@ -14,15 +14,15 @@ return {
       opts.scope.show_start = true
       opts.scope.show_end = true
       opts.scope.highlight = vim.tbl_get(vim.g, "rainbow_delimiters", "highlight")
-        or {
-          "RainbowDelimiterRed",
-          "RainbowDelimiterYellow",
-          "RainbowDelimiterBlue",
-          "RainbowDelimiterOrange",
-          "RainbowDelimiterGreen",
-          "RainbowDelimiterViolet",
-          "RainbowDelimiterCyan",
-        }
+          or {
+            "RainbowDelimiterRed",
+            "RainbowDelimiterYellow",
+            "RainbowDelimiterBlue",
+            "RainbowDelimiterOrange",
+            "RainbowDelimiterGreen",
+            "RainbowDelimiterViolet",
+            "RainbowDelimiterCyan",
+          }
     end,
 
     config = function(plugin, opts)

@@ -1,8 +1,7 @@
 return {
   { "max397574/better-escape.nvim", enabled = false },
-  { "jay-babu/mason-null-ls.nvim", enabled = false },
-  { "nvimtools/none-ls.nvim", enabled = false },
-  { "NMAC427/guess-indent.nvim", enabled = false },
+  { "NMAC427/guess-indent.nvim",    enabled = false },
+  { "nvimtools/none-ls.nvim",       enabled = false },
   {
     "folke/snacks.nvim",
     priority = 1000,
@@ -12,7 +11,7 @@ return {
       -- or leave it empty to use the default settings
       -- refer to the configuration section below
       bigfile = { enabled = true },
-      notifier = { enabled = true, timeout=3000 },
+      notifier = { enabled = true, timeout = 3000 },
       dashboard = {
         enabled = true,
         row = nil,
@@ -38,21 +37,21 @@ return {
 ╚═╝  ╚═══╝╚══════╝ ╚═════╝   ╚═══╝  ╚═╝╚═╝     ╚═╝]],
         },
         sections = {
-          {section = "header", gap = 1, padding = 1 },
-          {section = "keys", gap = 1, padding = 1 },
-          {section = "startup", gap = 1, padding  = 1 },
+          { section = "header",  gap = 1, padding = 1 },
+          { section = "keys",    gap = 1, padding = 1 },
+          { section = "startup", gap = 1, padding = 1 },
           {
-              section = "terminal",
-              cmd = "bat -pp " .. vim.fn.stdpath("config") .. "/bar.txt",
-              random = 10,
-              pane = 2,
-              indent = 0,
-              height = 30,
-              -- icon = "🔖", indent = 3, padding = 1, 
+            section = "terminal",
+            cmd = "bat -pp " .. vim.fn.stdpath("config") .. "/bar.txt",
+            random = 10,
+            pane = 2,
+            indent = 0,
+            height = 30,
+            -- icon = "🔖", indent = 3, padding = 1,
           },
         }
       },
-      picker = {},
+      picker = { ui_select = true },
       image = {},
       quickfile = { enabled = true },
       indent = { enabled = true },
@@ -63,7 +62,7 @@ return {
       words = { enabled = true },
       rename = { enabled = true },
       debug = { enabled = true },
-      lazygit =  {},
+      lazygit = {},
       terminal = {
         win = {
           style = "terminal",
@@ -78,8 +77,6 @@ return {
         }
       }
     },
-    keys = {
-      { "<Leader>;", function() Snacks.dashboard() end, desc = "Dashboard"}
-    },
+    keys = {},
   }
 }

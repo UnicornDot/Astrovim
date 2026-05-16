@@ -4,7 +4,7 @@ local astrocore = require "astrocore"
 return {
   {
     "AstroNvim/astrolsp",
-    ---@type AstroLSPOpts
+    ---@type function
     opts = function(_, opts)
       vim.tbl_deep_extend("force", opts, {
         ---@diagnostic disable: missing-fields
@@ -62,15 +62,6 @@ return {
         },
       })
     end
-  },
-  {
-    "nvim-treesitter/nvim-treesitter",
-    optional = true,
-    opts = function(_, opts)
-      if opts.ensure_installed ~= "all" then
-        opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "css" })
-      end
-    end,
   },
   {
     "WhoIsSethDaniel/mason-tool-installer.nvim",

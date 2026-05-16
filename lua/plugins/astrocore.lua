@@ -3,7 +3,7 @@ local utils = require "utils"
 -- @type LazySpec
 return {
   "AstroNvim/astrocore",
-  ---@type AstroCoreOpts
+  ---@type function
   ---@diagnostic disable-next-line: assign-type-mismatch
   opts = function(_, opts)
     local mappings = require("keymapping").core_mappings(opts.mappings)
@@ -40,10 +40,10 @@ return {
       },
       -- modify core features of AstroNvim
       features = {
-        large_buf = { size = 1024 * 1024 * 1.5, lines = 10000 }, -- set global limits for large files for disabling features like treesitter
+        large_buf = { size = 1024 * 1024, lines = 10000 }, -- set global limits for large files for disabling features like treesitter
         autopairs = false, -- enable autopairs at start
         cmp = true, -- enable completion at start
-        diagnostics_mode = 3, -- diagnostics_mode on start (0 = off, 1 = no sign/virtual text, 2 = no virtual text, 3 = on)
+        diagnostics = { virtual_text = true, virtual_lines = false }, -- diagnostic settings on startup
         highlighturl = true, -- highlight URLs at start
         notifications = true, -- enable notifications at start
       },
@@ -74,89 +74,6 @@ return {
           [".*/hypr/.+%.conf"] = "hyprlang",
           ["%.env%.[%W_.-]+"] = "sh",
         },
-      },
-      autocmds = {
-        auto_spell = {
-          {
-            event = "FileType",
-            desc = "Enable wrap and spell for text like documents",
-            pattern = { "gitcommit", "markdown", "text", "plaintex" },
-            callback = function()
-              vim.opt_local.wrap = true
-              vim.opt_local.spell = true
-            end,
-          },
-        },
-        auto_hide_tabline = {
-          {
-            event = "User",
-            desc = "Auto hide tabline",
-            pattern = "AstroBufsUpdated",
-            callback = function()
-              local new_showtabline = #vim.t.bufs > 1 and 2 or 1
-              if new_showtabline ~= vim.opt.showtabline:get() then vim.opt.showtabline = new_showtabline end
-            end,
-          },
-        },
-        auto_conceallevel_for_json = {
-          {
-            event = "FileType",
-            desc = "Fix conceallevel for json files",
-            pattern = { "json", "jsonc" },
-            callback = function()
-              vim.wo.spell = false
-              vim.wo.conceallevel = 0
-            end,
-          },
-        },
-        auto_close_dadbod_output = {
-          {
-            event = "FileType",
-            pattern = { "dbout"},
-            callback = function(event)
-              vim.bo[event.buf].buflisted = false
-              vim.schedule(function()
-                vim.keymap.set("n", "q", function() vim.cmd "q!" end, {
-                  buffer = event.buf,
-                  silent = true,
-                  desc = "Quit buffer",
-                })
-              end)
-            end,
-          },
-        },
-        auto_select_virtualenv = {
-          {
-            event = "VimEnter",
-            desc = "Auto select virtualenv Nvim open",
-            pattern = "*",
-            callback = function()
-              local venv = vim.fn.findfile("pyproject.toml", vim.fn.getcwd() .. ";")
-              if venv ~= "" then require("venv-selector").activate_from_path(vim.fn.getcwd()) end
-            end,
-            once = true,
-          },
-        },
-        auto_opencode_event = {
-          {
-            event = "User",
-            desc = "forwards opencode's SSE as an OpencodeEvent",
-            pattern = "OpencodeEvent:*", -- Optionally filter event types
-            callback = function(args)
-              ---@type opencode.server.Event
-              local event = args.data.event
-              ---@type number
-              local port = args.data.port
-
-              -- See the available event types and their properties
-              vim.notify(vim.inspect(event))
-              -- Do something useful
-              if event.type == "session.idle" then
-                vim.notify("`opencode` finished responding")
-              end
-            end,
-          }
-        }
       },
     })
   end,
