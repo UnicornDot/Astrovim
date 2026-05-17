@@ -46,20 +46,18 @@ return {
           },
           auto_opencode_event = {
             {
-              event = "User",
-              desc = "forwards opencode's SSE as an OpencodeEvent",
-              pattern = "OpencodeEvent:*",
-              callback = function(args)
-                ---@type opencode.server.Event
-                local event = args.data.event
-                ---@type number
-                local port = args.data.port
-                vim.notify(vim.inspect(event))
-                if event.type == "session.idle" then
-                  vim.notify("`opencode` finished responding")
+              event = 'WinEnter',
+              desc = "float window transparent bg when unfocus",
+              pattern = "*",
+              callback = function()
+                local zoom_book = require('neo-zoom').zoom_book
+
+                if require('neo-zoom').is_neo_zoom_float()
+                then for z, _ in pairs(zoom_book) do vim.wo[z].winbl = 0 end
+                else for z, _ in pairs(zoom_book) do vim.wo[z].winbl = 20 end
                 end
-              end,
-            },
+              end
+            }
           },
         },
       })
