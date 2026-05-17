@@ -87,7 +87,8 @@ return {
         --   Linux:   "/usr/lib/jvm/java-17-openjdk"
         --   Windows: "C:\\Program Files\\Java\\jdk-17"
         --   SDKMAN:  os.getenv("HOME") .. "/.sdkman/candidates/java/17.0.8-tem"
-        jdk_for_symbol_resolution = nil, -- Auto-detect from project
+        -- jdk_for_symbol_resolution = nil, -- Auto-detect from project
+        jdk_for_symbol_resolution = "/usr/local/src/jdk17",
 
         -- Optional: Specify additional JVM arguments for the kotlin-lsp server
         jvm_args = {

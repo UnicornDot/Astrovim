@@ -78,5 +78,8 @@ return {
       }
     },
     keys = {},
+    specs = {
+      { "stevearc/dressing.nvim", optional = true, opts = { select = { enabled = false } } },
+    }
   }
 }

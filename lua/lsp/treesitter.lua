@@ -76,8 +76,9 @@ return {
         "gitignore",
         "asm",
         'ron',
-        "thrift"
-
+        "thrift",
+        "norg",
+        "norg_meta"
       },
     },
   },

@@ -79,8 +79,7 @@ return {
             settings = {
               gopls = {
                 analyses = {
-                  ST1003 = false,
-                  SA5008 = false,
+                  ST1003 = true,
                   fieldalignment = false,
                   fillreturns = true,
                   nilness = true,
@@ -93,8 +92,7 @@ return {
                   useany = true,
                 },
                 codelenses = {
-                  gc_details = false, -- Show a code lens toggling the display of gc's choices.
-                  generate = true,    -- show the `go generate` lens.
+                  generate = true, -- show the `go generate` lens.
                   regenerate_cgo = true,
                   test = true,
                   tidy = true,
@@ -118,7 +116,7 @@ return {
                 semanticTokens = true,
                 staticcheck = true,
                 symbolMatcher = "fuzzy",
-                usePlaceholders = false,
+                usePlaceholders = true,
               },
             },
           },
@@ -146,32 +144,17 @@ return {
   {
     "leoluz/nvim-dap-go",
     ft = "go",
-    opts = {}
-  },
-  {
-    "saghen/blink.cmp",
-    optional = true,
     dependencies = {
+      "mfussenegger/nvim-dap",
       {
-        "Snikimonkd/cmp-go-pkgs",
-        ft = "go",
-        enabled = vim.fn.executable("go") == 1,
-      }
+        "jay-babu/mason-nvim-dap.nvim",
+        optional = true,
+        opts = function(_, opts)
+          opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "delve" })
+        end,
+      },
     },
-    opts = function(_, opts)
-      return astrocore.extend_tbl(opts, {
-        sources = {
-          compat = astrocore.list_insert_unique(opts.sources.compat or {}, { "go_pkgs" }),
-          providers = {
-            go_pkgs = {
-              name = "go_pkgs",
-              score_offset = 100,
-              async = true,
-            },
-          },
-        },
-      })
-    end,
+    opts = {}
   },
   {
     "olexsmir/gopher.nvim",
@@ -192,16 +175,10 @@ return {
   {
     "nvim-neotest/neotest",
     optional = true,
-    dependencies = {
-      {
-        "nvim-neotest/neotest-go",
-        ft = "go",
-        enabled = vim.fn.executable("go") == 1
-      }
-    },
+    dependencies = { "fredrikaverpil/neotest-golang" },
     opts = function(_, opts)
       if not opts.adapters then opts.adapters = {} end
-      table.insert(opts.adapters, require "neotest-go" (astrocore.plugin_opts "neotest-go"))
+      table.insert(opts.adapters, require "neotest-golang"(require("astrocore").plugin_opts "neotest-golang"))
     end,
   },
   {

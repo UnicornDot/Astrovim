@@ -3,51 +3,82 @@ local function has_words_before()
   return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match "%s" == nil
 end
 
-local function get_icon(ctx)
-  local mini_icons = require "mini.icons"
-  local source = ctx.item.source_name
-  local label = ctx.item.label
-  local color = ctx.item.documentation
+---@type function?, function?
+local icon_provider, hl_provider
 
-  if source == "LSP" then
-    if color and type(color) == "string" and color:match "^#%x%x%x%x%x%x$" then
-      local hl = "hex-" .. color:sub(2)
-      if #vim.api.nvim_get_hl(0, { name = hl }) == 0 then vim.api.nvim_set_hl(0, hl, { fg = color }) end
-      return "󱓻", hl, false
-    else
-      return mini_icons.get("lsp", ctx.kind)
+local function get_kind_icon(CTX)
+  -- Evaluate icon provider
+  if not icon_provider then
+    local _, mini_icons = pcall(require, "mini.icons")
+    if _G.MiniIcons then
+      icon_provider = function(ctx)
+        local source_name = ctx.item.source_name
+        local color = ctx.item.documentation
+        -- local label = ctx.item.label
+        local is_specific_color = ctx.kind_hl and ctx.kind_hl:match "^HexColor" ~= nil
+        if source_name == "LSP" then
+          if color and type(color) == "string" and color:match "^#%x%x%x%x%x%x$" then
+            local hl = "hex-" .. color:sub(2)
+            if #vim.api.nvim_get_hl(0, { name = hl }) == 0 then vim.api.nvim_set_hl(0, hl, { fg = color }) end
+            ctx.kind_icon, ctx.kind_hl = "󱓻",  hl 
+          else
+            local icon, hl = mini_icons.get("lsp", ctx.kind or "")
+            if icon then
+              ctx.kind_icon = icon
+              if not is_specific_color then ctx.kind_hl = hl end
+            end
+          end
+        elseif source_name == "codeium" then
+          ctx.kind_icon, ctx.kind_hl = mini_icons.get("lsp", "event")
+        elseif source_name == "Path" then
+          ctx.kind_icon, ctx.kind_hl = mini_icons.get(ctx.kind == "Folder" and "directory" or "file", ctx.label)
+          -- ctx.kind_icon, ctx.kind_hl = label:match "%.[^/]+$" and mini_icons.get("file", label) or mini_icons.get("directory", label))
+        end
+      end
     end
-  elseif source == "Path" then
-    return (label:match "%.[^/]+$" and mini_icons.get("file", label) or mini_icons.get("directory", label))
-  elseif source == "codeium" then
-    return mini_icons.get("lsp", "event")
-  else
-    return ctx.kind_icon, "BlinkCmpKind" .. ctx.kind, false
+    if not icon_provider then icon_provider = function() end end
   end
+  -- Evaluate highlight provider
+  if not hl_provider then
+    local highlight_colors_avail, highlight_colors = pcall(require, "nvim-highlight-colors")
+    if highlight_colors_avail then
+      local kinds
+      hl_provider = function(ctx)
+        if not kinds then kinds = require("blink.cmp.types").CompletionItemKind end
+        if ctx.item.kind == kinds.Color then
+          local doc = vim.tbl_get(ctx, "item", "documentation")
+          if doc then
+            local color_item = highlight_colors_avail and highlight_colors.format(doc, { kind = kinds[kinds.Color] })
+            if color_item and color_item.abbr_hl_group then
+              if color_item.abbr then ctx.kind_icon = color_item.abbr end
+              ctx.kind_hl = color_item.abbr_hl_group
+            end
+          end
+        end
+      end
+    end
+    if not hl_provider then hl_provider = function() end end
+  end
+  -- Call resolved providers
+  icon_provider(CTX)
+  hl_provider(CTX)
+  -- Return text and highlight information
+  return { text = CTX.kind_icon .. CTX.icon_gap, highlight = CTX.kind_hl }
 end
 
 return {
-  {
-    "saghen/blink.compat",
-    version = "*",
-    lazy = true,
-    opts = { impersonate_nvim_cmp = true }
-  },
   {
     "saghen/blink.cmp",
     event = { "InsertEnter", "CmdlineEnter" },
     version = "*",
     dependencies = {
-      { "rafamadriz/friendly-snippets", lazy = true },
-      { "moyiz/blink-emoji.nvim",       lazy = true },
-      { "nvim-mini/mini.icons",         lazy = true },
-      { "ray-x/cmp-sql",                lazy = true },
-      { "SergioRibera/cmp-dotenv" },
+      { "SergioRibera/cmp-dotenv",      lazy = true },
     },
     opts_extend = {
-      "sources.completion.enabled_providers",
-      "sources.compat",
       "sources.default",
+      "cmdline.sources",
+      "term.sources",
+      "sources.providers.lsp.fallbacks",
     },
     opts = {
       snippets = {
@@ -75,7 +106,7 @@ return {
         }
       },
       sources = {
-        default = { "lsp", "path", "snippets", "buffer", "emoji", "codeium", "cmdline", "sql", "dotenv" },
+        default = { "lsp", "path", "snippets", "buffer", "emoji", "cmdline", "dotenv" },
         providers = {
           dotenv = {
             name = "DotEnv",
@@ -120,35 +151,20 @@ return {
             score_offset = 200,
             async = true
           },
-          codeium = {
-            name = "Codeium",
-            module = "blink.compat.source",
-            async = true,
-            score_offset = 100,
-          },
           emoji = {
             name = "Emoji",
             module = "blink-emoji",
             async = true,
             opts = { insert = true },
-            score_offset = 1,
+            score_offset = 15,
             should_show_items = function()
               return vim.tbl_contains({ "gitcommit", "markdown" }, vim.o.filetype)
             end
-          },
-          sql = {
-            name = "sql",
-            async = true,
-            module = "blink.compat.source",
-            score_offset = 1,
-            should_show_items = function()
-              return vim.tbl_contains({ "sql" }, vim.o.filetype)
-            end,
-            opts = {}
           }
         },
       },
       keymap = {
+        ["<C-M>"] = { "show", "show_documentation", "hide_documentation" },
         ["<Up>"]    = { "select_prev", "fallback" },
         ["<Down>"]  = { "select_next", "fallback" },
         ["<C-N>"]   = { "snippet_forward", },
@@ -160,18 +176,20 @@ return {
         ["<C-E>"]   = { "hide", "fallback" },
         ["<CR>"]    = { "accept", "fallback" },
         ["<Tab>"]   = {
+          "select_next",
+          "snippet_forward",
           function(cmp)
-            if cmp.is_visible() then
-              return cmp.accept()
-            elseif has_words_before() then
+            if has_words_before() or vim.api.nvim_get_mode().mode == "c" then
               return cmp.show()
             end
           end,
           "fallback",
         },
         ["<S-Tab>"] = {
+          "select_prev",
+          "snippet_backward",
           function(cmp)
-            if cmp.is_visible() then return cmp.select_prev() end
+            if vim.api.nvim_get_mode().mode == "c" then return cmp.show() end
           end,
           "fallback",
         },
@@ -208,20 +226,14 @@ return {
             treesitter = { "lsp" },
             columns = {
               { "kind_icon" },
-              { "label",      "label_description", gap = 1 },
+              { "label", "label_description", gap = 1 },
               { "source_name" },
             },
             components = {
               kind_icon = {
                 ellipsis = true,
-                text = function(ctx)
-                  local icon, _, _ = get_icon(ctx)
-                  return icon .. ctx.icon_gap
-                end,
-                highlight = function(ctx)
-                  local _, hl, _ = get_icon(ctx)
-                  return hl
-                end,
+                text = function(ctx) return get_kind_icon(ctx).text end,
+                highlight = function(ctx) return get_kind_icon(ctx).highlight end,
               },
               kind = {
                 ellipsis = true,
@@ -290,28 +302,28 @@ return {
     end,
 
     specs = {
+      { "rafamadriz/friendly-snippets", lazy = true },
+      { "nvim-mini/mini.icons",         lazy = true },
+      { "moyiz/blink-emoji.nvim",       lazy = true },
+      {
+        "L3MON4D3/LuaSnip",
+        optional = true,
+        specs = { { "saghen/blink.cmp", opts = { snippets = { preset = "luasnip" } } } },
+      },
       {
         "AstroNvim/astrolsp",
-        ---@type function
+        optional = true,
         opts = function(_, opts)
-          local has_blink, blink = pcall(require, "blink.cmp")
-          local capabilities = vim.tbl_deep_extend(
-            "force",
-            {},
-            opts.capabilities or {},
-            has_blink and blink.get_lsp_capabilities() or {}
-          )
-          -- disable AstroLSP signature_help if "blick.cmp" is providing it
+          if not opts.config then opts.config = {} end
+          if not opts.config["*"] then opts.config["*"] = {} end
+          opts.config["*"].capabilities = require("blink.cmp").get_lsp_capabilities(opts.config["*"].capabilities)
+
+          -- disable AstroLSP signature help if `blink.cmp` is providing it
           local blink_opts = require("astrocore").plugin_opts "blink.cmp"
-          local signature_help = true
-          if vim.tbl_get(blink_opts, "signature", "enabled") == true then signature_help = false end
-          return require("astrocore").extend_tbl(
-            opts,
-            {
-              capabilities = capabilities,
-              features = { signature_help = signature_help }
-            }
-          )
+          if vim.tbl_get(blink_opts, "signature", "enabled") == true then
+            if not opts.features then opts.features = {} end
+            opts.features.signature_help = false
+          end
         end,
       },
       {
@@ -327,7 +339,11 @@ return {
                     -- add lazydev to your completion providers
                     default = { "lazydev" },
                     providers = {
-                      lazydev = { name = "LazyDev", module = "lazydev.integrations.blink", score_offset = 100 },
+                      lazydev = {
+                        name = "LazyDev",
+                        module = "lazydev.integrations.blink",
+                        score_offset = 100
+                      },
                     },
                   },
                 })
