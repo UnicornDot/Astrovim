@@ -177,7 +177,7 @@ return {
         settings = function(project_root, default_settings)
           local astrolsp_settings = astrolsp_opts.settings or {}
 
-          local merge_table = require("astrocore").extend_tbl(default_settings or {}, astrolsp_settings)
+          local merge_table = astrocore.extend_tbl(default_settings or {}, astrolsp_settings)
 
           -- Merge the settings from `rustaceanvim` first.
           local ra = require "rustaceanvim.config.server"
@@ -196,14 +196,14 @@ return {
           return settings
         end,
       }
-      local final_server = require("astrocore").extend_tbl(astrolsp_opts, server)
+      local final_server = astrocore.extend_tbl(astrolsp_opts, server)
       return {
         server = final_server,
         dap = { adapter = adapter, load_rust_types = true },
         tools = { enable_clippy = false },
       }
     end,
-    config = function(_, opts) vim.g.rustaceanvim = require("astrocore").extend_tbl(opts, vim.g.rustaceanvim) end,
+    config = function(_, opts) vim.g.rustaceanvim = astrocore.extend_tbl(opts, vim.g.rustaceanvim) end,
   },
   {
     "Saecki/crates.nvim",

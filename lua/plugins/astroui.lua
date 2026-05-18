@@ -11,21 +11,24 @@ return {
       -- colorscheme = "kanagawa",
       highlights = {
         init = {
-          Normal = { bg = "NONE" },
-          NormalFloat = { bg = "NONE" },
-          FloatBorder = { fg = '#7a8f98', bg = "NONE" },
-          Float = { bg = "NONE" },
-          WinBar = { bg = "NONE" },
+          Normal = { bg = "None" },
+          NormalFloat = { bg = "None" },
+          FloatBorder = { fg = '#7a8f98', bg = "None" },
+          Float = { bg = "None" },
+          WinBar = { bg = "None" },
         },
         deus = {
           SnacksPickerDir = { fg =  '#665c54' },
-          SnacksPickerListCursorLine = { bg = '#3c3836', fg = '#8ec07c' },
-          FzfLuaCursorLine = { bg = '#3c3836', fg = '#8ec07c' },
+          SnacksPickerListCursorLine = { bg = '#2c323b', blend = 10 },
+          FzfLuaCursorLine = { bg = '#2c323b', blend = 10 },
           BlinkCmpMenuBorder = { fg = '#7c6f64' },
           BlinkCmpGhostText = { fg = '#7c6f64' },
           LspInlayHint = { fg =  '#7c6f64' },
-          LspCodelens = { fg = "#8c6f64" },
-          NonText = { fg = "#3c3836" }
+          LspCodeLens = { fg = '#6f6f94' },
+          LazyDimmed = { fg = '#606060' },
+          NonText = { fg = '#606086' },
+          FoldColumn = { bg = 'None' },
+          Pmenu = { bg = "None" },
         }
       }
     },

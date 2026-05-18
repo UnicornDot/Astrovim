@@ -61,12 +61,12 @@ return {
     config.defaults.keymap.fzf["ctrl-b"] = "half-page-up"
 
     -- Trouble
-    if require("astrocore").is_available("trouble.nvim") then
+    if astrocore.is_available("trouble.nvim") then
       config.defaults.actions.files["ctrl-t"] = require("trouble.sources.fzf").actions.open
     end
 
     -- diffview
-    if require("astrocore").is_available("diffview.nvim") then
+    if astrocore.is_available("diffview.nvim") then
       config.defaults.git.commits.actions["ctrl-r"] = function(selected, _)
         local commit_hash = selected[1]:match("[^ ]+")
         vim.cmd.DiffviewOpen { commit_hash }
@@ -199,7 +199,7 @@ return {
     require("utils").on_very_lazy(function()
       vim.ui.select = function(...)
         require("lazy").load { plugins = { "fzf-lua" } }
-        local opts = require("astrocore").plugin_opts "fzf-lua" or {}
+        local opts = astrocore.plugin_opts "fzf-lua" or {}
         require("fzf-lua").register_ui_select(opts.ui_select or nil)
         return vim.ui.select(...)
       end

@@ -1,6 +1,5 @@
 local astrocore = require("astrocore")
 local utils = require("utils")
-local set_mappings = astrocore.set_mappings
 local decode_json = utils.decode_json
 local check_json_key_exists = utils.check_json_key_exists
 
@@ -56,7 +55,7 @@ return {
     ---@type function
     ---@diagnostic disable: missing-fields
     opts = function(_, opts)
-      return  require("astrocore").extend_tbl(opts, {
+      return astrocore.extend_tbl(opts, {
         config = {
           vtsls = {
             root_dir = require("lspconfig.util").root_pattern(
@@ -81,7 +80,7 @@ return {
 
               client.server_capabilities = existing_capabilities
 
-              set_mappings({
+              astrocore.set_mappings({
                 n = {
                   ["<Leader>lA"] = {
                     function() vim.lsp.buf.code_action { context = { only = { "source", "refactor", "quickfix" } } } end,
@@ -333,8 +332,8 @@ return {
     },
     opts = function(_, opts)
       if not opts.adapters then opts.adapters = {} end
-      table.insert(opts.adapters, require "neotest-vitest"(require("astrocore").plugin_opts "neotest-vitest"))
-      table.insert(opts.adapters, require "neotest-jest"(require("astrocore").plugin_opts "neotest-jest"))
+      table.insert(opts.adapters, require "neotest-vitest"(astrocore.plugin_opts "neotest-vitest"))
+      table.insert(opts.adapters, require "neotest-jest"(astrocore.plugin_opts "neotest-jest"))
     end,
   },
   {

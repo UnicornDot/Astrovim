@@ -16,7 +16,7 @@ return {
       -- HACK: Disables the select treesitter textobjects because the Dart treesitter parser is very inefficient. Hopefully this gets fixed and this block can be removed in the future.
       -- Reference: https://github.com/AstroNvim/AstroNvim/issues/2707
       local select = vim.tbl_get(opts, "textobjects", "select")
-      if select then select.disable = require("astrocore").list_insert_unique(select.disable, { "dart" }) end
+      if select then select.disable = astrocore.list_insert_unique(select.disable, { "dart" }) end
     end,
   },
   {

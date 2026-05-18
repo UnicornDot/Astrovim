@@ -66,14 +66,13 @@ local function get_kind_icon(CTX)
   return { text = CTX.kind_icon .. CTX.icon_gap, highlight = CTX.kind_hl }
 end
 
+local astrocore = require("astrocore")
+
 return {
   {
     "saghen/blink.cmp",
     event = { "InsertEnter", "CmdlineEnter" },
     version = "*",
-    dependencies = {
-      { "SergioRibera/cmp-dotenv",      lazy = true },
-    },
     opts_extend = {
       "sources.default",
       "cmdline.sources",
@@ -106,14 +105,8 @@ return {
         }
       },
       sources = {
-        default = { "lsp", "path", "snippets", "buffer", "emoji", "cmdline", "dotenv" },
+        default = { "lsp", "path", "snippets", "buffer", "emoji", "cmdline"},
         providers = {
-          dotenv = {
-            name = "DotEnv",
-            module = "cmp-dotenv",
-            score_offset = -100,
-            async = true
-          },
           lsp = {
             ---@type fun(ctx: blink.cmp.Context, items: blink.cmp.CompletionItem[])
             transform_items = function(ctx, items)
@@ -265,18 +258,6 @@ return {
     ---@param opts blink.cmp.Config | { sources: { compat : string[] } }
     config = function(_, opts)
       local enabled = opts.sources.default
-      for _, source in ipairs(opts.sources.compat or {}) do
-        opts.sources.providers[source] = vim.tbl_deep_extend(
-          "force",
-          { name = source, module = "blink.compat.source" },
-          opts.sources.providers[source] or {}
-        )
-        if type(enabled) == "table" and not vim.tbl_contains(enabled, source) then
-          table.insert(enabled, source)
-        end
-      end
-      opts.sources.compat = nil
-
       for _, provider in ipairs(opts.sources.providers or {}) do
         ---@cast provider blink.cmp.SourceProviderConfig | {kind?:string}
         if provider.kind then
@@ -319,7 +300,7 @@ return {
           opts.config["*"].capabilities = require("blink.cmp").get_lsp_capabilities(opts.config["*"].capabilities)
 
           -- disable AstroLSP signature help if `blink.cmp` is providing it
-          local blink_opts = require("astrocore").plugin_opts "blink.cmp"
+          local blink_opts = astrocore.plugin_opts "blink.cmp"
           if vim.tbl_get(blink_opts, "signature", "enabled") == true then
             if not opts.features then opts.features = {} end
             opts.features.signature_help = false
@@ -334,7 +315,7 @@ return {
             "saghen/blink.cmp",
             opts = function(_, opts)
               if pcall(require, "lazydev.integrations.blink") then
-                return require("astrocore").extend_tbl(opts, {
+                return astrocore.extend_tbl(opts, {
                   sources = {
                     -- add lazydev to your completion providers
                     default = { "lazydev" },

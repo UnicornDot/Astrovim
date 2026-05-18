@@ -1,3 +1,4 @@
+if true then return {} else
 return {
   {
     "nvim-neorg/neorg",
@@ -13,7 +14,7 @@ return {
           ["core.keybinds"] = {}, -- Adds default keybindings
           ["core.completion"] = {
             config = {
-              engine =  "nvim-cmp"
+              engine =  "blink.cmp"
             },
           }, -- Enables support for completion plugins
           ["core.journal"] = {}, -- Enables support for the journal module
@@ -30,3 +31,4 @@ return {
     end
   }
 }
+end

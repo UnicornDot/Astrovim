@@ -2,6 +2,7 @@ return {
   { "max397574/better-escape.nvim", enabled = false },
   { "NMAC427/guess-indent.nvim",    enabled = false },
   { "nvimtools/none-ls.nvim",       enabled = false },
+  { "rcarriga/cmp-dap",             enabled = false },
   {
     "folke/snacks.nvim",
     priority = 1000,

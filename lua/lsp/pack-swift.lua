@@ -1,16 +1,17 @@
+local astrocore = require("astrocore")
 return {
   {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
     optional = true,
     opts = function(_, opts)
-      opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, { "codelldb" })
+      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "codelldb" })
     end,
   },
   {
     "jay-babu/mason-nvim-dap.nvim",
     optional = true,
     opts = function(_, opts)
-      opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, { "codelldb" })
+      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "codelldb" })
     end,
   },
   {
@@ -18,7 +19,7 @@ return {
     optional = true,
     ---@type function
     opts = function(_, opts)
-      require("astrocore").extend_tbl(opts, {
+      astrocore.extend_tbl(opts, {
         servers = { "sourcekit" },
         config = {
           sourcekit= {

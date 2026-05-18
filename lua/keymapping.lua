@@ -1,9 +1,10 @@
 local M = {}
 local utils = require "utils"
 local astrobuffer = require "astrocore.buffer"
+local astrocore = require("astrocore")
 
 function M.core_mappings(mappings)
-  if not mappings then mappings = require("astrocore").empty_map_table() end
+  if not mappings then mappings = astrocore.empty_map_table() end
   local maps = mappings
   if maps then
 
@@ -55,24 +56,16 @@ function M.core_mappings(mappings)
     maps.n.N = { utils.better_search "N", desc = "Previous search" }
 
     if vim.fn.executable "btm" == 1 then
-      maps.n["<Leader>tt"] = {
-        utils.toggle_btm(),
-        desc = "ToggleTerm btm"
-      }
+      maps.n["<Leader>tt"] = { utils.toggle_btm(), desc = "ToggleTerm btm" }
     end
 
     if vim.fn.executable "lazygit" == 1 then
-      maps.n["<Leader>gg"] = {
-        require("snacks.lazygit").open,
-        desc = "ToggleTerm lazygit",
+      maps.n["<Leader>gg"] = { require("snacks.lazygit").open, desc = "ToggleTerm lazygit",
       }
     end
 
     if vim.fn.executable "lazydocker" == 1 then
-      maps.n["<Leader>td"] = {
-        utils.toggle_lazy_docker(),
-        desc = "ToggleTerm lazydocker",
-      }
+      maps.n["<Leader>td"] = { utils.toggle_lazy_docker(), desc = "ToggleTerm lazydocker", }
     end
 
     -- multi style open terminal
@@ -90,24 +83,24 @@ function M.core_mappings(mappings)
     maps.n["<Leader>wo"] = { "<C-w>o", desc = "Close other screen" }
     maps.n["<Leader>we"] = { "<C-w>=", desc = "Equals all Window"}
     maps.n["<M-l>"] = {
-      function() require("astrocore.buffer").nav(vim.v.count > 0 and vim.v.count or 1) end,
+      function() astrobuffer.nav(vim.v.count > 0 and vim.v.count or 1) end,
       desc = "Next buffer"
     }
     maps.n["<M-h>"] = {
-      function() require("astrocore.buffer").nav(-(vim.v.count > 0 and vim.v.count or 1)) end,
+      function() astrobuffer.nav(-(vim.v.count > 0 and vim.v.count or 1)) end,
       desc = "Previous buffer",
     }
-    maps.n["<Leader>bo"] = { function() require("astrocore.buffer").close_all(true) end, desc = "Close all buffers except current" }
-    maps.n["<Leader>ba"] = { function() require("astrocore.buffer").close_all() end, desc = "Close all buffers" }
-    maps.n["<Leader>bc"] = { function() require("astrocore.buffer").close() end, desc = "Close buffer" }
-    maps.n["<Leader>bC"] = { function() require("astrocore.buffer").close(0, true) end, desc = "Force close buffer" }
+    maps.n["<Leader>bo"] = { function() astrobuffer.close_all(true) end, desc = "Close all buffers except current" }
+    maps.n["<Leader>ba"] = { function() astrobuffer.close_all() end, desc = "Close all buffers" }
+    maps.n["<Leader>bc"] = { function() astrobuffer.close() end, desc = "Close buffer" }
+    maps.n["<Leader>bC"] = { function() aeastrobuffer.close(0, true) end, desc = "Force close buffer" }
     maps.n["<Leader>bn"] = { "<cmd>tabnew<cr>", desc = "New tab" }
   end
   return maps
 end
 
 function M.lsp_mappings(mappings)
-  if not mappings then mappings = require("astrocore").empty_map_table() end
+  if not mappings then mappings = astrocore.empty_map_table() end
   local maps = mappings
   if maps then
       maps.n["M"] = { function() vim.lsp.buf.hover() end, desc = "Hover symbol details", cond = "textDocument/hover" }
