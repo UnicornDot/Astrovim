@@ -24,6 +24,8 @@ return {
           BlinkCmpMenuBorder = { fg = '#7c6f64' },
           BlinkCmpGhostText = { fg = '#7c6f64' },
           LspInlayHint = { fg =  '#7c6f64' },
+          LspCodelens = { fg = "#8c6f64" },
+          NonText = { fg = "#3c3836" }
         }
       }
     },
