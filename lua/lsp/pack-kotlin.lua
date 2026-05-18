@@ -47,11 +47,11 @@ return {
   {
     "AlexandrosAlexiou/kotlin.nvim",
     ft = { "kotlin" },
-    dependencies = {
-      "mason.nvim",
-      "mason-lspconfig.nvim",
-      "stevearc/oil.nvim",
-      "trouble.nvim",
+    specs = {
+      { "mason-org/mason.nvim" },
+      { "mason-org/mason-lspconfig.nvim" },
+      { "stevearc/oil.nvim" },
+      { "folke/trouble.nvim" },
     },
     config = function()
       require("kotlin").setup {

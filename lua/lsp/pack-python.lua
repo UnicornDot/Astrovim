@@ -29,29 +29,23 @@ return {
             end,
             filetypes = { "python" },
             single_file_support = true,
-            root_dir = function(...)
-              local util = require "lspconfig.util"
-              return util.root_pattern(unpack {
-                "pyproject.toml",
-                "setup.py",
-                "setup.cfg",
-                "requirements.txt",
-                "Pipfile",
-              })(...)
-            end,
           },
         },
       })
     end
   },
   {
+    "mason-org/mason-lspconfig.nvim",
+    optional = true,
+    opts = function(_, opts)
+      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "pyrefly" })
+    end,
+  },
+  {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
     optional = true,
     opts = function(_, opts)
-      opts.ensure_installed = astrocore.list_insert_unique(
-        opts.ensure_installed,
-        { "pyrefly", "ruff", "debugpy" }
-      )
+      opts.ensure_installed = astrocore.list_insert_unique( opts.ensure_installed, { "pyrefly", "ruff", "debugpy" })
     end,
   },
   {
@@ -79,7 +73,7 @@ return {
     optional = true,
     opts = {
       formatters_by_ft = {
-        python = { "ruff" },
+        python = { "ruff_fix", "ruff_organize_imports", "ruff_format" },
       },
     },
   },
