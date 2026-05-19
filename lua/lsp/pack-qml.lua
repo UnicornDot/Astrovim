@@ -5,17 +5,14 @@ return {
     ---@type AstroLSPOpts
     ---@diagnostic disable-next-line: assign-type-mismatch
     opts = function(_, opts)
-      astrocore.extend_tbl(opts, {
-        ---@diagnostic disable: missing-fields
-        config = {
-          qmlls = {
-            root_dir = require("lspconfig.util").root_pattern(
-              "shell.qml",
-              ".qmlls.ini",
-              ".git"
-            ),
-          }
-        },
+      opts.config = vim.tbl_deep_extend("keep", opts.config or {}, {
+        qmlls = {
+          root_dir = require("lspconfig.util").root_pattern(
+            "shell.qml",
+            ".qmlls.ini",
+            ".git"
+          ),
+        }
       })
       vim.lsp.enable("qmlls")
     end,

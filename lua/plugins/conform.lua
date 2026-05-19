@@ -3,11 +3,16 @@ return {
   event = "User AstroFile",
   cmd = "ConformInfo",
   specs = {
-    { "AstroNvim/astrolsp", optional = true, opts = { formatting = { disabled = true } } },
+    { "AstroNvim/astrolsp",
+      optional = true,
+      opts = function(_, opts)
+        opts.formatting = { disabled = true }
+      end
+    },
     {
       "AstroNvim/astrocore",
-      opts = function(_, opts) 
-        local maps = opts.mappings or {}
+      opts = function(_, opts)
+        local maps = opts.mappings
 
         maps.n["<Leader>lI"] = { function() vim.cmd.ConformInfo() end, desc = "show conform info" }
         maps.n["<Leader>lf"] = { function() vim.cmd.Format() end, desc = "Format buffer" }

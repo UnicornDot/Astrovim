@@ -3,22 +3,20 @@ local astrocore = require "astrocore"
 return {
   {
     "AstroNvim/astrocore",
-    ---@type AstroCoreOpts
-    opts = {
-      autocmds = {
-        auto_conceallevel_for_json = {
-          {
-            event = "FileType",
-            desc = "Fix conceallevel for json files",
-            pattern = { "json", "jsonc", "json5" },
-            callback = function()
-              vim.wo.spell = false
-              vim.wo.conceallevel = 0
-            end,
-          },
+    ---@type function(_, opts: @type AstroCoreOpts)
+    opts = function(_, opts)
+      opts.autocmds.auto_conceallevel_for_json = {
+        {
+          event = "FileType",
+          desc = "Fix conceallevel for json files",
+          pattern = { "json", "jsonc", "json5" },
+          callback = function()
+            vim.wo.spell = false
+            vim.wo.conceallevel = 0
+          end,
         },
-      },
-    },
+      }
+    end,
   },
   {
     "b0o/SchemaStore.nvim",
@@ -27,10 +25,10 @@ return {
     specs = {
       {
         "AstroNvim/astrolsp",
-        ---@type AstroLSPOpts
-        opts = {
+        ---@type function(opts: @type AstroLSPOpts)
+        opts = function(_, opts)
           ---@diagnostic disable: missing-fields
-          config = {
+          opts.config = vim.tbl_deep_extend("keep", opts.config or {}, {
             jsonls = {
               -- lazy-load schemastore when needed
               on_new_config = function(config)
@@ -44,8 +42,8 @@ return {
                 },
               },
             },
-          },
-        },
+          })
+        end,
       },
     },
   },

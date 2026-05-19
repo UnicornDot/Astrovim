@@ -70,7 +70,7 @@ return {
         "AstroNvim/astrocore",
         ---@param opts AstroCoreOpts
         opts = function(_, opts)
-          local maps = opts.mappings or {}
+          local maps = opts.mappings
           if maps then
             maps.n['<Leader>rt'] = { "<cmd>OverseerToggle<cr>", desc = "Toggle overseer task list" }
             maps.n['<Leader>rr'] = { "<cmd>OverseerRun<cr>", desc = "List overseer run templates" }
@@ -79,7 +79,6 @@ return {
             maps.n['<Leader>ra'] = { "<Cmd>OverseerTaskAction<CR>", desc = "Task Action" }
             maps.n['<Leader>ri'] = { "<Cmd>OverseerInfo<CR>", desc = "Overseer Info" }
           end
-          opts.mappings = maps
         end
       },
     },

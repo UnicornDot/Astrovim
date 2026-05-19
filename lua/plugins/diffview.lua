@@ -1,6 +1,5 @@
-local astrocore = require "astrocore"
-local set_mappings = astrocore.set_mappings
-local prefix_diff_view = "<Leader>g"
+local astrocore = require("astrocore")
+local prefix_diff = "<Leader>g"
 
 ---@type LazySpec
 return {
@@ -14,18 +13,9 @@ return {
       opts = function(_, opts)
         local maps = opts.mappings
         if vim.fn.executable "git" == 1 then
-          maps.n[prefix_diff_view .. "o"] = {
-            function() vim.cmd [[DiffviewOpen]] end,
-            desc = "Open Git Diffview",
-          }
-          maps.n[prefix_diff_view .. "H"] = {
-            function() vim.cmd [[DiffviewFileHistory]] end,
-            desc = "Open current branch git history",
-          }
-          maps.n[prefix_diff_view .. "h"] = {
-            function() vim.cmd [[DiffviewFileHistory %]] end,
-            desc = "Open current file git history",
-          }
+          maps.n[prefix_diff .. "o"] = { function() vim.cmd [[DiffviewOpen]] end, desc = "Open Git Diffview", }
+          maps.n[prefix_diff .. "H"] = { function() vim.cmd [[DiffviewFileHistory]] end, desc = "Open current branch git history", }
+          maps.n[prefix_diff .. "h"] = { function() vim.cmd [[DiffviewFileHistory %]] end, desc = "Open current file git history", }
         end
       end,
     },
@@ -44,9 +34,9 @@ return {
     },
     hooks = {
       view_enter = function()
-        set_mappings {
+        astrocore.set_mappings {
           n = {
-            [prefix_diff_view .. "d"] = {
+            [prefix_diff .. "d"] = {
               function() vim.cmd [[DiffviewClose]] end,
               desc = "Close Git Diffview",
             }
@@ -54,9 +44,9 @@ return {
         }
       end,
       view_leave = function()
-        set_mappings {
+        astrocore.set_mappings {
           n = {
-            [prefix_diff_view .. "d"] = {
+            [prefix_diff .. "d"] = {
               function() vim.cmd [[DiffviewOpen]] end,
               desc = "Open Git Diffview",
             }

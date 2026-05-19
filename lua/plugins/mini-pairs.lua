@@ -22,7 +22,7 @@ return {
       ---@diagnostic disable: missing-fields
       ---@diagnostic disable: missing-parameter
       opts = function(_, opts)
-        local maps = opts.mappings or {}
+        local maps = opts.mappings
         maps.n["<Leader>ua"] = {
           function() vim.g.minipairs_disable = not vim.g.minipairs_disable end,
           desc = "Toggle mini pairs",

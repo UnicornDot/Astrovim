@@ -1,5 +1,4 @@
 local astrocore = require "astrocore"
-local set_mappings = astrocore.set_mappings
 local utils = require("utils")
 
 ---@type LazySpec
@@ -8,28 +7,25 @@ return {
     "AstroNvim/astrolsp",
     ---@type function
     opts = function(_, opts)
-      return vim.tbl_deep_extend("force", opts, {
-        ---@diagnostic disable: missing-fields
-        config = {
-          pyrefly = {
-            on_attach = function()
-              set_mappings({
-                n = {
-                  ["<Leader>lE"] = {
-                    "<cmd>VenvSelect<cr>",
-                    desc = "Select virtualenv",
-                  },
+      opts.config = vim.tbl_deep_extend("keep", opts.config or {}, {
+        pyrefly = {
+          on_attach = function()
+            astrocore.set_mappings({
+              n = {
+                ["<Leader>lE"] = {
+                  "<cmd>VenvSelect<cr>",
+                  desc = "Select virtualenv",
                 },
-              }, { buffer = true })
-            end,
-            before_init = function(_, c)
-              if not c.settings then c.settings = {} end
-              if not c.settings.python then c.settings.python = {} end
-              c.settings.python.pythonPath = vim.fn.exepath("python")
-            end,
-            filetypes = { "python" },
-            single_file_support = true,
-          },
+              },
+            }, { buffer = true })
+          end,
+          before_init = function(_, c)
+            if not c.settings then c.settings = {} end
+            if not c.settings.python then c.settings.python = {} end
+            c.settings.python.pythonPath = vim.fn.exepath("python")
+          end,
+          filetypes = { "python" },
+          single_file_support = true,
         },
       })
     end

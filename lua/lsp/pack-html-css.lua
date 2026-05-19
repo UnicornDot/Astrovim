@@ -18,39 +18,36 @@ return {
     "AstroNvim/astrolsp",
     ---@type function
     opts = function(_, opts)
-      vim.tbl_deep_extend("force", opts, {
-        ---@diagnostic disable: missing-fields
-        config = {
-          emmet_language_server = {
-            init_options = {
-              ---@type boolean Dafault to `true`
-              showAbbreviationSuggestions = false,
-              ---@type "always" | "never" Default to `always`
-              showExpandedAbbreviation = "always",
-              ---@type boolean Default to `false`
-              showSuggestionsAsSignppets = true,
-            },
-            filetypes,
+      opts.config = vim.tbl_deep_extend("keep", opts.config or {}, {
+        emmet_language_server = {
+          init_options = {
+            ---@type boolean Dafault to `true`
+            showAbbreviationSuggestions = false,
+            ---@type "always" | "never" Default to `always`
+            showExpandedAbbreviation = "always",
+            ---@type boolean Default to `false`
+            showSuggestionsAsSignppets = true,
           },
-          html = { init_options = { provideFormatter = false } },
-          cssls = {
-            init_options = { provideFormatter = false },
-            settings = {
-              css = {
-                lint = {
-                  unknownAtRules = "ignore",
-                },
+          filetypes,
+        },
+        html = { init_options = { provideFormatter = false } },
+        cssls = {
+          init_options = { provideFormatter = false },
+          settings = {
+            css = {
+              lint = {
+                unknownAtRules = "ignore",
               },
-              less = {
-                lint = {
-                  unknownAtRules = "ignore",
-                },
+            },
+            less = {
+              lint = {
+                unknownAtRules = "ignore",
               },
-              scss = {
-                validate = false,
-                lint = {
-                  unknownAtRules = "ignore",
-                },
+            },
+            scss = {
+              validate = false,
+              lint = {
+                unknownAtRules = "ignore",
               },
             },
           },
@@ -61,14 +58,14 @@ return {
   {
     "AstroNvim/astrocore",
     ---type AstroCoreOpts
-    opts = {
-      filetypes = {
+    opts = function(_, opts)
+      opts.filetypes = vim.tbl_deep_extend("keep", opts.filetypes or {}, {
         extension = {
           pcss = "postcss",
           postcss = "postcss",
         }
-      }
-    },
+      })
+    end,
   },
   {
     "WhoIsSethDaniel/mason-tool-installer.nvim",

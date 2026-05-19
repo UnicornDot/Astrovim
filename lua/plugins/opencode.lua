@@ -1,3 +1,5 @@
+local astrocore = require("astrocore")
+
 local prefix = "<Leader>a"
 
 ---@type LazySpec
@@ -5,7 +7,7 @@ return {
   "nickjvandyke/opencode.nvim",
   lazy = true,
   version = "*", -- Latest stable release
-  dependencies = {
+  specs = {
     {
       -- `snacks.nvim` integration is recommended, but optional
       ---@module "snacks" <- Loads `snacks.nvim` types for configuration intellisense
@@ -27,32 +29,27 @@ return {
         },
       },
     },
-  },
-  specs = {
     {
       "AstroNvim/astrocore",
       optional = true,
-      opts = {
-        mappings = {
-          n = {
-            [prefix] = { desc = " Agent Mode" },
-            [prefix .. "a"] = { function() require("opencode").ask("@this: ", { submit = true }) end, desc = "Ask opencode…" },
-            [prefix .. "x"] = { function() require("opencode").select() end, desc = "Execute opencode action…" },
-            [prefix .. "."] = { function() require("opencode").toggle() end, desc = "Toggle opencode" },
-            [prefix .. "o"] = { function() return require("opencode").operator("@this ") end, desc = "Add range to opencode", expr = true },
-            [prefix .. "p"] = { function() return require("opencode").operator("@this ") .. "_" end, desc = "Add line to opencode", expr = true },
-            [prefix .. "d"] = { function() require("opencode").command("session.half.page.down") end,  desc = "Scroll opencode down" },
-            [prefix .. "u"] = { function() require("opencode").command("session.half.page.up") end,  desc = "Scroll opencode up" }
-          },
-        x = {
-          [prefix .. "a"] = { function() require("opencode").ask("@this: ", { submit = true }) end, desc = "Ask opencode…" },
-          [prefix .. "x"] = { function() require("opencode").select() end, desc = "Execute opencode action…" },
-          [prefix .. "o"] = { function() return require("opencode").operator("@this ") end, desc = "Add range to opencode", expr = true },
-        },
-        t = {
-          [prefix .. "."] = { function() require("opencode").toggle() end, desc = "Toggle opencode" }},
-        }
-      },
+      opts = function(_, opts)
+        local maps = opts.mappings
+        maps.n[prefix] = { desc = " Agent Mode" }
+        maps.n[prefix .. "a"] = { function() require("opencode").ask("@this: ", { submit = true }) end, desc = "Ask opencode…" }
+        maps.n[prefix .. "x"] = { function() require("opencode").select() end, desc = "Execute opencode action…" }
+        maps.n[prefix .. "h"] = { function() require("opencode").toggle() end, desc = "Toggle opencode" }
+        maps.n[prefix .. "o"] = { function() return require("opencode").operator("@this ") end, desc = "Add range to opencode", expr = true }
+        maps.n[prefix .. "p"] = { function() return require("opencode").operator("@this ") .. "_" end, desc = "Add line to opencode", expr = true }
+        maps.n[prefix .. "d"] = { function() require("opencode").command("session.half.page.down") end,  desc = "Scroll opencode down" }
+        maps.n[prefix .. "u"] = { function() require("opencode").command("session.half.page.up") end,  desc = "Scroll opencode up" }
+
+        maps.x[prefix .. "a"] = { function() require("opencode").ask("@this: ", { submit = true }) end, desc = "Ask opencode…" }
+        maps.x[prefix .. "x"] = { function() require("opencode").select() end, desc = "Execute opencode action…" }
+        maps.x[prefix .. "o"] = { function() return require("opencode").operator("@this ") end, desc = "Add range to opencode", expr = true }
+
+        maps.t[prefix .. "."] = { function() require("opencode").toggle() end, desc = "Toggle opencode" }
+
+      end,
     },
   },
   config = function()
@@ -60,8 +57,9 @@ return {
     ---@type snacks.terminal.Opts
     local snacks_terminal_opts = {
       win = {
-        position = 'float',
-        enter = false,
+        position = 'right',
+        style = "float",
+        enter = true,
         on_win = function(win)
           require('opencode.terminal').setup(win.win)
         end,

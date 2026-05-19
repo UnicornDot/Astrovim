@@ -17,56 +17,53 @@ return {
         "typescript.tsx"
       }, { "vue" })
 
-      return vim.tbl_deep_extend("force", opts, {
-        ---@diagnostic disable: missing-fields
-        config = {
-          volar = {
-            init_options = {
-              vue = {
-                hybridMode = true,
-              },
+      opts.config = vim.tbl_deep_extend("keep", opts.config or {}, {
+        volar = {
+          init_options = {
+            vue = {
+              hybridMode = true,
             },
-            settings = {
-              vue = {
-                updateImportsOnFileMove = { enabled = true },
-                server = {
-                  maxOldSpaceSize = 8092,
-                },
+          },
+          settings = {
+            vue = {
+              updateImportsOnFileMove = { enabled = true },
+              server = {
+                maxOldSpaceSize = 8092,
               },
             },
           },
-          vtsls = {
-            filetypes = vtsls_ft,
-            settings = {
-              vtsls = {
-                tsserver = {
-                  globalPlugins = {}
-                },
+        },
+        vtsls = {
+          filetypes = vtsls_ft,
+          settings = {
+            vtsls = {
+              tsserver = {
+                globalPlugins = {}
               },
             },
-            before_init = function(_, config)
-              local vue_plugin_config = {
-                name = "@vue/typescript-plugin",
-                location = utils.get_pkg_path("vue-language-server", "/node_modules/@vue/language-server"),
-                languages = { "vue"},
-                configNamespace = "typescript",
-                enableForWorkspaceTypeScriptVersions = true,
-              }
-              local style_plugin_config= {
-                name = "@styled/typescript-styled-plugin",
-                location = require("utils").get_global_npm_path(),
-                enableForWorkspaceTypeScriptVersions = true,
-              }
-              local nx_plugin_config = {
-                name = "@monodon/typescript-nx-imports-plugin",
-                location = require("utils").get_global_npm_path(),
-                enableForWorkspaceTypeScriptVersions = true
-              }
-              astrocore.list_insert_unique(config.settings.vtsls.tsserver.globalPlugins, {
-                vue_plugin_config, style_plugin_config, nx_plugin_config
-              })
-            end
           },
+          before_init = function(_, config)
+            local vue_plugin_config = {
+              name = "@vue/typescript-plugin",
+              location = utils.get_pkg_path("vue-language-server", "/node_modules/@vue/language-server"),
+              languages = { "vue"},
+              configNamespace = "typescript",
+              enableForWorkspaceTypeScriptVersions = true,
+            }
+            local style_plugin_config= {
+              name = "@styled/typescript-styled-plugin",
+              location = require("utils").get_global_npm_path(),
+              enableForWorkspaceTypeScriptVersions = true,
+            }
+            local nx_plugin_config = {
+              name = "@monodon/typescript-nx-imports-plugin",
+              location = require("utils").get_global_npm_path(),
+              enableForWorkspaceTypeScriptVersions = true
+            }
+            astrocore.list_insert_unique(config.settings.vtsls.tsserver.globalPlugins, {
+              vue_plugin_config, style_plugin_config, nx_plugin_config
+            })
+          end
         },
       })
     end,

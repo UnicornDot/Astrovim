@@ -1,13 +1,14 @@
 return {
   {
     "folke/trouble.nvim",
+    lazy = true,
     cmd = "Trouble",
     specs = {
       { "AstroNvim/astroui", opts = { icons = { Trouble = "󱍼" } } },
       {
         "AstroNvim/astrocore",
         opts = function(_, opts)
-          local maps = opts.mappings or {}
+          local maps = opts.mappings
           local prefix = "<Leader>x"
           maps.n[prefix] = { desc = require("astroui").get_icon("Trouble", 1, true) .. "Trouble" }
           maps.n[prefix .. "X"] = { "<Cmd>Trouble diagnostics toggle<CR>", desc = "Diagnostics (Trouble)" }

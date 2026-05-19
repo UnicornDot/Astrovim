@@ -4,13 +4,13 @@ local astrocore = require "astrocore"
 return {
   {
     "AstroNvim/astrolsp",
-    opts = {
-      config = {
+    opts = function(_, opts)
+      opts.config = vim.tbl_deep_extend("keep", opts.config or {}, {
         bashls = {
           filetypes = { "bash", "sh", "zsh" },
         },
-      },
-    },
+      })
+    end,
   },
   {
     "WhoIsSethDaniel/mason-tool-installer.nvim",

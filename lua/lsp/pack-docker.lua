@@ -4,15 +4,15 @@ local astrocore = require "astrocore"
 return {
   {
     "AstroNvim/astrocore",
-    ---@type AstroCoreOpts
-    opts = {
-      filetypes = {
+    ---@type function(opts, AstroCoreOpts)
+    opts = function(_, opts)
+      opts.filetypes = vim.tbl_deep_extend("keep", opts.filetypes or {}, {
         filename = {
           ["docker-compose.yaml"] = "yaml.docker-compose",
           ["docker-compose.yml"] = "yaml.docker-compose"
         },
-      },
-    },
+      })
+    end,
   },
   {
     "WhoIsSethDaniel/mason-tool-installer.nvim",

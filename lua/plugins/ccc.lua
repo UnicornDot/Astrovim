@@ -7,7 +7,7 @@ return {
       {
         "AstroNvim/astrocore",
         opts = function(_, opts)
-          local maps = opts.mappings or {}
+          local maps = opts.mappings
           maps.n["<M-c>"] = { "<Cmd>CccHighlighterToggle<CR>", desc = "Toggle colorizer" }
           maps.n["<M-m>"] = { "<Cmd>CccConvert<CR>", desc = "Convert color" }
           maps.i["<M-p>"] = { "<Cmd>CccPick<CR>", desc = "Pick Color" }

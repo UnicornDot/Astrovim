@@ -54,10 +54,10 @@ end
 return {
   {
     "AstroNvim/astrolsp",
-    ---@type AstroLSPOpts
-    opts = {
+    ---@type function
+    opts = function(_, opts)
       ---@diagnostic disable: missing-fields
-      config = {
+      opts.config = vim.tbl_deep_extend("keep", opts.config or {}, {
         bufls = {
           filetypes = { "proto" },
           single_file_support = true,
@@ -93,8 +93,8 @@ return {
             }, { buffer = true })
           end,
         },
-      },
-    },
+      })
+    end,
   },
   {
     "WhoIsSethDaniel/mason-tool-installer.nvim",

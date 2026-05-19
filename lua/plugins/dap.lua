@@ -138,7 +138,7 @@ return {
         "AstroNvim/astrocore",
         ---@type function
         opts = function(_, opts)
-          local maps = opts.mappings or {}
+          local maps = opts.mappings
           local dap = require("dap")
           local dapui = require("dapui")
           local widget = require("dap.ui.widgets")

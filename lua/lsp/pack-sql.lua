@@ -64,42 +64,29 @@ return {
     specs = {
       {
         "AstroNvim/astrocore",
-        ---@type AstroCoreOpts
         ---@type function
         opts = function(_, opts)
+          opts.autocmds.auto_spell_for_sql = {
+            {
+              event = "FileType",
+              desc = "create completion",
+              pattern = sql_ft,
+              callback = function()
+                astrocore.set_mappings({
+                  n = {
+                    ["<Leader>lc"] = {
+                      create_sqlfluff_config_file,
+                      desc = "Create sqlfluff config file",
+                    },
+                  },
+                }, { buffer = true })
+              end,
+            },
+          }
           return vim.tbl_deep_extend("force", opts, {
             filetypes = {
               extension = {
                 pg = "sql",
-              },
-            },
-            autocmds = {
-              auto_spell = {
-                {
-                  event = "FileType",
-                  desc = "create completion",
-                  pattern = sql_ft,
-                  callback = function()
-                    astrocore.set_mappings({
-                      n = {
-                        ["<Leader>lc"] = {
-                          create_sqlfluff_config_file,
-                          desc = "Create sqlfluff config file",
-                        },
-                      },
-                    }, { buffer = true })
-                  end,
-                },
-              },
-              sqls_attach = {
-                {
-                  event = "LspAttach",
-                  desc = "Load sqls.nvim with sqls",
-                  callback = function(args)
-                    local client = assert(vim.lsp.get_client_by_id(args.data.client_id))
-                    if client.name == "sqls" then require("sqls").on_attach(client, args.buf) end
-                  end,
-                },
               },
             },
             config = {
@@ -110,7 +97,7 @@ return {
                   client.server_capabilities.documentRangeFormattingProvider = false
                 end,
               },
-            }
+            },
           })
         end,
       }
@@ -118,6 +105,7 @@ return {
   },
   {
     "kristijanhusak/vim-dadbod-ui",
+    lazy = true,
     cmd = { "DBUI", "DBUIToggle", "DBUIAddConnection", "DBUIFindBuffer" },
     dependencies =  {
       { "tpope/vim-dadbod", cmd = "DB", lazy = true },

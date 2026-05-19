@@ -35,89 +35,80 @@ end
 return {
   {
     "AstroNvim/astrocore",
-    ---@type AstroCoreOpts
-    opts = { filetypes = { extension = { api = "goctl" } } },
+    ---@type function(opts: AstroCoreOpts)
+    opts = function(_, opts)
+      opts.filetypes = vim.tbl_deep_extend("keep", opts.filetypes or {}, {
+        extension = { api = "goctl" }
+      })
+    end
   },
   {
     "AstroNvim/astrolsp",
     optional = true,
     ---@type function
     opts = function(_, opts)
-      return vim.tbl_deep_extend("force", opts, {
-        config = {
-          gopls = {
-            on_attach = function(client, _)
-              vim.api.nvim_create_autocmd({ "TermOpen", "TermClose", "BufEnter" }, {
-                pattern = "*",
-                desc = "Jump to error line",
-                callback = function()
-                  local buf_name = vim.api.nvim_buf_get_name(0)
-                  if vim.bo.filetype == "dap-repl" and buf_name:match("%[dap%-repl%-%d+%]") then
-                    set_mapppings({
-                      n = {
-                        ["gd"] = {
-                          preview_stack_trace,
-                          desc = "Jump to error line"
-                        },
+      opts.config = vim.tbl_deep_extend("keep", opts.config, {
+        gopls = {
+          on_attach = function(_, _)
+            vim.api.nvim_create_autocmd({ "TermOpen", "TermClose", "BufEnter" }, {
+              pattern = "*",
+              desc = "Jump to error line",
+              callback = function()
+                local buf_name = vim.api.nvim_buf_get_name(0)
+                if vim.bo.filetype == "dap-repl" and buf_name:match("%[dap%-repl%-%d+%]") then
+                  set_mapppings({
+                    n = {
+                      ["gd"] = {
+                        preview_stack_trace,
+                        desc = "Jump to error line"
                       },
-                    }, { buffer = true })
-                  end
+                    },
+                  }, { buffer = true })
                 end
-              })
-              if not client.server_capabilities.semanticTokensProvider then
-                local semantic = client.config.capabilities.textDocument.semanticTokens
-                client.server_capabilities.semanticTokensProvider = {
-                  full = true,
-                  legend = {
-                    tokenTypes = semantic.tokenTypes,
-                    tokenModifiers = semantic.tokenModifiers,
-                  },
-                  range = true,
-                }
               end
-            end,
-            settings = {
-              gopls = {
-                analyses = {
-                  ST1003 = true,
-                  fieldalignment = false,
-                  fillreturns = true,
-                  nilness = true,
-                  nonewvars = true,
-                  shadow = true,
-                  undeclaredname = true,
-                  unreachable = true,
-                  unusedparams = true,
-                  unusedwrite = true,
-                  useany = true,
-                },
-                codelenses = {
-                  generate = true, -- show the `go generate` lens.
-                  regenerate_cgo = true,
-                  test = true,
-                  tidy = true,
-                  upgrade_dependency = true,
-                  vendor = true,
-                },
-                hints = {
-                  assignVariableTypes = true,
-                  compositeLiteralFields = true,
-                  compositeLiteralTypes = true,
-                  constantValues = true,
-                  functionTypeParameters = true,
-                  parameterNames = true,
-                  rangeVariableTypes = true,
-                },
-                buildFlags = { "-tags", "integration" },
-                completeUnimported = true,
-                diagnosticsDelay = "500ms",
-                gofumpt = true,
-                matcher = "Fuzzy",
-                semanticTokens = true,
-                staticcheck = true,
-                symbolMatcher = "fuzzy",
-                usePlaceholders = true,
+            })
+          end,
+          settings = {
+            gopls = {
+              analyses = {
+                ST1003 = true,
+                fieldalignment = false,
+                fillreturns = true,
+                nilness = true,
+                nonewvars = true,
+                shadow = true,
+                undeclaredname = true,
+                unreachable = true,
+                unusedparams = true,
+                unusedwrite = true,
+                useany = true,
               },
+              codelenses = {
+                generate = true, -- show the `go generate` lens.
+                regenerate_cgo = true,
+                test = true,
+                tidy = true,
+                upgrade_dependency = true,
+                vendor = true,
+              },
+              hints = {
+                assignVariableTypes = true,
+                compositeLiteralFields = true,
+                compositeLiteralTypes = true,
+                constantValues = true,
+                functionTypeParameters = true,
+                parameterNames = true,
+                rangeVariableTypes = true,
+              },
+              buildFlags = { "-tags", "integration" },
+              completeUnimported = true,
+              diagnosticsDelay = "500ms",
+              gofumpt = true,
+              matcher = "Fuzzy",
+              semanticTokens = true,
+              staticcheck = true,
+              symbolMatcher = "fuzzy",
+              usePlaceholders = true,
             },
           },
         },

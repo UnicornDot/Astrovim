@@ -11,7 +11,7 @@ return {
       ---@diagnostic disable: missing-fields
       ---@diagnostic disable: missing-parameter
       opts = function(_, opts)
-        local maps = opts.mappings or {}
+        local maps = opts.mappings
         local refactor = require("refactoring")
         maps.n["<Leader>lb"] = { function() refactor.refactor "Extract Block" end, desc = "Extract Block", }
         maps.n["<Leader>lB"] = { function() refactor.refactor "Extract Block To File" end, desc = "Extract Block To File", }

@@ -1,11 +1,11 @@
 ---@type LazySpec
 return {
   "mikavilpas/yazi.nvim",
+  lazy = true,
   enabled = vim.fn.executable "yazi" == 1,
   specs = {
     { "nvim-neo-tree/neo-tree.nvim", enabled = true },
   },
-  event = "VeryLazy",
   keys = {
     -- 👇 in this section, choose your own keymappings!
     {

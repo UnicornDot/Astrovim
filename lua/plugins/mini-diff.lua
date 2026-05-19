@@ -2,6 +2,7 @@
 return {
   "echasnovski/mini.diff",
   event = "User AstroGitFile",
+  lazy = true,
   opts = function()
     local sign = require("astroui").get_icon "GitSign"
     return {

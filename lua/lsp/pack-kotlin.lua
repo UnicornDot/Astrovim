@@ -4,7 +4,7 @@ return {
     "jay-babu/mason-nvim-dap.nvim",
     optional = true,
     opts = function(_, opts)
-      opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, { "kotlin" })
+      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "kotlin" })
     end,
   },
   {
@@ -24,13 +24,20 @@ return {
     end,
   },
   {
+    "Mgenuit/nvim-dap-kotlin",
+    lazy = true,
+    optional = true,
+    opts = {}
+  },
+  {
     "nvim-neotest/neotest",
+    optional = true,
     dependencies = {
-      "codymikol/neotest-kotlin",
+      { "codymikol/neotest-kotlin", lazy = true }
     },
-    config = function(_, opts)
+    opts = function(_, opts)
       if not opts.adapters then opts.adapters = {} end
-      table.insert(opts.adapters, require "neotest-kotlin"(astrocore.plugin_opts "neotest-kotlin"))
+      table.insert(opts.adapters, require "neotest-kotlin")
     end,
   },
   {
@@ -47,11 +54,10 @@ return {
   {
     "AlexandrosAlexiou/kotlin.nvim",
     ft = { "kotlin" },
+    lazy = true,
     specs = {
-      { "mason-org/mason.nvim" },
-      { "mason-org/mason-lspconfig.nvim" },
-      { "stevearc/oil.nvim" },
-      { "folke/trouble.nvim" },
+      { "stevearc/oil.nvim", lazy = true },
+      { "folke/trouble.nvim", lazy = true },
     },
     config = function()
       require("kotlin").setup {

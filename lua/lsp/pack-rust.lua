@@ -33,95 +33,6 @@ return {
     lazy = true,
   },
   {
-    "AstroNvim/astrolsp",
-    --- @type function
-    opts = function(_, opts)
-      if diagnostics ~= "rust-analyzer" then
-        astrocore.list_insert_unique(opts.servers, { "bacon_ls" })
-      end
-      return vim.tbl_deep_extend("force", opts, {
-        handlers = { rust_analyzer = function() return false end }, -- disable setup of `rust_analyzer`
-        ---@diagnostic disable: missing-fields
-        config = {
-          bacon_ls = {
-            init_options = {
-              updateOnSave = true,
-              updateOnSaveMillis = 1000,
-              updateOnChange = false,
-            }
-          },
-          rust_analyzer = {
-            on_attach = function()
-              vim.api.nvim_create_autocmd({ "TermOpen", "TermClose", "BufEnter" }, {
-                pattern = "term://*",
-                desc = "Jump to error line",
-                callback = function()
-                  if vim.bo.buftype == 'terminal' then
-                    local buf_name = vim.api.nvim_buf_get_name(0)
-                    local cmd = string.match(buf_name, ":%s*(cargo build)$")
-                    if cmd then
-                      set_mappings({
-                        n = {
-                          ["gd"] = {
-                            preview_stack_trace,
-                            desc = "Jump to error line",
-                          },
-                        },
-                      }, { buffer = true })
-                    end
-                  end
-                end,
-              })
-            end,
-            settings = {
-              ['rust-analyzer'] = {
-                cargo = {
-                  allFeatures = true,
-                  loadOutDirsFromCheck = true,
-                  buildScripts = {
-                    enable = true,
-                  },
-                },
-                -- add clippy lints for rust if using rust-analyzer
-                checkOnSave = diagnostics == "rust-analyzer",
-                diagnostics = {
-                  enable = diagnostics == "rust-analyzer",
-                },
-                procMacro = {
-                  enable = true,
-                  ignored = {
-                    ["async-trait"] = {"async_trait"},
-                    ["napi-derive"] = {"napi"},
-                    ["async-recursion"] = {"async_recursion"},
-                  },
-                },
-                files = {
-                  excludeDirs = {
-                    ".direnv",
-                    ".git",
-                    ".github",
-                    ".gitlab",
-                    "bin",
-                    "node_modules",
-                    "target",
-                    "venv",
-                    ".venv"
-                  },
-                },
-                check = {
-                  command = "clippy",
-                  extraArgs = {
-                    "--no-deps",
-                  },
-                },
-              },
-            },
-          },
-        },
-      })
-    end
-  },
-  {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
     optional = true,
     opts = function(_, opts)
@@ -138,11 +49,91 @@ return {
     specs = {
       {
         "AstroNvim/astrolsp",
-        optional = true,
-        ---@type AstroLSPOpts
-        opts = {
-          handlers = { rust_analyzer = false }, -- disable setup of `rust_analyzer`
-        },
+        --- @type function
+        opts = function(_, opts)
+          if diagnostics ~= "rust-analyzer" then
+            opts.servers = astrocore.list_insert_unique(opts.servers or {}, { "bacon_ls" })
+          end
+          opts.handlers = vim.tbl_deep_extend("force", opts.handlers, {
+            handlers = { rust_analyzer = function() return false end }, -- disable setup of `rust_analyzer`
+          })
+          opts.config = vim.tbl_deep_extend("keep", opts.config or {}, {
+            bacon_ls = {
+              init_options = {
+                updateOnSave = true,
+                updateOnSaveMillis = 1000,
+                updateOnChange = false,
+              }
+            },
+            rust_analyzer = {
+              on_attach = function()
+                vim.api.nvim_create_autocmd({ "TermOpen", "TermClose", "BufEnter" }, {
+                  pattern = "term://*",
+                  desc = "Jump to error line",
+                  callback = function()
+                    if vim.bo.buftype == 'terminal' then
+                      local buf_name = vim.api.nvim_buf_get_name(0)
+                      local cmd = string.match(buf_name, ":%s*(cargo build)$")
+                      if cmd then
+                        set_mappings({
+                          n = {
+                            ["gd"] = {
+                              preview_stack_trace,
+                              desc = "Jump to error line",
+                            },
+                          },
+                        }, { buffer = true })
+                      end
+                    end
+                  end,
+                })
+              end,
+              settings = {
+                ['rust-analyzer'] = {
+                  cargo = {
+                    allFeatures = true,
+                    loadOutDirsFromCheck = true,
+                    buildScripts = {
+                      enable = true,
+                    },
+                  },
+                  -- add clippy lints for rust if using rust-analyzer
+                  checkOnSave = diagnostics == "rust-analyzer",
+                  diagnostics = {
+                    enable = diagnostics == "rust-analyzer",
+                  },
+                  procMacro = {
+                    enable = true,
+                    ignored = {
+                      ["async-trait"] = {"async_trait"},
+                      ["napi-derive"] = {"napi"},
+                      ["async-recursion"] = {"async_recursion"},
+                    },
+                  },
+                  files = {
+                    excludeDirs = {
+                      ".direnv",
+                      ".git",
+                      ".github",
+                      ".gitlab",
+                      "bin",
+                      "node_modules",
+                      "target",
+                      "venv",
+                      ".venv"
+                    },
+                  },
+                  check = {
+                    command = "clippy",
+                    extraArgs = {
+                      "--no-deps",
+                    },
+                  },
+                },
+              }
+            },
+          })
+        end
       },
     },
     opts = function()

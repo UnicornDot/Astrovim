@@ -1,6 +1,7 @@
 ---@type LazySpec
 return {
- "brenoprata10/nvim-highlight-colors",
+  "brenoprata10/nvim-highlight-colors",
+  lazy = true,
   opts = {
     virtual_symbol = "󱓻",
     virtual_symbol_suffix = " ",

@@ -80,7 +80,7 @@ return {
     },
     keys = {},
     specs = {
-      { "stevearc/dressing.nvim", optional = true, opts = { select = { enabled = false } } },
+      { "stevearc/dressing.nvim", optional = true, opts = function(_, opts) opts.select = { enabled = false } end }
     }
   }
 }

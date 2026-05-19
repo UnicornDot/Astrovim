@@ -19,24 +19,21 @@ return {
     optional = true,
     ---@type function
     opts = function(_, opts)
-      astrocore.extend_tbl(opts, {
-        servers = { "sourcekit" },
-        config = {
-          sourcekit= {
-            capabilities = {
-              workspace = {
-                didChangeWatchedFiles = {
-                  dynamicRegistration = true,
-                }
+      opts.servers = astrocore.list_insert_unique(opts.servers or {}, { "sourcekit" })
+      opts.config = vim.tbl_deep_extend("keep", opts.config, {
+        sourcekit= {
+          root_dir = require("lspconfig.util").root_pattern(
+            "Package.swift", "Package.resolved", ".git"
+          ),
+          filetypes = { "swift" },
+          capabilities = {
+            workspace = {
+              didChangeWatchedFiles = {
+                dynamicRegistration = true,
               }
             }
-          }
-        }
-      })
-      vim.lsp.enable("sourcekit")
-      vim.api.nvim_create_autocmd('LspAttach', {
-        desc = 'LSP Actions',
-        callback = function()
+          },
+          on_attach = function()
             vim.keymap.set('n', 'M', vim.lsp.buf.hover, {noremap = true, silent = true})
             vim.keymap.set('n', 'gra', vim.lsp.buf.code_action, {noremap = true, silent = true})
             vim.keymap.set('n', 'grd', vim.lsp.buf.definition, {noremap = true, silent = true})
@@ -45,8 +42,10 @@ return {
             vim.keymap.set('n', 'grn', vim.lsp.buf.rename, {noremap = true, silent = true})
             vim.keymap.set('n', 'grr', vim.lsp.buf.references, {noremap = true, silent = true})
             vim.keymap.set('n', "grx", vim.lsp.codelens.run, { noremap = true, silent = true})
-        end,
+          end
+        }
       })
+      vim.lsp.enable("sourcekit")
     end,
   },
 }

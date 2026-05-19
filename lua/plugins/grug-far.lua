@@ -16,7 +16,7 @@ return {
     {
       "AstroNvim/astrocore",
       opts = function(_, opts)
-        local maps = opts.mappings or {}
+        local maps = opts.mappings
         local prefix = "<Leader>s"
 
         maps.n[prefix .. "r"] = {
@@ -45,22 +45,11 @@ return {
         }
       end,
     },
-    {
-      "zbirenbaum/copilot.lua",
-      optional = true,
-      opts = {
-        filetypes = {
-          ["grug-far"] = false,
-          ["grug-far-history"] = false,
-        },
-      },
-    },
   },
   dependencies = {
     "nvim-mini/mini.icons",
   },
   ---@param opts GrugFarOptionsOverride
-  -- NOTE: Wrapping opts into a function, because `astrocore` can set vim options
   opts = function(_, opts)
     if not opts.icons then opts.icons = {} end
     opts.icons.enabled = vim.g.icons_enabled

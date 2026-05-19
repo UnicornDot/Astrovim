@@ -15,7 +15,7 @@ return {
         "AstroNvim/astrocore",
         ---@param opts AstroCoreOpts
         opts = function(_, opts)
-          local maps = opts.mappings or {}
+          local maps = opts.mappings
           maps.n["<C-/>"] = opts.mappings.n["<Leader>/"]
           maps.x["<C-/>"] = opts.mappings.x["<Leader>/"]
           -- end

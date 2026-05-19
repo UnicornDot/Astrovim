@@ -10,19 +10,16 @@ return {
         "AstroNvim/astrolsp",
         ---@type function
         opts = function(_, opts)
-          vim.tbl_deep_extend("force", opts, {
-            ---@diagnostic disable: missing-fields
-            config = {
-              yamlls = {
-                on_new_config = function(config)
-                  config.settings.yaml.schemas = vim.tbl_deep_extend(
-                    "force",
-                    config.settings.yaml.schemas or {},
-                    require("schemastore").yaml.schemas()
-                  )
-                end,
-                settings = { yaml = { schemaStore = { enable = false, url = "" } } },
-              },
+          opts.config = vim.tbl_deep_extend("keep", opts.config or {}, {
+            yamlls = {
+              on_new_config = function(config)
+                config.settings.yaml.schemas = vim.tbl_deep_extend(
+                  "force",
+                  config.settings.yaml.schemas or {},
+                  require("schemastore").yaml.schemas()
+                )
+              end,
+              settings = { yaml = { schemaStore = { enable = false, url = "" } } },
             },
           })
         end

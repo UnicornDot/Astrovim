@@ -55,92 +55,90 @@ return {
     ---@type function
     ---@diagnostic disable: missing-fields
     opts = function(_, opts)
-      return astrocore.extend_tbl(opts, {
-        config = {
-          vtsls = {
-            root_dir = require("lspconfig.util").root_pattern(
-              "nx.json",
-              "tsconfig.json",
-              "package.json",
-              "jsconfig.json"
-            ),
-            on_attach = function(client, _)
-              local existing_capabilities = vim.deepcopy(client.server_capabilities)
-              if existing_capabilities == nil then return end
-              existing_capabilities.documentFormattingProvider = nil
-              local existing_filters = existing_capabilities.workspace.fileOperations.didRename.filters or {}
-              local new_glob = "**/*.{ts,cts,mts,tsx,js,cjs,mjs,jsx,vue}"
-              for _, filter in ipairs(existing_filters) do
-                if filter.pattern and filter.pattern.matches == "file" then
-                  filter.pattern.glob = new_glob
-                  break
-                end
+      opts.config = vim.tbl_deep_extend("keep", opts.config or {}, {
+        vtsls = {
+          root_dir = require("lspconfig.util").root_pattern(
+            "nx.json",
+            "tsconfig.json",
+            "package.json",
+            "jsconfig.json"
+          ),
+          on_attach = function(client, _)
+            local existing_capabilities = vim.deepcopy(client.server_capabilities)
+            if existing_capabilities == nil then return end
+            existing_capabilities.documentFormattingProvider = nil
+            local existing_filters = existing_capabilities.workspace.fileOperations.didRename.filters or {}
+            local new_glob = "**/*.{ts,cts,mts,tsx,js,cjs,mjs,jsx,vue}"
+            for _, filter in ipairs(existing_filters) do
+              if filter.pattern and filter.pattern.matches == "file" then
+                filter.pattern.glob = new_glob
+                break
               end
-              existing_capabilities.workspace.fileOperations.didRename.filters = existing_filters
+            end
+            existing_capabilities.workspace.fileOperations.didRename.filters = existing_filters
 
-              client.server_capabilities = existing_capabilities
+            client.server_capabilities = existing_capabilities
 
-              astrocore.set_mappings({
-                n = {
-                  ["<Leader>lA"] = {
-                    function() vim.lsp.buf.code_action { context = { only = { "source", "refactor", "quickfix" } } } end,
-                    desc = "Lsp All Action",
-                  },
-                  gs = {
-                    function() require("vtsls").commands.goto_source_definition() end,
-                    desc = "Goto Source Definition (vtsls)",
-                  },
+            astrocore.set_mappings({
+              n = {
+                ["<Leader>lA"] = {
+                  function() vim.lsp.buf.code_action { context = { only = { "source", "refactor", "quickfix" } } } end,
+                  desc = "Lsp All Action",
                 },
-              }, { buffer = true })
-            end,
-            filetypes = {
-              "angular",
-              "javascript",
-              "javascriptreact",
-              "javascript.jsx",
-              "typescript",
-              "typescriptreact",
-              "typescript.tsx",
+                gs = {
+                  function() require("vtsls").commands.goto_source_definition() end,
+                  desc = "Goto Source Definition (vtsls)",
+                },
+              },
+            }, { buffer = true })
+          end,
+          filetypes = {
+            "angular",
+            "javascript",
+            "javascriptreact",
+            "javascript.jsx",
+            "typescript",
+            "typescriptreact",
+            "typescript.tsx",
+          },
+          settings = {
+            complete_function_calls = true,
+            vtsls = {
+              enableMoveToFileCodeAction = true,
+              autoUseWorkspaceTsdk = true,
+              experimental = {
+                maxInlayHintLength = 30,
+                completion = {
+                  enableServerSideFuzzyMatch = true,
+                },
+              },
+              tsserver = {
+                globalPlugins = {},
+              },
             },
-            settings = {
-              complete_function_calls = true,
-              vtsls = {
-                enableMoveToFileCodeAction = true,
-                autoUseWorkspaceTsdk = true,
-                experimental = {
-                  maxInlayHintLength = 30,
-                  completion = {
-                    enableServerSideFuzzyMatch = true,
-                  },
-                },
-                tsserver = {
-                  globalPlugins = {},
-                },
+            typescript = {
+              updateImportsOnFileMove = { enabled = "always" },
+              suggest = {
+                completeFunctionCalls = true,
               },
-              typescript = {
-                updateImportsOnFileMove = { enabled = "always" },
-                suggest = {
-                  completeFunctionCalls = true,
-                },
-                inlayHints = {
-                  parameterNames = { enabled = "literals" },
-                  parameterTypes = { enabled = true },
-                  variableTypes = { enabled = true },
-                  propertyDeclarationTypes = { enabled = true },
-                  functionLikeReturnTypes = { enabled = true },
-                  enumMemberValues = { enabled = true },
-                },
+              inlayHints = {
+                parameterNames = { enabled = "literals" },
+                parameterTypes = { enabled = true },
+                variableTypes = { enabled = true },
+                propertyDeclarationTypes = { enabled = true },
+                functionLikeReturnTypes = { enabled = true },
+                enumMemberValues = { enabled = true },
               },
-              javascript = {
-                updateImportsOnFileMove = { enabled = "always" },
-                inlayHints = {
-                  parameterNames = { enabled = "literals" },
-                  parameterTypes = { enabled = true },
-                  variableTypes = { enabled = true },
-                  propertyDeclarationTypes = { enabled = true },
-                  functionLikeReturnTypes = { enabled = true },
-                  enumMemberValues = { enabled = true },
-                },
+            },
+            javascript = {
+              updateImportsOnFileMove = { enabled = "always" },
+              inlayHints = {
+                parameterNames = { enabled = "literals" },
+                parameterTypes = { enabled = true },
+                variableTypes = { enabled = true },
+                propertyDeclarationTypes = { enabled = true },
+                functionLikeReturnTypes = { enabled = true },
+                enumMemberValues = { enabled = true },
               },
             },
           },
@@ -159,6 +157,7 @@ return {
   },
   {
     "jay-babu/mason-nvim-dap.nvim",
+    lazy = true,
     optional = true,
     opts = function(_, opts)
       opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "js" })
@@ -166,6 +165,7 @@ return {
   },
   {
     "mfussenegger/nvim-dap",
+    lazy = true,
     optional = true,
     config = function()
       local success, js_debug_adapter_path = pcall(function ()
@@ -330,22 +330,20 @@ return {
     lazy = true,
     dependencies = {
       "AstroNvim/astrocore",
-      opts = {
-        autocmds = {
-          nvim_vtsls = {
-            {
-              event = "LspAttach",
-              desc = "Load nvim-vtsls with vtsls",
-              callback = function(args)
-                if assert(vim.lsp.get_client_by_id(args.data.client_id)).name == "vtsls" then
-                  require("vtsls")._on_attach(args.data.client_id, args.buf)
-                  vim.api.nvim_del_augroup_by_name "nvim_vtsls"
-                end
-              end,
-            },
+      opts = function(_, opts)
+        opts.autocmds.nvim_vtsls = {
+          {
+            event = "LspAttach",
+            desc = "Load nvim-vtsls with vtsls",
+            callback = function(args)
+              if assert(vim.lsp.get_client_by_id(args.data.client_id)).name == "vtsls" then
+                require("vtsls")._on_attach(args.data.client_id, args.buf)
+                vim.api.nvim_del_augroup_by_name "nvim_vtsls"
+              end
+            end,
           },
-        },
-      },
+        }
+      end,
     },
     config = function(_, opts) require("vtsls").config(opts) end,
   },

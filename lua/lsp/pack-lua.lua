@@ -10,10 +10,13 @@ return {
     "AstroNvim/astrolsp",
     ---@type function
     opts = function(_, opts)
-      return vim.tbl_deep_extend("force", opts, {
-        ---@diagnostic disable: missing-fields
-        config = {
-          lua_ls = { settings = { Lua = { hint = { enable = true, arrayIndex = "Disable" } } } },
+      opts.confif = vim.tbl_deep_extend("keep", opts.config or {}, {
+        lua_ls = {
+          settings = {
+            Lua = {
+              hint = { enable = true, arrayIndex = "Disable" }
+            }
+          }
         },
       })
     end

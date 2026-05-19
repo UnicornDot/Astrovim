@@ -16,28 +16,17 @@ return {
       optional = true,
       opts = function(_, opts)
         if astrocore.is_available "fzf-lua" then
-          local maps = opts.mappings or {}
-          maps.n["<Leader>lX"] = {
-            function() require("fzf-lua").diagnostics_document() end,
-            desc = "Search diagnostics"
-          }
-          maps.n["<Leader>lS"] = {
-            function()
-              require("fzf-lua").lsp_live_workspace_symbols {
-                regex_filter = symbols_filter,
-              }
-            end,
-            desc = "Goto Symbol (Workspace)"
-          }
+          local maps = opts.mappings
+          local fzf = require("fzf-lua")
+          maps.n["<Leader>lX"] = { function() fzf.diagnostics_document() end, desc = "Search diagnostics" }
+          maps.n["<Leader>lS"] = { function() fzf.lsp_live_workspace_symbols { regex_filter = symbols_filter, } end, desc = "Goto Symbol (Workspace)" }
         end
       end,
     },
     {
       "AstroNvim/astrocore",
       opts = function(_, opts)
-        local maps = opts.mappings or {}
-        maps.n["<Leader>f"] = vim.tbl_get(opts, "_map_sections", "f")
-
+        local maps = opts.mappings
         maps.n["<Leader>fx"] = { "<cmd>FzfLua diagnostics_document<cr>", desc = "Find Document Diagnostics" }
         maps.n["<Leader>fX"] = { "<cmd>FzfLua diagnostics_workspace<cr>", desc = "Find Workspace Diagnostics" }
         maps.n["<Leader>fa"] = { "<cmd>FzfLua autocmds<cr>", desc = "Find autocmds" }

@@ -3,11 +3,12 @@ return {
   {
     "AstroNvim/astrolsp",
     optional = true,
-    ---@type AstroLSPOpts
-    opts = {
-      ---@diagnostic disable: missing-fields
-      handlers = { dartls = false },
-    },
+    ---@type function
+    opts = function(_, opts)
+      opts.handlers = vim.tbl_deep_extend("keep", opts.handlers or {}, {
+        handlers = { dartls = false }
+      })
+    end,
   },
   {
     "nvim-treesitter/nvim-treesitter",
