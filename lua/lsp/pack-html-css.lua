@@ -28,7 +28,7 @@ return {
             ---@type boolean Default to `false`
             showSuggestionsAsSignppets = true,
           },
-          filetypes,
+          filetypes = filetypes,
         },
         html = { init_options = { provideFormatter = false } },
         cssls = {
@@ -69,6 +69,7 @@ return {
   },
   {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
+    lazy = true,
     optional = true,
     opts = function(_, opts)
       opts.ensure_installed = astrocore.list_insert_unique(
@@ -79,6 +80,7 @@ return {
   },
   {
     "stevearc/conform.nvim",
+    lazy = true,
     optional = true,
     opts = {
       formatters_by_ft = {
@@ -92,6 +94,7 @@ return {
   },
   {
     "nvim-mini/mini.icons",
+    lazy = true,
     optional = true,
     opts = {
       filetype = {

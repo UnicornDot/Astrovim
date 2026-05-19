@@ -5,6 +5,7 @@ local utils = require("utils")
 return {
   {
     "AstroNvim/astrolsp",
+    optional = true,
     ---@type function
     opts = function(_, opts)
       opts.config = vim.tbl_deep_extend("keep", opts.config or {}, {
@@ -39,6 +40,7 @@ return {
   },
   {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
+    lazy = true,
     optional = true,
     opts = function(_, opts)
       opts.ensure_installed = astrocore.list_insert_unique( opts.ensure_installed, { "pyrefly", "ruff", "debugpy" })
@@ -46,9 +48,10 @@ return {
   },
   {
     "mfussenegger/nvim-dap-python",
-    ft = "python", -- NOTE: ft: lazy-load on filetype
+    lazy = true,
+    ft = "python",
     config = function()
-      if vim.fn.has("win32") == 1 then
+      if utils.is_windows() then
         require("dap-python").setup(utils.get_pkg_path("debugpy", "/venv/Scripts/python.exe"))
       else
         require("dap-python").setup(utils.get_pkg_path("debugpy", "/venv/bin/python"))
@@ -57,6 +60,7 @@ return {
   },
   {
     "nvim-neotest/neotest",
+    lazy = true,
     optional = true,
     dependencies = { "nvim-neotest/neotest-python" },
     opts = function(_, opts)
@@ -66,6 +70,7 @@ return {
   },
   {
     "stevearc/conform.nvim",
+    lazy = true,
     optional = true,
     opts = {
       formatters_by_ft = {
@@ -75,6 +80,7 @@ return {
   },
   {
     "linux-cultist/venv-selector.nvim",
+    lazy = true,
     branch = "main",
     enabled = vim.fn.executable("fd") == 1 or vim.fn.executable("fdfind") == 1 or vim.fn.executable("fd-find") == 1,
     opts = {

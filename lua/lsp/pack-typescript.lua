@@ -148,11 +148,10 @@ return {
   },
   {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
+    lazy = true,
     optional = true,
     opts = function(_, opts)
-      opts.ensure_installed = astrocore.list_insert_unique(
-        opts.ensure_installed, { "vtsls", "biome"  }
-      )
+      opts.ensure_installed = astrocore.list_insert_unique( opts.ensure_installed, { "vtsls", "biome"  })
     end,
   },
   {
@@ -328,8 +327,9 @@ return {
   {
     "yioneko/nvim-vtsls",
     lazy = true,
-    dependencies = {
+    specs = {
       "AstroNvim/astrocore",
+      optional = true,
       opts = function(_, opts)
         opts.autocmds.nvim_vtsls = {
           {
@@ -359,9 +359,10 @@ return {
   },
   {
     "nvim-neotest/neotest",
+    lazy = true,
     optional = true,
-    dependencies = {
-      { "marilari88/neotest-vitest" },
+    specs = {
+      { "marilari88/neotest-vitest", lazy = true },
       { "nvim-neotest/neotest-jest", config = function() end }
     },
     opts = function(_, opts)

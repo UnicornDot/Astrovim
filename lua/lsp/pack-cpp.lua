@@ -8,6 +8,7 @@ return {
     lazy = true,
     specs = {
       "AstroNvim/astrolsp",
+      optional = true,
       opts = function(_, opts)
         if is_linux_arm then
           opts.servers = astrocore.list_insert_unique(opts.servers, { "clangd" })
@@ -58,6 +59,7 @@ return {
   },
   {
     "jay-babu/mason-nvim-dap.nvim",
+    layz = true,
     opts = function(_, opts)
       opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "codelldb" })
     end,
@@ -72,6 +74,7 @@ return {
   },
   {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
+    lazy = true,
     optional = true,
     opts = function(_, opts)
       opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "clangd" })

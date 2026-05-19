@@ -98,6 +98,7 @@ return {
   },
   {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
+    lazy = true,
     optional = true,
     opts = function(_, opts)
       opts.ensure_installed = astrocore.list_insert_unique(
@@ -107,6 +108,7 @@ return {
   },
   {
     "stevearc/conform.nvim",
+    lazy = true,
     optional = true,
     opts = {
       formatters = {
@@ -121,6 +123,7 @@ return {
   },
   {
     "mfussenegger/nvim-lint",
+    lazy = true,
     optional = true,
     opts = {
       linters = {

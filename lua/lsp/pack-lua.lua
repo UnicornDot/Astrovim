@@ -8,9 +8,10 @@ end
 return {
   {
     "AstroNvim/astrolsp",
+    optional = true,
     ---@type function
     opts = function(_, opts)
-      opts.confif = vim.tbl_deep_extend("keep", opts.config or {}, {
+      opts.config = vim.tbl_deep_extend("keep", opts.config or {}, {
         lua_ls = {
           settings = {
             Lua = {
@@ -23,6 +24,7 @@ return {
   },
   {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
+    lazy = true,
     optional = true,
     opts = function(_, opts) opts.ensure_installed = astrocore.list_insert_unique(
       opts.ensure_installed, { "lua-language-server", "stylua", "selene" }
@@ -31,6 +33,7 @@ return {
   },
   {
     "stevearc/conform.nvim",
+    lazy = true,
     optional = true,
     opts = {
       formatters_by_ft = {
@@ -40,6 +43,7 @@ return {
   },
   {
     "mfussenegger/nvim-lint",
+    lazy = true,
     optional = true,
     opts = {
       linters_by_ft = {

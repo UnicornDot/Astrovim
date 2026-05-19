@@ -2,6 +2,7 @@ local astrocore = require "astrocore"
 return {
   {
     "jay-babu/mason-nvim-dap.nvim",
+    lazy = true,
     optional = true,
     opts = function(_, opts)
       opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "kotlin" })
@@ -9,6 +10,7 @@ return {
   },
   {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
+    lazy = true,
     optional = true,
     opts = function(_, opts)
       opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "kotlin-lsp", "ktlint", "ktfmt" })
@@ -26,12 +28,11 @@ return {
   {
     "Mgenuit/nvim-dap-kotlin",
     lazy = true,
-    optional = true,
     opts = {}
   },
   {
     "nvim-neotest/neotest",
-    optional = true,
+    lazy = true,
     dependencies = {
       { "codymikol/neotest-kotlin", lazy = true }
     },

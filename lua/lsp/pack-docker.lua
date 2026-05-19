@@ -8,14 +8,15 @@ return {
     opts = function(_, opts)
       opts.filetypes = vim.tbl_deep_extend("keep", opts.filetypes or {}, {
         filename = {
-          ["docker-compose.yaml"] = "yaml.docker-compose",
-          ["docker-compose.yml"] = "yaml.docker-compose"
+          ["docker-compose.yaml"] = "yaml",
+          ["docker-compose.yml"] = "yaml"
         },
       })
     end,
   },
   {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
+    lazy = true,
     optional = true,
     opts = function(_, opts)
       -- lsp
@@ -32,6 +33,7 @@ return {
   },
   {
     "stevearc/conform.nvim",
+    lazy = true,
     optional = true,
     opts = {
       formatters_by_ft = {
@@ -41,6 +43,7 @@ return {
   },
   {
     "mfussenegger/nvim-lint",
+    lazy = true,
     optional = true,
     opts = {
       linters_by_ft = {

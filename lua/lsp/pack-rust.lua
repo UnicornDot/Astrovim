@@ -34,6 +34,7 @@ return {
   },
   {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
+    lazy = true,
     optional = true,
     opts = function(_, opts)
       opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "codelldb" })
@@ -49,13 +50,15 @@ return {
     specs = {
       {
         "AstroNvim/astrolsp",
+        optional = true,
         --- @type function
         opts = function(_, opts)
           if diagnostics ~= "rust-analyzer" then
             opts.servers = astrocore.list_insert_unique(opts.servers or {}, { "bacon_ls" })
           end
-          opts.handlers = vim.tbl_deep_extend("force", opts.handlers, {
-            handlers = { rust_analyzer = function() return false end }, -- disable setup of `rust_analyzer`
+          opts.handlers = vim.tbl_deep_extend("keep", opts.handlers, {
+             -- disable setup of `rust_analyzer`
+             rust_analyzer = function() return false end,
           })
           opts.config = vim.tbl_deep_extend("keep", opts.config or {}, {
             bacon_ls = {
@@ -198,6 +201,7 @@ return {
   },
   {
     "Saecki/crates.nvim",
+    lazy = true,
     event = { "BufRead Cargo.toml" },
     opts = {
       completion = {
@@ -217,6 +221,7 @@ return {
   },
   {
     "nvim-neotest/neotest",
+    lazy = true,
     optional = true,
     opts = function(_, opts)
       if not opts.adapters then opts.adapters = {} end

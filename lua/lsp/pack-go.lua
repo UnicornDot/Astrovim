@@ -1,6 +1,5 @@
 --TODO: https://github.com/golang/go/issues/60903
 local astrocore = require("astrocore")
-local set_mapppings = astrocore.set_mappings
 
 local function preview_stack_trace()
   local current_line = vim.api.nvim_get_current_line()
@@ -35,6 +34,7 @@ end
 return {
   {
     "AstroNvim/astrocore",
+    optional = true,
     ---@type function(opts: AstroCoreOpts)
     opts = function(_, opts)
       opts.filetypes = vim.tbl_deep_extend("keep", opts.filetypes or {}, {
@@ -56,7 +56,7 @@ return {
               callback = function()
                 local buf_name = vim.api.nvim_buf_get_name(0)
                 if vim.bo.filetype == "dap-repl" and buf_name:match("%[dap%-repl%-%d+%]") then
-                  set_mapppings({
+                  astrocore.set_mapppings({
                     n = {
                       ["gd"] = {
                         preview_stack_trace,
@@ -117,6 +117,7 @@ return {
   },
   {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
+    lazy = true,
     optional = true,
     opts = function(_, opts)
       if vim.fn.executable "go" == 1 then
@@ -134,6 +135,7 @@ return {
   },
   {
     "leoluz/nvim-dap-go",
+    lazy = true,
     ft = "go",
     dependencies = {
       "mfussenegger/nvim-dap",
@@ -149,6 +151,7 @@ return {
   },
   {
     "olexsmir/gopher.nvim",
+    lazy = true,
     ft = "go",
     enabled = vim.fn.executable "go" == 1,
     build = function()
@@ -165,6 +168,7 @@ return {
   },
   {
     "nvim-neotest/neotest",
+    lazy = true,
     optional = true,
     dependencies = { "fredrikaverpil/neotest-golang" },
     opts = function(_, opts)
@@ -175,6 +179,7 @@ return {
   {
     "chaozwn/goctl.nvim",
     ft = "goctl",
+    lazy = true,
     enabled = vim.fn.executable "goctl" == 1,
     opts = function()
       local group = vim.api.nvim_create_augroup("GoctlAutocmd", { clear = true })
@@ -195,6 +200,7 @@ return {
   },
   {
     "strevearc/conform.nvim",
+    lazy = true,
     optional = true,
     opts = {
       formatters_by_ft = {

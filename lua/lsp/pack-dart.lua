@@ -6,7 +6,7 @@ return {
     ---@type function
     opts = function(_, opts)
       opts.handlers = vim.tbl_deep_extend("keep", opts.handlers or {}, {
-        handlers = { dartls = false }
+          dartls = function() return false end
       })
     end,
   },
@@ -23,23 +23,18 @@ return {
   {
     "nvim-flutter/flutter-tools.nvim",
     ft = "dart",
+    lazy = true,
     opts = function(_, opts)
       opts.lsp = vim.lsp.config["dartls"] or {}
       opts.debugger = { enabled = true }
     end,
-    dependencies = { 
-      "nvim-lua/plenary.nvim" 
+    specs = {
+      "nvim-lua/plenary.nvim", lazy = true
     },
   },
   {
-    "WhoIsSethDaniel/mason-tool-installer.nvim",
-    optional = true,
-    opts = function(_, opts)
-      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "dcm" })
-    end,
-  },
-  {
     "jay-babu/mason-nvim-dap.nvim",
+    lazy = true,
     optional = true,
     opts = function(_, opts)
       opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "dart" })
