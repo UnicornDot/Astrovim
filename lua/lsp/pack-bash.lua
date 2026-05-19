@@ -8,26 +8,51 @@ return {
       config = {
         bashls = {
           filetypes = { "bash", "sh", "zsh" },
-        }
-      }
-    }
+        },
+      },
+    },
   },
   {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
     optional = true,
     opts = function(_, opts)
-      opts.ensure_installed = astrocore.list_insert_unique(
-        opts.ensure_installed,
-        { "bash-language-server", "shfmt", "shellcheck" }
-      )
+      opts.ensure_installed =
+        astrocore.list_insert_unique(opts.ensure_installed, { "bash-language-server", "shfmt", "shellcheck" })
     end,
+  },
+  {
+    "bydlw98/blink-cmp-env",
+    lazy = true,
+    specs = {
+      {
+        "saghen/blink.cmp",
+        optional = true,
+        opts = function(_, opts)
+          return astrocore.extend_tbl(opts, {
+            sources = {
+              default = astrocore.list_insert_unique(opts.sources.default or {}, {"env" }),
+              providers = {
+                env = {
+                  name = "Env",
+                  module = "blink-cmp-env",
+                  --- @type blink-cmp-env.Options
+                  opts = {
+                    item_kind = require("blink.cmp.types").CompletionItemKind.Variable,
+                    show_braces = false,
+                    show_documentation_window = true,
+                  },
+                },
+              },
+            }
+          })
+        end
+      },
+    },
   },
   {
     "jay-babu/mason-nvim-dap.nvim",
     optional = true,
-    opts = function(_, opts)
-      opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "bash" })
-    end,
+    opts = function(_, opts) opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "bash" }) end,
   },
   {
     "stevearc/conform.nvim",
@@ -37,7 +62,7 @@ return {
         sh = { "shfmt", "shellcheck" },
         zsh = { "shfmt", "shellcheck" },
       },
-    }
+    },
   },
   {
     "mfussenegger/nvim-lint",
@@ -47,6 +72,6 @@ return {
         sh = { "shellcheck" },
         zsh = { "shellcheck" },
       },
-    }
-  }
+    },
+  },
 }
