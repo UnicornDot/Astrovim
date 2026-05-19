@@ -290,6 +290,42 @@ return {
     event = "BufRead package.json",
   },
   {
+    "alexandre-abrioux/blink-cmp-npm.nvim",
+    lazy = true,
+    specs = {
+      {
+        "saghen/blink.cmp",
+        optional = true,
+        opts = function(_, opts)
+          return astrocore.extend_tbl(opts, {
+            sources = {
+              default = astrocore.list_insert_unique(opts.sources.default or {}, { 'npm' }),
+                -- enable "npm" in your sources list
+              providers = {
+                -- configure the provider
+                npm = {
+                  name = "npm",
+                  module = "blink-cmp-npm",
+                  async = true,
+                  -- optional - make blink-cmp-npm completions top priority (see `:h blink.cmp`)
+                  score_offset = 100,
+                  -- optional - blink-cmp-npm config
+                  ---@module "blink-cmp-npm"
+                  ---@type blink-cmp-npm.Options
+                  opts = {
+                    ignore = {},
+                    only_semantic_versions = true,
+                    only_latest_version = false,
+                  }
+                },
+              },
+            },
+          })
+        end,
+      },
+    }
+  },
+  {
     "yioneko/nvim-vtsls",
     lazy = true,
     dependencies = {

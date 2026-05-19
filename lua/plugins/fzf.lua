@@ -8,6 +8,7 @@ local astrocore = require("astrocore")
 
 return {
   "ibhagwan/fzf-lua",
+  lazy = true,
   cmd = "FzfLua",
   specs = {
     {

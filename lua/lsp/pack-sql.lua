@@ -172,9 +172,11 @@ return {
   },
   {
     "KevinNitroG/blink-sql.nvim",
+    lazy = true,
     specs = {
       {
-        "Saghen/blink.cmp",
+        "saghen/blink.cmp",
+        optional = true,
         ---@module 'blink.cmp'
         ---@type blink.cmp.Config
         ---@type function

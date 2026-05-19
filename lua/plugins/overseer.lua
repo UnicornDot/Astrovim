@@ -4,6 +4,7 @@ return {
     "stevearc/overseer.nvim",
     ---@param opts overseer.Config
     event = "User AstroFile",
+    lazy = true,
     opts = function(_, opts)
       local window_scaling_factor = 0.3
       local height = require("utils").size(vim.o.lines, window_scaling_factor)

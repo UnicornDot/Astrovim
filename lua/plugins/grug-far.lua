@@ -1,6 +1,7 @@
 ---@type LazySpec
 return {
   "MagicDuck/grug-far.nvim",
+  lazy = true,
   cmd = "GrugFar",
   specs = {
     {

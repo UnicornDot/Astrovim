@@ -1,6 +1,6 @@
-local prefix_diff_view = "<Leader>g"
 local astrocore = require "astrocore"
 local set_mappings = astrocore.set_mappings
+local prefix_diff_view = "<Leader>g"
 
 ---@type LazySpec
 return {

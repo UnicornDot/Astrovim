@@ -1,5 +1,6 @@
 return {
   "nyngwang/NeoZoom.lua",
+  lazy = true,
   opts = {
     popup = { enabled = true }, -- this is the default.
     -- NOTE: Add popup-effect (replace the window on-zoom with a `[No Name]`).

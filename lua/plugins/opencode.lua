@@ -3,6 +3,7 @@ local prefix = "<Leader>a"
 ---@type LazySpec
 return {
   "nickjvandyke/opencode.nvim",
+  lazy = true,
   version = "*", -- Latest stable release
   dependencies = {
     {
@@ -30,6 +31,7 @@ return {
   specs = {
     {
       "AstroNvim/astrocore",
+      optional = true,
       opts = {
         mappings = {
           n = {

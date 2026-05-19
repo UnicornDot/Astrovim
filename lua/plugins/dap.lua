@@ -101,39 +101,33 @@ return {
     },
   },
   {
-    "bramdelta/blink-dap",
+    "mayromr/blink-cmp-dap",
+    lazy = true,
     specs = {
       {
         "saghen/blink.cmp",
         optional = true,
         opts = function(_, opts)
           return astrocore.extend_tbl(opts, {
+            enabled = function()
+              -- add interoperability with blink-cmp-dap
+              local dap_prompt = vim.tbl_contains({ "dap-repl", "dapui_watches", "dapui_hover" }, vim.bo.filetype) 
+              if vim.bo.buftype == "prompt" and not dap_prompt then return false end
+              return vim.F.if_nil(vim.b.completion, astrocore.config.features.cmp)
+            end,
             sources = {
-              default = astrocore.list_insert_unique(opts.sources.default or {}, { "dap" }),
+              default = astrocore.list_insert_unique(opts.sources.default, { "dap" }),
               providers = {
                 dap = {
                   name = "dap", -- This should match the source specified above
-                  module = "blink-dap",
-                  opts = {
-                    -- If you want to include DAP commands like `.scopes` as well
-                    include_repl = true,
-                    filetypes = {
-                      -- The name of the adapter `type` in your debugger configuration file
-                      python = {
-                        -- What trigger characters to use for additional completions, i.e.
-                        -- foo.bar would mean to use . to prompt for available properties of foo
-                        trigger_characters = { "." },
-                      },
-                    },
-                    -- Which filetypes to enable completion for.
-                    -- Use `:echo &filetype` to find this per buffer
-                    dap_filetypes = { "dap-repl" },
-                  },
+                  module = "blink-cmp-dap",
+                  async = true,
+                  score_offset = 100,
                 },
               },
             },
           })
-        end,
+        end
       },
     },
   },
@@ -181,7 +175,7 @@ return {
           maps.n[prefix_debug .. "C"] = { function() bpapi.set_conditional_breakpoint() end, desc = "Conditional Breakpoint (S-F9)" }
           maps.n[prefix_debug .. "h"] = { function() widget.hover() end, desc = "Debugger Hover" }
           maps.n[prefix_debug .. "P"] = { function() widget.preview() end, desc = "Debugger Preview" }
-          maps.n[prefix_debug .. "S"] = { function() widget.centered_float(w.sessions, {}) end, desc = "Switch Debug Session" }
+          maps.n[prefix_debug .. "S"] = { function() widget.centered_float(widget.sessions, {}) end, desc = "Switch Debug Session" }
           maps.n[prefix_debug .. "G"] = { utils.create_launch_json, desc = "Create Dap Launch Json" }
         end
       },

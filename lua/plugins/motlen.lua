@@ -58,6 +58,7 @@ end
 ---@type LazySpec
 return {
   "benlubas/molten-nvim",
+  lazy = true,
   ft = { "python" },
   cmd = {
     "MoltenEvaluateLine",
@@ -72,6 +73,7 @@ return {
     { "AstroNvim/astroui", opts = { icons = { Molten = "󱓞" } } },
     {
       "AstroNvim/astrocore",
+      optional = true,
       opts = function(_, opts)
         local maps = opts.mappings or {}
         local prefix = "<leader>j"

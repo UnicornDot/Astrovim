@@ -132,6 +132,7 @@ end
 return {
   {
     "nvim-neo-tree/neo-tree.nvim",
+    lazy = true,
     dependencies = {
       "antosha417/nvim-lsp-file-operations",
     },

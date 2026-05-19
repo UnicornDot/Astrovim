@@ -19,8 +19,8 @@ return {
         },
         deus = {
           SnacksPickerDir = { fg =  '#665c54' },
-          SnacksPickerListCursorLine = { bg = '#2c323b', blend = 10 },
-          FzfLuaCursorLine = { bg = '#2c323b', blend = 10 },
+          SnacksPickerListCursorLine = { bg = '#4f4f64', blend = 10 },
+          FzfLuaCursorLine = { bg = '#4f4f64', blend = 10 },
           BlinkCmpMenuBorder = { fg = '#7c6f64' },
           BlinkCmpGhostText = { fg = '#7c6f64' },
           LspInlayHint = { fg =  '#7c6f64' },

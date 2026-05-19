@@ -141,7 +141,7 @@ return {
                 return true
               end, items)
             end,
-            score_offset = 200,
+            score_offset = 20,
             async = true
           },
           emoji = {
