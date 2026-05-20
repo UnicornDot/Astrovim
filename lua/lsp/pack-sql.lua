@@ -62,9 +62,11 @@ return {
   },
   {
     "nanotee/sqls.nvim",
+    lazy = true,
     specs = {
       {
         "AstroNvim/astrocore",
+        optional = true,
         ---@type function
         opts = function(_, opts)
           opts.autocmds.auto_spell_for_sql = {
@@ -110,10 +112,11 @@ return {
     cmd = { "DBUI", "DBUIToggle", "DBUIAddConnection", "DBUIFindBuffer" },
     dependencies =  {
       { "tpope/vim-dadbod", cmd = "DB", lazy = true },
-      { "kristijanhusak/vim-dadbod-completion", ft = "sql_ft", lazy = true },
+      { "kristijanhusak/vim-dadbod-completion", ft = sql_ft, lazy = true },
     },
     specs = {
       "saghen/blink.cmp",
+      lazy = true,
       optional = true,
       opts = function(_, opts)
         return astrocore.extend_tbl(opts, {
@@ -123,7 +126,8 @@ return {
               dadbod = {
                 name = "Dadbod",
                 module = "vim_dadbod_completion.blink",
-                score_offset = 85
+                score_offset = 85,
+                async = true
               },
             },
           },
@@ -165,6 +169,7 @@ return {
     specs = {
       {
         "saghen/blink.cmp",
+        lazy = true,
         optional = true,
         ---@module 'blink.cmp'
         ---@type blink.cmp.Config
@@ -216,6 +221,7 @@ return {
   },
   {
     "stevearc/conform.nvim",
+    lazy = true,
     optional = true,
     opts = function(_, opts)
       return vim.tbl_deep_extend("force", opts, {
@@ -230,6 +236,7 @@ return {
   },
   {
     "mfussenegger/nvim-lint",
+    lazy = true,
     optional = true,
     opts = function(_, opts)
       return vim.tbl_deep_extend("force", opts, {

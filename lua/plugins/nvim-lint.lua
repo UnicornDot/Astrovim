@@ -1,5 +1,6 @@
 return {
   "mfussenegger/nvim-lint",
+  lazy = true,
   event = "User AstroFile",
   opts = {
     -- Event to trigger linters

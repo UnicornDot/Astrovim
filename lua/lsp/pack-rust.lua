@@ -29,8 +29,7 @@ end
 ---@type LazySpec
 return {
   {
-    "cmrschwarz/rust-prettifier-for-lldb",
-    lazy = true,
+    "cmrschwarz/rust-prettifier-for-lldb", lazy = true,
   },
   {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
@@ -45,6 +44,7 @@ return {
   },
     {
     "mrcjkb/rustaceanvim",
+    lazy = true,
     version = vim.fn.has "nvim-0.12" == 1 and "^9" or "^8",
     ft = "rust",
     specs = {

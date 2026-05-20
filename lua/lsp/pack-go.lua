@@ -160,9 +160,9 @@ return {
         vim.cmd.GoInstallDeps()
       end
     end,
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "nvim-treesitter/nvim-treesitter",
+    specs = {
+      { "nvim-lua/plenary.nvim", lazy = true },
+      { "nvim-treesitter/nvim-treesitter", lazy = true }
     },
     opts = {},
   },
@@ -170,7 +170,7 @@ return {
     "nvim-neotest/neotest",
     lazy = true,
     optional = true,
-    dependencies = { "fredrikaverpil/neotest-golang" },
+    specs = { "fredrikaverpil/neotest-golang", lazy = true },
     opts = function(_, opts)
       if not opts.adapters then opts.adapters = {} end
       table.insert(opts.adapters, require "neotest-golang"(astrocore.plugin_opts "neotest-golang"))

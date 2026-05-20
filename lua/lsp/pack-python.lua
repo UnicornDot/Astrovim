@@ -62,7 +62,7 @@ return {
     "nvim-neotest/neotest",
     lazy = true,
     optional = true,
-    dependencies = { "nvim-neotest/neotest-python" },
+    specs = { "nvim-neotest/neotest-python", lazy = true },
     opts = function(_, opts)
       if not opts.adapters then opts.adapters = {} end
       table.insert(opts.adapters, require "neotest-python"(require("astrocore").plugin_opts "neotest-python"))

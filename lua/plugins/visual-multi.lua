@@ -1,6 +1,7 @@
 ---@type LazySpec
 return {
   "mg979/vim-visual-multi",
+  lazy = true,
   event = "User AstroFile",
   specs = {
     {

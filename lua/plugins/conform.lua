@@ -1,5 +1,6 @@
 return {
   "stevearc/conform.nvim",
+  lazy = true,
   event = "User AstroFile",
   cmd = "ConformInfo",
   specs = {

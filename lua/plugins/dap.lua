@@ -77,6 +77,7 @@ local prefix_debug = "<Leader>d"
 return {
   {
     "Weissle/persistent-breakpoints.nvim",
+    lazy = true,
     event = "VeryLazy",
     opts = function(_, opts)
       return astrocore.extend_tbl(opts, {
@@ -86,6 +87,7 @@ return {
   },
   {
     "theHamsta/nvim-dap-virtual-text",
+    lazy = true,
     event = "VeryLazy",
     opts = {
       commented = true,
@@ -106,6 +108,7 @@ return {
     specs = {
       {
         "saghen/blink.cmp",
+        lazy = true,
         optional = true,
         opts = function(_, opts)
           return astrocore.extend_tbl(opts, {

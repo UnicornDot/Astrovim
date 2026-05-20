@@ -57,6 +57,7 @@ return {
   },
   {
     "AstroNvim/astrocore",
+    optional = true,
     ---type AstroCoreOpts
     opts = function(_, opts)
       opts.filetypes = vim.tbl_deep_extend("keep", opts.filetypes or {}, {

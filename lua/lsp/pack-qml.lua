@@ -7,11 +7,7 @@ return {
     opts = function(_, opts)
       opts.config = vim.tbl_deep_extend("keep", opts.config or {}, {
         qmlls = {
-          root_dir = require("lspconfig.util").root_pattern(
-            "shell.qml",
-            ".qmlls.ini",
-            ".git"
-          ),
+          root_markers = { "shell.qml", ".qmlls.ini", ".git" },
         }
       })
       vim.lsp.enable("qmlls")

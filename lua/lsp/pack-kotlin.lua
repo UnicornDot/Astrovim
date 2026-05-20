@@ -28,12 +28,13 @@ return {
   {
     "Mgenuit/nvim-dap-kotlin",
     lazy = true,
+    ft = "kotlin",
     opts = {}
   },
   {
     "nvim-neotest/neotest",
     lazy = true,
-    dependencies = {
+    specs = {
       { "codymikol/neotest-kotlin", lazy = true }
     },
     opts = function(_, opts)
@@ -43,7 +44,8 @@ return {
   },
   {
     "stevearc/conform.nvim",
-    event = "VeryLazy",
+    lazy = true,
+    event = "User AstrFile",
     ft = "kotlin",
     opts = function(_, opts)
       opts.formatters_by_ft = opts.formatters_by_ft or {}

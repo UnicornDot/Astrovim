@@ -82,6 +82,7 @@ return {
   },
   {
     "iamcco/markdown-preview.nvim",
+    lazy = true,
     cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
     ft = { "markdown", "markdown.mdx" },
     build = function() vim.fn["mkdp#util#install"]() end,
@@ -95,6 +96,7 @@ return {
   },
   {
     "HakonHarnes/img-clip.nvim",
+    lazy = true,
     cmd = { "PasteImage", "ImgClipDebug", "ImgClipConfig" },
     opts = {
       default = {
@@ -113,6 +115,7 @@ return {
   },
   {
     "TobinPalmer/pastify.nvim",
+    lazy = true,
     cmd = { "Pastify" },
     opts = {
       absolute_path = false,
@@ -123,8 +126,9 @@ return {
   },
   {
     "MeanderingProgrammer/render-markdown.nvim",
+    lazy = true,
     ft = { "markdown", "markdown.mdx" },
-    event = "VeryLazy",
+    event = "User AstroFile",
     opts = {
       bullet = {
         right_pad = 1,
@@ -135,15 +139,19 @@ return {
   },
   {
     "OXY2DEV/helpview.nvim",
+    lazy = true,
+    event = "VeryLazy",
     ft = "help",
   },
   {
     "mattn/vim-maketable",
+    lazy = true,
     cmd = "MakeTable",
     ft = { "markdown", "markdown.mdx" },
   },
   {
     "stevearc/conform.nvim",
+    lazy = true,
     optional = true,
     opts = {
       formatters_by_ft = {
@@ -153,6 +161,7 @@ return {
   },
   {
     "mfussenegger/nvim-lint",
+    lazy = true,
     optional = true,
     opts = {
       linters = {

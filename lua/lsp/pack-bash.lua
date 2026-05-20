@@ -27,6 +27,7 @@ return {
     specs = {
       {
         "saghen/blink.cmp",
+        lazy = true,
         optional = true,
         opts = function(_, opts)
           return astrocore.extend_tbl(opts, {
@@ -52,12 +53,14 @@ return {
   },
   {
     "jay-babu/mason-nvim-dap.nvim",
+    lazy = true,
     optional = true,
     opts = function(_, opts) opts.ensure_installed = astrocore.list_insert_unique(opts.ensure_installed, { "bash" }) end,
   },
   {
     "stevearc/conform.nvim",
     optional = true,
+    lazy = true,
     opts = {
       formatters_by_ft = {
         sh = { "shfmt", "shellcheck" },
@@ -67,6 +70,7 @@ return {
   },
   {
     "mfussenegger/nvim-lint",
+    lazy = true,
     optional = true,
     opts = {
       linters_by_ft = {

@@ -8,16 +8,6 @@ return {
     opts = function(_, opts)
       opts.config = vim.tbl_deep_extend("keep", opts.config or {}, {
         tailwindcss = {
-          root_dir = function(fname)
-            local root_pattern = require("lspconfig").util.root_pattern(
-              "tailwind.config.cjs",
-              "tailwind.config.js",
-              "tailwind.config.ts",
-              "postcss.config.js",
-              "config/tailwind.config.js"
-            )
-            return root_pattern(fname)
-          end,
           settings = {
             tailwindCSS = {
               classAttributes = {

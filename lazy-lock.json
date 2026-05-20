@@ -2,7 +2,7 @@
   "AstroNvim": { "branch": "main", "commit": "c399f7f46daa010db1b70f6f7062a6a85216e1de" },
   "LuaSnip": { "branch": "master", "commit": "642b0c595e11608b4c18219e93b88d7637af27bc" },
   "NeoZoom.lua": { "branch": "main", "commit": "c97a0197548c1e9b559e4fa41ab3f7782c93e613" },
-  "SchemaStore.nvim": { "branch": "main", "commit": "05a0a69ca52c31aa687e8251ae11dd913df10061" },
+  "SchemaStore.nvim": { "branch": "main", "commit": "05383893462944f20bf2044b5a1216f894c9b7a0" },
   "SmoothCursor.nvim": { "branch": "main", "commit": "12518b284e1e3f7c6c703b346815968e1620bee2" },
   "aerial.nvim": { "branch": "master", "commit": "645d108a5242ec7b378cbe643eb6d04d4223f034" },
   "astrocore": { "branch": "main", "commit": "cfd0e9ce9362b6ef71faae0efaa17f4a8f67e036" },
@@ -113,5 +113,5 @@
   "which-key.nvim": { "branch": "main", "commit": "fcbf4eea17cb299c02557d576f0d568878e354a4" },
   "windsurf.nvim": { "branch": "main", "commit": "821b570b526dbb05b57aa4ded578b709a704a38a" },
   "xmake.nvim": { "branch": "main", "commit": "c987ceca234fb3733a871605cf3e244ce256b4c4" },
-  "yazi.nvim": { "branch": "main", "commit": "cad24771df41423022233f11078087c4c8400e51" }
+  "yazi.nvim": { "branch": "main", "commit": "ce56cb1534a4192eaf13a2f8fb2c1cdfc553e5f2" }
 }

@@ -6,10 +6,12 @@ return {
   "sindrets/diffview.nvim",
   event = "User AstroGitFile",
   cmd = { "DiffviewOpen" },
+  lazy = true,
   specs = {
     {
       ---@type AstroCoreOpts
       "AstroNvim/astrocore",
+      optional = true,
       opts = function(_, opts)
         local maps = opts.mappings
         if vim.fn.executable "git" == 1 then

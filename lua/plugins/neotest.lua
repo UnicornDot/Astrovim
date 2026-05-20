@@ -3,7 +3,7 @@ return {
     "nvim-neotest/neotest",
     lazy = true,
     specs = {
-      {"nvim-lua/plenary.nvim", lazy = true },
+      { "nvim-lua/plenary.nvim", lazy = true },
       { "nvim-neotest/nvim-nio", lazy = true },
       {
         "AstroNvim/astroui",

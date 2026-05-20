@@ -71,6 +71,7 @@ local astrocore = require("astrocore")
 return {
   {
     "saghen/blink.cmp",
+    lazy = true,
     event = { "InsertEnter", "CmdlineEnter" },
     version = "*",
     opts_extend = {
@@ -283,14 +284,8 @@ return {
     end,
 
     specs = {
-      { "rafamadriz/friendly-snippets", lazy = true },
       { "nvim-mini/mini.icons",         lazy = true },
       { "moyiz/blink-emoji.nvim",       lazy = true },
-      {
-        "L3MON4D3/LuaSnip",
-        optional = true,
-        specs = { { "saghen/blink.cmp", opts = { snippets = { preset = "luasnip" } } } },
-      },
       {
         "AstroNvim/astrolsp",
         optional = true,

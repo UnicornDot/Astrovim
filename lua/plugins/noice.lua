@@ -9,6 +9,7 @@ local astrocore = require "astrocore"
 return {
   {
     "folke/noice.nvim",
+    lazy = true,
     event = "VeryLazy",
     dependencies = {
       { "MunifTanjim/nui.nvim", lazy = true },
@@ -16,6 +17,7 @@ return {
     specs = {
       {
         "AstroNvim/astrolsp",
+        lazy = true,
         optional = true,
         ---@param opts AstroLSPOpts
         opts = function(_, opts)

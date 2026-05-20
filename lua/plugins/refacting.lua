@@ -1,10 +1,9 @@
 return {
   "ThePrimeagen/refactoring.nvim",
+  lazy = true,
   event = "VeryLazy",
-  dependencies = {
-    "lewis6991/async.nvim",
-  },
   specs = {
+    { "lewis6991/async.nvim", lazy = true },
     {
       "AstroNvim/astrocore",
       ---@param opts AstroCoreOpts

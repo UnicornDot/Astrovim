@@ -1,10 +1,9 @@
-local astrocore = require("astrocore")
 return {
   {
     "stevearc/overseer.nvim",
-    ---@param opts overseer.Config
     event = "User AstroFile",
     lazy = true,
+    ---@param opts overseer.Config
     opts = function(_, opts)
       local window_scaling_factor = 0.3
       local height = require("utils").size(vim.o.lines, window_scaling_factor)
@@ -54,11 +53,13 @@ return {
     specs = {
       {
         "mfussenegger/nvim-dap",
+        lazy = true,
         optional = true,
         opts = function() require("overseer").enable_dap() end,
       },
       {
         "nvim-neotest/neotest",
+        lazy = true,
         optional = true,
         opts = function(_, opts)
           opts = opts or {}
@@ -68,6 +69,7 @@ return {
       },
       {
         "AstroNvim/astrocore",
+        optional = true,
         ---@param opts AstroCoreOpts
         opts = function(_, opts)
           local maps = opts.mappings

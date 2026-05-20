@@ -57,12 +57,15 @@ return {
     opts = function(_, opts)
       opts.config = vim.tbl_deep_extend("keep", opts.config or {}, {
         vtsls = {
-          root_dir = require("lspconfig.util").root_pattern(
-            "nx.json",
-            "tsconfig.json",
-            "package.json",
-            "jsconfig.json"
-          ),
+          root_dir = function(bufnr, on_dir)
+            local fname = vim.api.nvim_buf_get_name(bufnr)
+            on_dir(require("lspconfig.util").root_pattern(
+              "nx.json",
+              "tsconfig.json",
+              "package.json",
+              "jsconfig.json"
+            )(fname))
+          end,
           on_attach = function(client, _)
             local existing_capabilities = vim.deepcopy(client.server_capabilities)
             if existing_capabilities == nil then return end
@@ -81,10 +84,6 @@ return {
 
             astrocore.set_mappings({
               n = {
-                ["<Leader>lA"] = {
-                  function() vim.lsp.buf.code_action { context = { only = { "source", "refactor", "quickfix" } } } end,
-                  desc = "Lsp All Action",
-                },
                 gs = {
                   function() require("vtsls").commands.goto_source_definition() end,
                   desc = "Goto Source Definition (vtsls)",
@@ -92,15 +91,6 @@ return {
               },
             }, { buffer = true })
           end,
-          filetypes = {
-            "angular",
-            "javascript",
-            "javascriptreact",
-            "javascript.jsx",
-            "typescript",
-            "typescriptreact",
-            "typescript.tsx",
-          },
           settings = {
             complete_function_calls = true,
             vtsls = {
@@ -294,6 +284,7 @@ return {
     specs = {
       {
         "saghen/blink.cmp",
+        lazy = true,
         optional = true,
         opts = function(_, opts)
           return astrocore.extend_tbl(opts, {
@@ -363,7 +354,7 @@ return {
     optional = true,
     specs = {
       { "marilari88/neotest-vitest", lazy = true },
-      { "nvim-neotest/neotest-jest", config = function() end }
+      { "nvim-neotest/neotest-jest", lazy = true, config = function() end }
     },
     opts = function(_, opts)
       if not opts.adapters then opts.adapters = {} end

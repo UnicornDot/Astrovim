@@ -1,7 +1,7 @@
 ---@type LazySpec
 return {
   "echasnovski/mini.pairs",
-  event = "VeryLazy",
+  event = "User AstroFile",
   opts = {
     modes = { insert = true, command = true, terminal = false },
     -- skip autopair when next character is one of these

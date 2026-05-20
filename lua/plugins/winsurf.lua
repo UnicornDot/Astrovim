@@ -1,8 +1,9 @@
 ---@type LazySpec
 return {
   'Exafunction/windsurf.nvim',
-  event = 'BufEnter',
-  config = function() 
+  event = "User AstroFile",
+  lazy = true,
+  config = function()
     require("codeium").setup({
       enable_cmp_source = false,
       virtual_text = {
@@ -48,6 +49,7 @@ return {
   specs = {
     {
       "saghen/blink.cmp",
+      lazy = true,
       optional = true,
       opts = function(_, opts)
         local astrocore = require("astrocore")
