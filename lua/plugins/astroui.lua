@@ -116,6 +116,7 @@ return {
   {
     'gen740/SmoothCursor.nvim',
     lazy = true,
+    event = "User AstroFile",
     opts = {},
     config = function()
       require('smoothcursor').setup({

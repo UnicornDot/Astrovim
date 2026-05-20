@@ -1,6 +1,7 @@
 return {
   "folke/flash.nvim",
   lazy = true,
+  event = "User AstroFile",
   opts = {
     label = {
       uppercase = false,

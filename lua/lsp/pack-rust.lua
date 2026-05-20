@@ -1,4 +1,5 @@
 local astrocore = require "astrocore"
+local utils = require("utils")
 local set_mappings = astrocore.set_mappings
 -- vim.g.astronvim_rust_diagnostics = "bacon-ls"
 local diagnostics = vim.g.astronvim_rust_diagnostics or "rust-analyzer"
@@ -145,15 +146,14 @@ return {
       local cfg = require "rustaceanvim.config"
       if codelldb_installed then
         local codelldb_path = vim.fn.exepath "codelldb"
-        local this_os = vim.uv.os_uname().sysname
 
         local liblldb_path = vim.fn.expand "$MASON/share/lldb"
         -- The path in windows is different
-        if this_os:find "Windows" then
+        if utils.is_windows() then
           liblldb_path = liblldb_path .. "\\bin\\lldb.dll"
         else
           -- The liblldb extension is .so for linux and .dylib for macOS
-          liblldb_path = liblldb_path .. "/lib/liblldb" .. (this_os == "Linux" and ".so" or ".dylib")
+          liblldb_path = liblldb_path .. "/lib/liblldb" .. (utils.is_linux() and ".so" or ".dylib")
         end
         adapter = cfg.get_codelldb_adapter(codelldb_path, liblldb_path)
       else

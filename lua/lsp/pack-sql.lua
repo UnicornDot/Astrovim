@@ -62,6 +62,7 @@ return {
   },
   {
     "nanotee/sqls.nvim",
+    ft = sql_ft,
     lazy = true,
     specs = {
       {

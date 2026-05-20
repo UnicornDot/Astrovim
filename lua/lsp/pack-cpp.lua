@@ -1,16 +1,15 @@
 local astrocore = require("astrocore")
-local uname = (vim.uv or vim.loop).os_uname()
-local is_linux_arm = uname.sysname == "Linux" and (uname.machine == "aarch64" or vim.startswith(uname.machine, "arm"))
 
 return {
   {
     "p00f/clangd_extensions.nvim",
+    ft = { "cpp", "c" },
     lazy = true,
     specs = {
       "AstroNvim/astrolsp",
       optional = true,
       opts = function(_, opts)
-        if is_linux_arm then
+        if require("utils").is_linux_arm() then
           opts.servers = astrocore.list_insert_unique(opts.servers, { "clangd" })
         end
         opts.config = vim.tbl_deep_extend("keep", opts.config or {}, {
@@ -54,7 +53,7 @@ return {
   {
     "Civitasv/cmake-tools.nvim",
     lazy = true,
-    ft = { "c", "cpp", "objc", "objcpp", "cuda", "proto" },
+    ft = { "c", "cpp", "objc", "objcpp", "cuda", "proto", "cmake" },
     opts = {},
   },
   {
@@ -67,9 +66,8 @@ return {
   {
     "Mythos-404/xmake.nvim",
     version = "^3",
-    ft = "lua",
     lazy = true,
-    event = "BufReadPost",
+    event = "BufReadPost xmake.lua",
     config = true,
   },
   {

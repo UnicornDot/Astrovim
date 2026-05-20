@@ -217,10 +217,18 @@ end
 -- local is_windows = vim.uv.os_uname().sysname == "Windows_NT"
 -- local is_windows = vim.loop.os_uname().sysname == "Windows_NT"
 function M.is_windows()
-  return vim.uv.os_uname().version:find("Windows")
+  return uv.os_uname().sysname:find("Windows")
 end
-
-
+function M.is_linux()
+  return uv.os_uname().sysname:find("Linux")
+end
+function M.is_arm()
+  local machine = uv.os_uname().machine
+  return (machine == "aarch64" or vim.startswith(machine, "arm"))
+end
+function M.is_linux_arm()
+  return M.is_linux() and M.is_arm()
+end
 function M.get_global_npm_path()
   if M.is_windows() then
     return vim.fn.system "cmd.exe /c npm root -g"

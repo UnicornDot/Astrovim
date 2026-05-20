@@ -8,6 +8,7 @@ return {
     return {
       view = {
         style = "sign",
+        priority = 10,
         signs = { add = sign, change = sign, delete = sign },
       },
       mappings = {

@@ -23,8 +23,7 @@ return {
       opts.servers = astrocore.list_insert_unique(opts.servers or {}, { "sourcekit" })
       opts.config = vim.tbl_deep_extend("keep", opts.config, {
         sourcekit = {
-          root_dir = require("lspconfig.util").root_pattern("Package.swift", "Package.resolved", ".git"),
-          filetypes = { "swift" },
+          filetypes = { "swift", "objc", "objcpp" },
           capabilities = {
             workspace = {
               didChangeWatchedFiles = {

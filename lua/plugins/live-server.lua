@@ -11,8 +11,9 @@ return {
       optional = true,
       opts = function(_, opts)
         local maps = opts.mappings
-        maps.n["<Leader>lw"] = { "<Cmd>LiveServerStart<CR>", desc = "Start Live Server" }
-        maps.n["<Leader>lW"] = { "<Cmd>LiveServerStop<CR>", desc = "Stop Live Server" }
+
+        maps.n["<Leader>ss"] = { "<Cmd>LiveServerStart<CR>", desc = "Start Live Server" }
+        maps.n["<Leader>se"] = { "<Cmd>LiveServerStop<CR>", desc = "Stop Live Server" }
       end,
     },
   },

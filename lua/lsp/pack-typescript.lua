@@ -275,11 +275,12 @@ return {
   },
   {
     "vuki656/package-info.nvim",
-    dependencies = { "MunifTanjim/nui.nvim", lazy = true },
+    specs = { "MunifTanjim/nui.nvim", lazy = true },
     event = "BufRead package.json",
   },
   {
     "alexandre-abrioux/blink-cmp-npm.nvim",
+    event = "BufRead package.json",
     lazy = true,
     specs = {
       {
@@ -318,6 +319,15 @@ return {
   {
     "yioneko/nvim-vtsls",
     lazy = true,
+    ft = {
+      "javascript",
+      "javascriptreact",
+      "javascript.jsx",
+      "typescript",
+      "typescriptreact",
+      "typescript.tsx",
+      "vue"
+    },
     specs = {
       "AstroNvim/astrocore",
       optional = true,
