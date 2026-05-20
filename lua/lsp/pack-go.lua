@@ -56,7 +56,7 @@ return {
               callback = function()
                 local buf_name = vim.api.nvim_buf_get_name(0)
                 if vim.bo.filetype == "dap-repl" and buf_name:match("%[dap%-repl%-%d+%]") then
-                  astrocore.set_mapppings({
+                  astrocore.set_mappings({
                     n = {
                       ["gd"] = {
                         preview_stack_trace,
