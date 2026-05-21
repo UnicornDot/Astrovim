@@ -76,7 +76,9 @@ return {
         "gitignore",
         "asm",
         'ron',
-        "thrift"
+        "thrift",
+        "svelte",
+        "typst"
       },
     },
   },
