@@ -59,7 +59,6 @@ return {
         "vue",
         "yuck",
         "zig",
-        "vimdoc",
         "swift",
         "sql",
         "regex",
