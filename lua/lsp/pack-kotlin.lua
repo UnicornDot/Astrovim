@@ -26,7 +26,7 @@ return {
     end,
   },
   {
-    "Mgenuit/nvim-dap-kotlin",
+    "ancion/nvim-dap-kotlin",
     lazy = true,
     ft = "kotlin",
     opts = {}
