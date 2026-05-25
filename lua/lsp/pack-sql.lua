@@ -41,6 +41,7 @@ local function diagnostic()
   else
     table.insert(sqlfluff, system_config)
   end
+  table.insert(sqlfluff, "-")
   return sqlfluff
 end
 
@@ -93,6 +94,14 @@ return {
                 pg = "sql",
               },
             },
+          })
+        end,
+      },
+      {
+        "AstroNvim/astrolsp",
+        optional = true,
+        opts = function(_, opts)
+          return vim.tbl_deep_extend("force", opts, {
             config = {
               sqls = {
                 on_attach = function(client)
@@ -103,7 +112,7 @@ return {
               },
             },
           })
-        end,
+        end
       }
     }
   },
