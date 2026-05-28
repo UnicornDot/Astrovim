@@ -85,18 +85,21 @@ return {
   },
   {
     "HiPhish/rainbow-delimiters.nvim",
-    dependencies = "nvim-treesitter/nvim-treesitter",
+    dependencies = { "nvim-treesitter/nvim-treesitter" },
     event = "User AstroFile",
     main = "rainbow-delimiters.setup",
   },
   {
     "lukas-reineke/indent-blankline.nvim",
     main = "ibl",
-    dependencies = { "HiPhish/rainbow-delimiters.nvim" },
+    dependencies = {
+      "HiPhish/rainbow-delimiters.nvim",
+    },
     opts = function(_, opts)
       if not opts.scope then opts.scope = {} end
       opts.scope.show_start = true
       opts.scope.show_end = true
+      opts.indent = { char = "│" }
       opts.scope.highlight = vim.tbl_get(vim.g, "rainbow_delimiters", "highlight")
         or {
           "RainbowDelimiterRed",
