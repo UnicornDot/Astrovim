@@ -66,7 +66,7 @@ return {
           --   }
           -- end,
         },
-        flutter_path = "/opt/flutter/", -- <-- this takes priority over the lookup
+        flutter_path = "/opt/flutter/bin/flutter", -- <-- this takes priority over the lookup
         flutter_lookup_cmd = nil, -- example "dirname $(which flutter)" or "asdf where flutter"
         root_patterns = { ".git", "pubspec.yaml" }, -- patterns to find the root of your flutter project
         fvm = false, -- takes priority over path, uses <workspace>/.fvm/flutter_sdk if enabled
