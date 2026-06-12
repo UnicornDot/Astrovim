@@ -118,9 +118,11 @@ function M.lsp_mappings(mappings)
     maps.n["grd"] = { function() snacks.picker.lsp_definitions() end, desc = "vim.lsp.buf.definitions", }
     maps.n["gri"] = { function() snacks.picker.lsp_implementations() end, desc = "vim.lsp.buf.implementations", }
     maps.n["grt"] = { function() snacks.picker.lsp_type_definitions() end, desc = "vim.lsp.buf.implementations", }
-    maps.n["gra"] = { function() snacks.picker.lsp_config() end, desc = "vim.lsp.buf.code_action", }
-    maps.n["grx"] = { function() vim.lsp.codelens.run() end, desc = "vim.lsp.codelens_run", }
     maps.n["grn"] = { function() snacks.rename() end, desc = "vim.lsp.rename", }
+    maps.n["grx"] = { function() vim.lsp.codelens.run() end, desc = "vim.lsp.codelens_run", }
+    maps.n["<Leader>lc"] = { function() snacks.picker.lsp_config() end, desc = "vim.lsp.config", }
+    maps.n["<leader>lo"] = { function() snacks.picker.lsp_outgoing_calls() end, desc = "vim.lsp.lsp_outgoing_calls", cond = "callHierarchy/outgoingCalls" }
+    maps.n["<leader>li"] = { function() snacks.picker.lsp_incoming_calls() end, desc = "vim.lsp.lsp_incoming_calls", cond = "callHierarchy/incomingCalls" }
   end
   return maps
 end
