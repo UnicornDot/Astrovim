@@ -10,7 +10,6 @@ return {
           root_markers = { "shell.qml", ".qmlls.ini", ".git" },
         }
       })
-      vim.lsp.enable("qmlls")
     end,
   },
   {
