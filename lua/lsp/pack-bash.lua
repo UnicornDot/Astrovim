@@ -18,7 +18,7 @@ return {
     optional = true,
     opts = function(_, opts)
       opts.ensure_installed =
-        astrocore.list_insert_unique(opts.ensure_installed, { "bash-language-server", "shfmt", "shellcheck" })
+        astrocore.list_insert_unique(opts.ensure_installed, { "bash-language-server", "shfmt", "shellcheck", "bash-debug-adapter" })
     end,
   },
   {
