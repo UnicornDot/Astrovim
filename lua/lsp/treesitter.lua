@@ -77,7 +77,8 @@ return {
         'ron',
         "thrift",
         "svelte",
-        "typst"
+        "typst",
+        "moonbit"
       },
     },
   },
