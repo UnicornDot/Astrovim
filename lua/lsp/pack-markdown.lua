@@ -63,7 +63,7 @@ return {
                   ["<Leader>lt"] = { [[:'<,'>MakeTable! \t<CR>]], desc = "Markdown csv to table(Default:\\t)" },
                   ["<Leader>lT"] = { markdown_table_change, desc = "Markdown csv to table with separate char" },
                 },
-              }, { buffer = true })
+              }, { buf = 0 })
             end
           end,
         },

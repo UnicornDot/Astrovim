@@ -63,7 +63,7 @@ return {
                         desc = "Jump to error line"
                       },
                     },
-                  }, { buffer = true })
+                  }, { buf = 0 })
                 end
               end
             })
@@ -188,12 +188,12 @@ return {
         pattern = "goctl",
         callback = function()
           -- set up format keymap
-          vim.keymap.set(
-            "n",
-            "<Leader>lf",
-            "<Cmd>GoctlApiFormat<CR>",
-            { silent = true, noremap = true, buffer = true, desc = "Format Buffer" }
-          )
+          astrocore.set_mappings({ 
+            n  = {
+              ["<Leader>lf"] = { "<Cmd>GoctlApiFormat<CR>", desc = "Format Buffer" },
+            },
+            { buf = 0 }
+          })
         end,
       })
     end,

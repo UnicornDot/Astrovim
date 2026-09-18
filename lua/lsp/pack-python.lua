@@ -18,7 +18,7 @@ return {
                   desc = "Select virtualenv",
                 },
               },
-            }, { buffer = true })
+            }, { buf = 0 })
           end,
           before_init = function(_, c)
             if not c.settings then c.settings = {} end

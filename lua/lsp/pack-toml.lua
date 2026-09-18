@@ -24,7 +24,7 @@ return {
                   desc = "Show Crate Documentation",
                 },
               },
-            }, { buffer = true })
+            }, { buf = 0 })
           end,
         },
       })

@@ -86,7 +86,7 @@ return {
                               desc = "Jump to error line",
                             },
                           },
-                        }, { buffer = true })
+                        }, { buf = 0 })
                       end
                     end
                   end,

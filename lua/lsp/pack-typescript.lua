@@ -66,7 +66,7 @@ return {
               "jsconfig.json"
             )(fname))
           end,
-          on_attach = function(client, _)
+          on_attach = function(client)
             local existing_capabilities = vim.deepcopy(client.server_capabilities)
             if existing_capabilities == nil then return end
             existing_capabilities.documentFormattingProvider = nil
@@ -89,7 +89,7 @@ return {
                   desc = "Goto Source Definition (vtsls)",
                 },
               },
-            }, { buffer = true })
+            }, { buf = 0 })
           end,
           settings = {
             complete_function_calls = true,

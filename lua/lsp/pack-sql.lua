@@ -84,7 +84,7 @@ return {
                       desc = "Create sqlfluff config file",
                     },
                   },
-                }, { buffer = true })
+                }, { buf = 0 })
               end,
             },
           }

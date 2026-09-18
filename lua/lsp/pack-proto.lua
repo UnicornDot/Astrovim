@@ -90,7 +90,7 @@ return {
                   desc = "Create Buf Config File",
                 },
               },
-            }, { buffer = true })
+            }, { buf = 0 })
           end,
         },
       })
