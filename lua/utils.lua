@@ -506,7 +506,7 @@ function M.get_filename_with_extension_from_path(path)
 end
 
 function M.get_launch_json_by_source_file(source_file)
-  local target_file = vim.fn.getcwd() .. ".vscode/launch.json"
+  local target_file = vim.fn.getcwd() .. "/.vscode/launch.json"
   local file_exist = M.file_exists(target_file)
   if file_exist then
     local confirm = vim.fn.confirm("File `.vscode/launch.json` Exists, Overwrite it? &Yes\n&No", 1, "Question")
@@ -530,7 +530,7 @@ end
 function M.create_launch_json()
   Snacks.picker.select(
     {
-      "go", "node", "rust", "python", "chrome", "nextjs"
+      "go", "node", "rust", "python", "chrome", "nextjs", "bun"
     },
     { prompt = "Select Language Debug Template: ", default = "go"},
     function(select, _)
@@ -540,6 +540,9 @@ function M.create_launch_json()
         M.get_launch_json_by_source_file(source_file)
       elseif select == "node" then
         local source_file = vim.fn.stdpath("config") .. "/.vscode/node_launch.json"
+        M.get_launch_json_by_source_file(source_file)
+      elseif select == "bun" then
+        local source_file = vim.fn.stdpath("config") .. "/.vscode/bun_launch.json"
         M.get_launch_json_by_source_file(source_file)
       elseif select == "rust" then
         local source_file = vim.fn.stdpath("config") .. "/.vscode/rust.launch.json"

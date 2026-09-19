@@ -157,25 +157,16 @@ return {
     lazy = true,
     optional = true,
     config = function()
-      local success, js_debug_adapter_path = pcall(function ()
-        return utils.get_pkg_path("js-debug-adapter", "/js-debug/src/dapDebugServer.js")
-      end)
-      if not success then return end
 
       local dap = require "dap"
-      if not dap.adapters["pwa-node"] then
-        require("dap").adapters["pwa-node"] = {
-          type = "server",
-          host = "localhost",
-          port = "${port}",
-          executable = {
-            command = "node",
-            args = {
-              js_debug_adapter_path,
-              "${port}",
-            },
-          },
-        }
+
+      if not dap.adapters["bun"] then
+        local bin = utils.get_pkg_path("bun-dap-adapter", "bin/bun-dap-adapter")
+        local root = utils.get_pkg_path("bun-dap-adapter", "")
+        dap.adapters.bun = vim.fn.filereadable(bin) == 1
+          and { type = "executable", command = bin }
+          or  { type = "executable", command = "bun", args = { "run", root .. "src/adapter.ts" } }
+
       end
       if not dap.adapters["node"] then
         dap.adapters["node"] = function(cb, config)
@@ -187,6 +178,27 @@ return {
             cb(nativeAdapter)
           end
         end
+      end
+
+      local success, js_debug_adapter_path = pcall(function ()
+        return utils.get_pkg_path("js-debug-adapter", "/js-debug/src/dapDebugServer.js")
+      end)
+
+      if not success then return end
+
+      if not dap.adapters["pwa-node"] then
+        dap.adapters["pwa-node"] = {
+          type = "server",
+          host = "localhost",
+          port = "${port}",
+          executable = {
+            command = "node",
+            args = {
+              js_debug_adapter_path,
+              "${port}",
+            },
+          },
+        }
       end
 
       if not dap.adapters["pwa-chrome"] then
@@ -213,6 +225,14 @@ return {
       for _, language in ipairs(js_filetypes) do
         if not dap.configurations[language] then
           dap.configurations[language] = {
+            {
+              type = "bun",
+              request = "launch",
+              name = "Bun launch current",
+              program = "${file}",
+              cwd = "${workspaceFolder}",
+              stopOnEntry = false
+            },
             {
               type = "pwa-node",
               request = "launch",
