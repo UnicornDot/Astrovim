@@ -160,13 +160,12 @@ return {
 
       local dap = require "dap"
 
-      if not dap.adapters["bun"] then
-        local bin = utils.get_pkg_path("bun-dap-adapter", "bin/bun-dap-adapter")
-        local root = utils.get_pkg_path("bun-dap-adapter", "")
-        dap.adapters.bun = vim.fn.filereadable(bin) == 1
-          and { type = "executable", command = bin }
-          or  { type = "executable", command = "bun", args = { "run", root .. "src/adapter.ts" } }
-
+      if not dap.adapters["bun-dap-x"] then
+        dap.adapters['bun-dap-x'] = {
+          type = "executable",
+          command = "bunx",
+          args = { "bun-dap-x" },
+        }      
       end
       if not dap.adapters["node"] then
         dap.adapters["node"] = function(cb, config)
@@ -226,13 +225,22 @@ return {
         if not dap.configurations[language] then
           dap.configurations[language] = {
             {
-              type = "bun",
-              request = "launch",
-              name = "Bun launch current",
-              program = "${file}",
-              cwd = "${workspaceFolder}",
-              stopOnEntry = false
-            },
+		          type = "bun-dap-x",
+		          request = "launch",
+		          name = "Bun: current file",
+		          program = "${file}",
+		          cwd = "${workspaceFolder}",
+		          runtime = "bun",
+		          args = {},
+		          runtimeArgs = {},
+		          stopOnEntry = false,
+	          },
+	          {
+		          type = "bun-dap-x",
+		          request = "attach",
+		          name = "Bun: attach",
+		          url = "ws://127.0.0.1:6499/<inspector-id>",
+	          },
             {
               type = "pwa-node",
               request = "launch",
