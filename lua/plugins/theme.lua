@@ -173,4 +173,27 @@ return {
       })
     end,
   },
+  {
+    "Fau818/fade.nvim",
+    event = { "LspAttach", "InsertEnter" },  -- `unused` needs a server, `ghost` needs insert mode
+    opts = {
+      unused = {
+        enabled      = true,
+        alpha        = 0.75,  -- share of the original color kept; lower fades further
+        min_contrast = 3.0,   -- below this WCAG ratio, a group keeps its own color instead of fading
+        ignore       = {},    -- capture groups never faded, matched by prefix
+        priority     = 200,   -- must outrank treesitter (100), semantic tokens (128), diagnostics (150)
+        hide         = { underline = true, virtual_text = true, signs = true },  -- handlers to skip
+        patterns     = {},    -- Lua patterns, for servers that report unused code without the tag
+        exclude      = {},    -- filetypes to leave alone, e.g. { markdown = true }
+      },
+      ghost = {
+        enabled      = true,
+        alpha        = 0.65,  -- suggestions want to sit further back than real code
+        min_contrast = 3.0,
+        ignore       = { "@comment" },
+        providers    = { copilot = true, blink = true },
+      },
+    },
+  }
 }
